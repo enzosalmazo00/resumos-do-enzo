@@ -18,15 +18,37 @@
     document.documentElement.style.visibility = "visible";
   });
 </script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Sans+3:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0d1117;--bg2:#161b27;--bg3:#1e2738;--ac:#00d4aa;--ac2:#3a8ef0;--tx:#e8eaf0;--tx2:#8890a8;--bd:#252d42;--r:16px;--c-enter:#e67e22;--c-nonfer:#3498db;--c-haem:#9b59b6;--c-neis:#e74c3c;--c-other:#1abc9c;--c-spiro:#f1c40f}
+:root {
+  --bg: #0a0d14;
+  --bg2: #111520;
+  --bg3: #161c2e;
+  --card: #1a2138;
+  --card2: #1f2845;
+  --accent: #4f9cf9;
+  --accent2: #38e8c0;
+  --accent3: #f9784f;
+  --accent4: #b84ff9;
+  --gold: #f9c94f;
+  --red: #f95f5f;
+  --green: #4ff984;
+  --text: #e8eaf6;
+  --muted: #8892b0;
+  --border: rgba(79,156,249,0.15);
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --radius: 16px;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
-body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
 .page{display:none;min-height:100vh}.page.active{display:block}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--ac)}
 .top-nav{position:sticky;top:0;z-index:200;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
-.btn-home{background:var(--ac);color:#000;border:none;padding:8px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:14px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-home{background:var(--ac);color:#000;border:none;padding:8px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-family:var(--font-body);font-size:14px;transition:all .2s;display:flex;align-items:center;gap:6px}
 .btn-home:hover{background:#00b896;transform:translateY(-1px)}
 .nav-lbl{font-family:'Playfair Display',serif;font-size:16px;color:var(--ac)}
 #page-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:40px 20px;background:radial-gradient(ellipse 80% 80% at 50% -10%,#002240 0%,var(--bg) 70%);position:relative;overflow:hidden}
@@ -41,7 +63,7 @@ body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx)
 .cov-stats{display:flex;gap:36px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;animation:fuA .8s .4s ease both}
 .cov-sn{font-size:2.4rem;font-weight:900;font-family:'Playfair Display',serif;color:var(--ac)}
 .cov-sl{font-size:.68rem;color:var(--tx2);text-transform:uppercase;letter-spacing:2px}
-.btn-start{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;border:none;padding:18px 56px;border-radius:50px;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:'Source Sans 3',sans-serif;letter-spacing:1px;transition:all .3s;animation:fuA .8s .5s ease both}
+.btn-start{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;border:none;padding:18px 56px;border-radius:50px;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:var(--font-body);letter-spacing:1px;transition:all .3s;animation:fuA .8s .5s ease both}
 .btn-start:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,212,170,.35)}
 @keyframes fuA{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 #page-dashboard{padding:0}
@@ -119,9 +141,9 @@ body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx)
 .q-fb-t.ok{color:#27ae60}.q-fb-t.err{color:#e74c3c}
 .q-fb-p{font-size:.84rem;color:var(--tx2);line-height:1.65}
 .q-nav{display:flex;align-items:center;justify-content:space-between;margin-top:32px;flex-wrap:wrap;gap:12px}
-.btn-q{background:var(--ac);color:#000;border:none;padding:12px 32px;border-radius:10px;font-weight:700;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:.95rem;transition:all .2s}
+.btn-q{background:var(--ac);color:#000;border:none;padding:12px 32px;border-radius:10px;font-weight:700;cursor:pointer;font-family:var(--font-body);font-size:.95rem;transition:all .2s}
 .btn-q:hover{background:#00b896}.btn-q:disabled{opacity:.4;cursor:not-allowed}
-.btn-qs{background:transparent;border:1px solid var(--bd);color:var(--tx2);padding:12px 24px;border-radius:10px;font-size:.9rem;cursor:pointer;font-family:'Source Sans 3',sans-serif;transition:all .2s}
+.btn-qs{background:transparent;border:1px solid var(--bd);color:var(--tx2);padding:12px 24px;border-radius:10px;font-size:.9rem;cursor:pointer;font-family:var(--font-body);transition:all .2s}
 .btn-qs:hover{border-color:var(--ac);color:var(--ac)}
 .qr{text-align:center;padding:60px 20px}
 .qr-score{font-size:5rem;font-weight:900;font-family:'Playfair Display',serif;color:var(--ac)}
@@ -157,7 +179,7 @@ body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx)
 .cc-qt{font-size:.93rem;font-weight:600;color:var(--tx);margin-bottom:9px}
 .cc-ans{background:var(--bg3);border-radius:10px;overflow:hidden;border:1px solid transparent;transition:all .3s}
 .cc-ans.rev{border-color:rgba(0,212,170,.3)}
-.cc-ansbtn{width:100%;text-align:left;background:none;border:none;color:var(--tx2);padding:12px 16px;cursor:pointer;font-size:.8rem;font-family:'Source Sans 3',sans-serif;display:flex;align-items:center;gap:8px;transition:color .2s}
+.cc-ansbtn{width:100%;text-align:left;background:none;border:none;color:var(--tx2);padding:12px 16px;cursor:pointer;font-size:.8rem;font-family:var(--font-body);display:flex;align-items:center;gap:8px;transition:color .2s}
 .cc-ansbtn:hover{color:var(--ac)}
 .cc-anshid{padding:0 16px 14px;font-size:.86rem;line-height:1.75;color:var(--tx);display:none}
 .cc-ans.rev .cc-anshid{display:block}
@@ -209,12 +231,6 @@ body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx)
   .case-hd{padding:14px 16px;}
 
   /* Back button position */
-  a[href="dashboard.html"]{
-    bottom:16px !important;
-    left:16px !important;
-    padding:9px 16px !important;
-    font-size:12px !important;
-  }
 }
 
 @media(max-width:480px){
@@ -229,6 +245,38 @@ body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx)
   .sec-hero{padding:24px 12px 16px;}
   .sc{padding:16px;}
 }
+
+/* ── NAV PADRÃO BIOQUÍMICA ── */
+nav.tabs {
+  position:sticky; top:0; z-index:100;
+  display:flex; gap:4px; flex-wrap:wrap;
+  background: rgba(10,13,20,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  justify-content: center;
+}
+nav.tabs button {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-body); font-size:12px; font-weight:600;
+  padding: 6px 14px; border-radius: 8px; cursor:pointer;
+  transition: all 0.2s; letter-spacing: 0.3px;
+}
+nav.tabs button:hover { color: var(--accent); border-color: var(--accent); }
+nav.tabs button.active {
+  background: var(--accent); color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(79,156,249,0.4);
+}
+@media(max-width:768px){
+  nav.tabs{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; justify-content:flex-start; }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{ flex-shrink:0; white-space:nowrap; }
+}
+
 </style>
 </head>
 <body>
@@ -930,6 +978,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 
+
 <!-- ── Botão Voltar ── -->
 <a href="dashboard.html" style="
   position:fixed; bottom:24px; left:24px; z-index:9999;
@@ -937,8 +986,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   padding:12px 26px;
   background:rgba(2,10,22,0.93);
   border:1.5px solid rgba(34,211,238,0.42);
-  border-radius:50px;
-  color:#e2f8fc;
+  border-radius:50px; color:#e2f8fc;
   font-size:13px; font-weight:600; letter-spacing:0.03em;
   text-decoration:none;
   backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);

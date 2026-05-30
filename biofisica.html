@@ -20,19 +20,32 @@
   });
 </script>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
-:root{
-  --bg:#05050a;--bg2:#0a0a12;
-  --card:rgba(255,255,255,.032);--card-h:rgba(255,255,255,.065);
-  --red:#c0392b;--red-b:#e74c3c;
-  --gold:#c9941a;--gold-l:#f0c040;
-  --blue:#4a90d9;--blue-l:#7eb8f7;
-  --green:#27ae60;--green-l:#2ecc71;
-  --t1:#f2edfb;--t2:#9b92b8;--t3:#454065;
-  --bdr:rgba(192,57,43,.13);--bdr-b:rgba(192,57,43,.36);
+:root {
+  --bg: #0a0d14;
+  --bg2: #111520;
+  --bg3: #161c2e;
+  --card: #1a2138;
+  --card2: #1f2845;
+  --accent: #4f9cf9;
+  --accent2: #38e8c0;
+  --accent3: #f9784f;
+  --accent4: #b84ff9;
+  --gold: #f9c94f;
+  --red: #f95f5f;
+  --green: #4ff984;
+  --text: #e8eaf6;
+  --muted: #8892b0;
+  --border: rgba(79,156,249,0.15);
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --radius: 16px;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
+
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;overflow-x:hidden;overflow-y:scroll;}
 /* ── Scrollbar visível e clicável ── */
@@ -40,7 +53,7 @@ html::-webkit-scrollbar{width:8px;}
 html::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);border-radius:4px;}
 html::-webkit-scrollbar-thumb{background:rgba(192,57,43,0.55);border-radius:4px;}
 html::-webkit-scrollbar-thumb:hover{background:rgba(231,76,60,0.85);}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-y:auto;overflow-x:hidden;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--t1);min-height:100vh;overflow-y:auto;overflow-x:hidden;}
 body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
 
 #pgbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--red),var(--gold-l),var(--blue-l));z-index:9999;width:0%;transition:width .12s;box-shadow:0 0 12px var(--red);}
@@ -56,14 +69,14 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 @keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.25;transform:scale(.6);}}
 .heart{font-size:3.8rem;animation:hbeat 1.05s ease-in-out infinite;display:inline-block;margin-bottom:20px;filter:drop-shadow(0 0 24px rgba(231,76,60,.5));}
 @keyframes hbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.22);}28%{transform:scale(1);}42%{transform:scale(1.14);}56%{transform:scale(1);}}
-h1.hero-t{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,8vw,6.5rem);font-weight:900;line-height:1.05;margin-bottom:12px;background:linear-gradient(138deg,#f2edfb 15%,var(--red-b) 55%,var(--gold-l) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+h1.hero-t{font-family:var(--font-display);font-size:clamp(2.4rem,8vw,6.5rem);font-weight:900;line-height:1.05;margin-bottom:12px;background:linear-gradient(138deg,#f2edfb 15%,var(--red-b) 55%,var(--gold-l) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .hero-author{font-size:.82rem;color:var(--t3);font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
 .hero-ref{font-size:.75rem;color:var(--t3);margin-bottom:36px;font-style:italic;}
 .hero-sub{font-size:1.05rem;color:var(--t2);font-weight:300;max-width:580px;margin:0 auto 44px;line-height:1.8;}
 .stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;}
-.stat-n{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--red-b);display:block;line-height:1;}
+.stat-n{font-family:var(--font-display);font-size:3rem;font-weight:900;color:var(--red-b);display:block;line-height:1;}
 .stat-l{font-size:.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;}
-.cta{display:inline-flex;align-items:center;gap:10px;padding:16px 42px;background:linear-gradient(135deg,var(--red),#a93226);color:#fff;border:none;border-radius:100px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;font-family:'DM Sans',sans-serif;box-shadow:0 0 40px rgba(192,57,43,.4);}
+.cta{display:inline-flex;align-items:center;gap:10px;padding:16px 42px;background:linear-gradient(135deg,var(--red),#a93226);color:#fff;border:none;border-radius:100px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;font-family:var(--font-body);box-shadow:0 0 40px rgba(192,57,43,.4);}
 .cta:hover{transform:scale(1.06);box-shadow:0 0 60px rgba(231,76,60,.55);}
 .scroll-hint{position:absolute;bottom:155px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--t3);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;animation:float 2.2s ease-in-out infinite;cursor:pointer;z-index:3;}
 .scroll-hint::after{content:'';width:1px;height:30px;background:linear-gradient(to bottom,var(--red-b),transparent);}
@@ -72,7 +85,7 @@ h1.hero-t{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,8vw,6.5rem
 .nav-wrap{position:sticky;top:0;z-index:100;background:rgba(5,5,10,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr);}
 .nav-inner{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;}
 .nav-inner::-webkit-scrollbar{display:none;}
-.ntab{flex-shrink:0;padding:16px 13px;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:all .22s;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;font-family:'DM Sans',sans-serif;}
+.ntab{flex-shrink:0;padding:16px 13px;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:all .22s;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;font-family:var(--font-body);}
 .ntab:hover{color:var(--t2);}
 .ntab.active{color:var(--red-b);border-bottom-color:var(--red-b);}
 
@@ -81,10 +94,10 @@ h1.hero-t{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,8vw,6.5rem
 .mod.active{display:block;}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
 .mod-tag{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red-b);margin-bottom:10px;}
-.mod-title{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.1;color:var(--t1);margin-bottom:12px;}
+.mod-title{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.1;color:var(--t1);margin-bottom:12px;}
 .mod-desc{font-size:1rem;color:var(--t2);font-weight:300;max-width:600px;line-height:1.8;margin-bottom:46px;}
 .divl{height:1px;background:var(--bdr);margin:44px 0;}
-.stitle{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:700;color:var(--t1);margin-bottom:22px;display:flex;align-items:center;gap:16px;}
+.stitle{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--t1);margin-bottom:22px;display:flex;align-items:center;gap:16px;}
 .stitle::after{content:'';flex:1;height:1px;background:var(--bdr);}
 
 .cg2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin:24px 0;}
@@ -94,7 +107,7 @@ h1.hero-t{font-family:'Playfair Display',serif;font-size:clamp(2.4rem,8vw,6.5rem
 .card:hover{background:var(--card-h);border-color:var(--bdr-b);transform:translateY(-3px);box-shadow:0 20px 45px rgba(192,57,43,.1);}
 .card:hover::before{opacity:1;}
 .card-ico{font-size:2.1rem;margin-bottom:13px;display:block;}
-.card-t{font-family:'Playfair Display',serif;font-size:1.18rem;font-weight:700;color:var(--t1);margin-bottom:9px;}
+.card-t{font-family:var(--font-display);font-size:1.18rem;font-weight:700;color:var(--t1);margin-bottom:9px;}
 .card-b{font-size:.87rem;color:var(--t2);line-height:1.75;}
 .card-freq{margin-top:13px;padding:10px 14px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.22);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--red-b);}
 
@@ -129,7 +142,7 @@ tr:hover td{background:rgba(255,255,255,.022);}
 .pcard{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:24px;text-align:center;transition:all .3s;cursor:default;}
 .pcard:hover{border-color:var(--bdr-b);background:rgba(192,57,43,.07);transform:scale(1.04);}
 .pico{font-size:2.3rem;margin-bottom:10px;}
-.pname{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--t1);margin-bottom:5px;}
+.pname{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--t1);margin-bottom:5px;}
 .pdef{font-size:.73rem;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;}
 
 .sbar{display:flex;align-items:center;gap:14px;margin:12px 0;}
@@ -159,12 +172,12 @@ tr:hover td{background:rgba(255,255,255,.022);}
 
 .scard{display:flex;align-items:center;gap:22px;background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin:12px 0;transition:all .3s;}
 .scard:hover{border-color:var(--bdr-b);transform:translateX(4px);}
-.snum{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:900;color:var(--red);line-height:1;width:56px;flex-shrink:0;}
+.snum{font-family:var(--font-display);font-size:2.8rem;font-weight:900;color:var(--red);line-height:1;width:56px;flex-shrink:0;}
 .sinfo h4{font-size:.9rem;color:var(--t1);text-transform:none;letter-spacing:0;margin-bottom:6px;}
 
 .wcard{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin:12px 0;display:flex;align-items:flex-start;gap:18px;transition:all .3s;}
 .wcard:hover{border-color:var(--bdr-b);background:rgba(192,57,43,.04);}
-.wlabel{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--red-b);width:70px;flex-shrink:0;line-height:1;padding-top:4px;}
+.wlabel{font-family:var(--font-display);font-size:2.4rem;font-weight:900;color:var(--red-b);width:70px;flex-shrink:0;line-height:1;padding-top:4px;}
 .winfo p{margin-bottom:5px;font-size:.88rem;}
 .mono{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--t3);}
 
@@ -194,19 +207,51 @@ tr:hover td{background:rgba(255,255,255,.022);}
 /* QUIZ */
 .quiz-q{font-size:1.05rem;color:var(--t1);font-weight:500;margin-bottom:22px;line-height:1.65;}
 .qopts{display:flex;flex-direction:column;gap:10px;}
-.qopt{padding:14px 18px;border:1px solid var(--bdr);border-radius:8px;font-size:.9rem;color:var(--t2);cursor:pointer;transition:all .2s;background:none;text-align:left;font-family:'DM Sans',sans-serif;}
+.qopt{padding:14px 18px;border:1px solid var(--bdr);border-radius:8px;font-size:.9rem;color:var(--t2);cursor:pointer;transition:all .2s;background:none;text-align:left;font-family:var(--font-body);}
 .qopt:hover:not(:disabled){border-color:var(--bdr-b);color:var(--t1);background:rgba(255,255,255,.03);}
 .qopt.cor{background:rgba(39,174,96,.12);border-color:var(--green);color:var(--green-l);}
 .qopt.incor{background:rgba(192,57,43,.12);border-color:var(--red-b);color:var(--red-b);}
 .qexp{margin-top:16px;padding:17px;border-radius:8px;background:rgba(255,255,255,.03);font-size:.87rem;color:var(--t2);display:none;line-height:1.72;border:1px solid rgba(255,255,255,.06);}
 .qexp.show{display:block;}
-.qnxt{margin-top:14px;padding:11px 26px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:.87rem;font-weight:700;cursor:pointer;display:none;transition:background .2s;font-family:'DM Sans',sans-serif;}
+.qnxt{margin-top:14px;padding:11px 26px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:.87rem;font-weight:700;cursor:pointer;display:none;transition:background .2s;font-family:var(--font-body);}
 .qnxt:hover{background:var(--red-b);}
 .qnxt.show{display:inline-block;}
-.qsnum{font-family:'Playfair Display',serif;font-size:5.5rem;font-weight:900;}
+.qsnum{font-family:var(--font-display);font-size:5.5rem;font-weight:900;}
 
 footer{border-top:1px solid var(--bdr);padding:44px 30px;text-align:center;color:var(--t3);font-size:.78rem;}
 footer strong{color:var(--t2);}
+
+/* ── NAV PADRÃO BIOQUÍMICA ── */
+nav.tabs {
+  position:sticky; top:0; z-index:100;
+  display:flex; gap:4px; flex-wrap:wrap;
+  background: rgba(10,13,20,0.97);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  justify-content: center;
+}
+nav.tabs button {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-body); font-size:12px; font-weight:600;
+  padding: 6px 14px; border-radius: 8px; cursor:pointer;
+  transition: all 0.2s; letter-spacing: 0.3px;
+}
+nav.tabs button:hover { color: var(--accent); border-color: var(--accent); }
+nav.tabs button.active {
+  background: var(--accent); color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(79,156,249,0.4);
+}
+@media(max-width:768px){
+  nav.tabs{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; justify-content:flex-start; }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{ flex-shrink:0; white-space:nowrap; }
+}
+
 </style>
 </head>
 <body>
@@ -661,12 +706,12 @@ footer strong{color:var(--t2);}
   </div>
   <div class="cl cl-red"><div class="cl-lbl">❗ Verdadeiro ou Falso — Clássico!</div><p>"V1, V2 e V3 são derivações bipolares." → <strong>FALSO</strong> — são unipolares precordiais.<br>"As bipolares são D1, D2 e D3." → <strong>VERDADEIRO</strong>.<br>"Em derivações unipolares o eletrodo específico tem polaridade negativa." → <strong>FALSO</strong> — POSITIVA.<br>"As derivações ampliadas precisam de 2 eletrodos." → <strong>FALSO</strong> — são unipolares (1 eletrodo).</p></div>
   <h3 class="stitle">Passos para Interpretar um ECG</h3>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">1</div><div><div class="card-t">Calibração</div><div class="card-b">Verificar sinal (10mm=1mV) e velocidade (25mm/s). Sem calibração correta = todas as medidas inválidas.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">2</div><div><div class="card-t">12 Derivações Presentes?</div><div class="card-b">Em <strong>aVR</strong>: todas as ondas devem estar invertidas (negativas). Em <strong>V1</strong>: QRS deve estar parcialmente invertido. Esses são os check-ins de normalidade.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">3</div><div><div class="card-t">Ritmo</div><div class="card-b">Intervalos R-R iguais = ritmo <strong>regular</strong>. Variáveis = irregular. Percepção visual do espaçamento — não precisa medir cada quadradinho.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">4</div><div><div class="card-t">Origem da Atividade Elétrica</div><div class="card-b">Onda P presente E antes do QRS em ≥6 derivações → origem sinusal. Onda P ausente = FA ou outra arritmia. Verificar preferencialmente em D2.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">5</div><div><div class="card-t">Frequência Cardíaca — 3 Métodos</div><div class="card-b">• <strong>1500 ÷ n° de quadradinhos entre R-R</strong> (mais preciso)<br>• <strong>300 → 150 → 100 → 75 → 60 → 50</strong> (contar quadrados grandes)<br>• <strong>Contar QRS em 10s × 6</strong> (para ritmos irregulares)</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">6</div><div><div class="card-t">Eixo Elétrico Cardíaco</div><div class="card-b">Normal: <strong>−30° a +90°</strong>. Técnica rápida D1+aVF: ambos(+)=normal; D1(+) aVF(−)=desvio esquerdo; D1(−) aVF(+)=desvio direito; ambos(−)=extremo. Para grau exato: isodifásicas → eixo a 90° + verificar D2.</div></div></div>
+  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">1</div><div><div class="card-t">Calibração</div><div class="card-b">Verificar sinal (10mm=1mV) e velocidade (25mm/s). Sem calibração correta = todas as medidas inválidas.</div></div></div>
+  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">2</div><div><div class="card-t">12 Derivações Presentes?</div><div class="card-b">Em <strong>aVR</strong>: todas as ondas devem estar invertidas (negativas). Em <strong>V1</strong>: QRS deve estar parcialmente invertido. Esses são os check-ins de normalidade.</div></div></div>
+  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">3</div><div><div class="card-t">Ritmo</div><div class="card-b">Intervalos R-R iguais = ritmo <strong>regular</strong>. Variáveis = irregular. Percepção visual do espaçamento — não precisa medir cada quadradinho.</div></div></div>
+  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">4</div><div><div class="card-t">Origem da Atividade Elétrica</div><div class="card-b">Onda P presente E antes do QRS em ≥6 derivações → origem sinusal. Onda P ausente = FA ou outra arritmia. Verificar preferencialmente em D2.</div></div></div>
+  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">5</div><div><div class="card-t">Frequência Cardíaca — 3 Métodos</div><div class="card-b">• <strong>1500 ÷ n° de quadradinhos entre R-R</strong> (mais preciso)<br>• <strong>300 → 150 → 100 → 75 → 60 → 50</strong> (contar quadrados grandes)<br>• <strong>Contar QRS em 10s × 6</strong> (para ritmos irregulares)</div></div></div>
+  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">6</div><div><div class="card-t">Eixo Elétrico Cardíaco</div><div class="card-b">Normal: <strong>−30° a +90°</strong>. Técnica rápida D1+aVF: ambos(+)=normal; D1(+) aVF(−)=desvio esquerdo; D1(−) aVF(+)=desvio direito; ambos(−)=extremo. Para grau exato: isodifásicas → eixo a 90° + verificar D2.</div></div></div>
   <h3 class="stitle">Eixo Elétrico — Tabela de Referência</h3>
   <div class="tw"><table><thead><tr><th>Eixo</th><th>Graus</th><th>D1</th><th>aVF</th></tr></thead>
   <tbody>
@@ -870,13 +915,14 @@ function renderScore(container) {
     <div class="card" style="padding:56px 24px;text-align:center;">
       <div style="font-size:.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;">Resultado Final · Biofísica P2</div>
       <div class="qsnum" style="color:${color};">${score}<span style="font-size:2.5rem;color:var(--t3)">/${quizData.length}</span></div>
-      <div style="font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;margin:10px 0;color:${color};">${pct}%</div>
+      <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:700;margin:10px 0;color:${color};">${pct}%</div>
       <p style="color:var(--t2);margin:18px 0 34px;">${msg}</p>
       <button class="cta" onclick="restartQuiz()">🔄 Refazer Quiz</button>
     </div>`;
 }
 function restartQuiz() { qIdx = 0; score = 0; renderQuestion(); }
 </script>
+
 
 
 
@@ -887,8 +933,7 @@ function restartQuiz() { qIdx = 0; score = 0; renderQuestion(); }
   padding:12px 26px;
   background:rgba(2,10,22,0.93);
   border:1.5px solid rgba(34,211,238,0.42);
-  border-radius:50px;
-  color:#e2f8fc;
+  border-radius:50px; color:#e2f8fc;
   font-size:13px; font-weight:600; letter-spacing:0.03em;
   text-decoration:none;
   backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);

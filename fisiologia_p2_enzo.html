@@ -3,26 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- PAGE_KEY: coluna "fisiologia" na tabela profiles -->
+<script>window.PAGE_KEY = "fisiologia";</script>
+<!-- 1. Oculta a página imediatamente -->
+<script>document.documentElement.style.visibility = "hidden";</script>
+<!-- 2. Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 3. Auth guard -->
+<script src="auth-guard.js"></script>
+<!-- 4. Revela após auth OK -->
+<script>document.addEventListener("authReady", function(){ document.documentElement.style.visibility = "visible"; });</script>
+<!-- Fonts Bioquímica padrão -->
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <title>Fisiologia Cardiovascular P2 – Enzo | 2026</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#071224;--bg2:#0d1f38;--card:#112340;--card2:#162d4f;--border:#1e3a5f;--accent:#00b4d8;--accent2:#0077b6;--gold:#f4a261;--gold2:#e76f51;--green:#43b581;--red:#f04747;--text:#ccd6f6;--text2:#8892b0;--text3:#a8b2d8;--white:#e6f1ff;--highlight:#64ffda;--radius:12px;--shadow:0 8px 32px rgba(0,0,0,.4)}
+:root {
+  --bg: #0a0d14; --bg2: #111520; --bg3: #161c2e;
+  --card: #1a2138; --card2: #1f2845;
+  --accent: #4f9cf9; --accent2: #38e8c0; --accent3: #f9784f; --accent4: #b84ff9;
+  --gold: #f9c94f; --red: #f95f5f; --green: #4ff984;
+  --text: #e8eaf6; --muted: #8892b0;
+  --border: rgba(79,156,249,0.15);
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --radius: 16px;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;line-height:1.7;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:15px;line-height:1.7;min-height:100vh}
 ::-webkit-scrollbar{width:7px;height:7px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--accent2);border-radius:4px}
 .site-header{background:linear-gradient(135deg,#0a192f,#0d2137 50%,#112340);border-bottom:1px solid var(--border);padding:1.2rem 2rem;position:sticky;top:0;z-index:100}
 .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .header-left{display:flex;align-items:center;gap:1rem}
-.back-btn{background:var(--card);border:1px solid var(--border);color:var(--accent);padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:all .2s;white-space:nowrap}
+.back-btn{background:var(--card);border:1px solid var(--border);color:var(--accent);padding:.5rem 1rem;border-radius:8px;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700;text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:all .2s;white-space:nowrap}
 .back-btn:hover{background:var(--accent);color:var(--bg)}
-.header-title{font-family:'Playfair Display',serif;font-size:clamp(.95rem,2.5vw,1.3rem);color:var(--white);font-weight:700}
+.header-title{font-family:var(--font-display);font-size:clamp(.95rem,2.5vw,1.3rem);color:var(--white);font-weight:700}
 .header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:.1rem}
 .header-meta span{font-size:12px;color:var(--text2);font-weight:600}
 .header-meta .student-name{color:var(--gold);font-size:14px;font-weight:800}
 .tab-nav-wrapper{background:var(--bg2);border-bottom:2px solid var(--border);position:sticky;top:68px;z-index:99;overflow-x:auto;scrollbar-width:thin}
 .tab-nav{display:flex;max-width:1200px;margin:0 auto;padding:0 1rem;white-space:nowrap}
-.tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:var(--text2);padding:.85rem 1.1rem;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:var(--text2);padding:.85rem 1.1rem;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .tab-btn:hover{color:var(--text);background:rgba(255,255,255,.03)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(0,180,216,.05)}
 .tab-btn.ft{color:#e76f51}.tab-btn.ft.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(244,162,97,.05)}
@@ -33,13 +56,13 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font
 .chapter-hero{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:2rem;position:relative;overflow:hidden}
 .chapter-hero::before{content:'';position:absolute;top:-50%;right:-10%;width:280px;height:280px;background:radial-gradient(circle,rgba(0,180,216,.08),transparent 70%);pointer-events:none}
 .chapter-num{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:3px;margin-bottom:.4rem}
-.chapter-title{font-family:'Playfair Display',serif;font-size:clamp(1.3rem,4vw,1.9rem);color:var(--white);margin-bottom:.4rem;line-height:1.3}
+.chapter-title{font-family:var(--font-display);font-size:clamp(1.3rem,4vw,1.9rem);color:var(--white);margin-bottom:.4rem;line-height:1.3}
 .chapter-subtitle{color:var(--text2);font-size:13px}
 .grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:1.5rem}
 .grid-3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1rem;margin-bottom:1.5rem}
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem;transition:border-color .2s,transform .2s}
 .card:hover{border-color:var(--accent2);transform:translateY(-2px)}
-.section-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--white);margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
+.section-title{font-family:var(--font-display);font-size:1.2rem;color:var(--white);margin:2rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem}
 .hb{border-radius:var(--radius);padding:1.1rem 1.4rem;margin-bottom:1rem}
 .hb.law{background:rgba(100,255,218,.05);border:1px solid rgba(100,255,218,.3);border-left:4px solid var(--highlight)}
 .hb.imp{background:rgba(244,162,97,.07);border:1px solid rgba(244,162,97,.3);border-left:4px solid var(--gold)}
@@ -66,18 +89,18 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font
 .sc{padding:.9rem;border-radius:10px;text-align:center}
 .sc.out{background:rgba(240,71,71,.08);border:1px solid rgba(240,71,71,.3)}
 .sc.in{background:rgba(67,181,129,.08);border:1px solid rgba(67,181,129,.3)}
-.sc .fv{font-size:1.5rem;font-weight:900;font-family:'Playfair Display',serif}
+.sc .fv{font-size:1.5rem;font-weight:900;font-family:var(--font-display)}
 .sc.out .fv{color:var(--red)}.sc.in .fv{color:var(--green)}
 .sc .fn{font-size:12px;font-weight:700;margin:.2rem 0;color:var(--white)}
 .sc .fd{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
 .sc.out .fd{color:var(--red)}.sc.in .fd{color:var(--green)}
-.next-btn{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--bg);border:none;padding:1rem 2rem;border-radius:50px;font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;cursor:pointer;margin:3rem auto 1rem;display:block;text-align:center;transition:all .3s;max-width:340px;letter-spacing:.4px}
+.next-btn{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--bg);border:none;padding:1rem 2rem;border-radius:50px;font-family:var(--font-body);font-size:15px;font-weight:800;cursor:pointer;margin:3rem auto 1rem;display:block;text-align:center;transition:all .3s;max-width:340px;letter-spacing:.4px}
 .next-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,180,216,.4)}
 /* FLASHCARDS */
 .fc-header{text-align:center;margin-bottom:2rem}
-.fc-header h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--gold);margin-bottom:.5rem}
+.fc-header h2{font-family:var(--font-display);font-size:1.9rem;color:var(--gold);margin-bottom:.5rem}
 .cat-row{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
-.cat-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:.35rem .85rem;border-radius:20px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;transition:all .2s}
+.cat-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:.35rem .85rem;border-radius:20px;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700;transition:all .2s}
 .cat-btn:hover{border-color:var(--gold);color:var(--gold)}
 .cat-btn.active{background:var(--gold);color:var(--bg);border-color:var(--gold)}
 .fc-arena{max-width:580px;margin:0 auto}
@@ -101,10 +124,10 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font
 .fc-prog{font-size:14px;color:var(--text2);font-weight:700;min-width:75px;text-align:center}
 /* QUIZ */
 .quiz-header{text-align:center;margin-bottom:2rem}
-.quiz-header h2{font-family:'Playfair Display',serif;font-size:1.9rem;color:#a78bfa;margin-bottom:.5rem}
+.quiz-header h2{font-family:var(--font-display);font-size:1.9rem;color:#a78bfa;margin-bottom:.5rem}
 .q-stats{display:flex;gap:1rem;justify-content:center;margin-bottom:2rem;flex-wrap:wrap}
 .sbox{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:.65rem 1.1rem;text-align:center;min-width:75px}
-.sbox .sv{font-size:1.5rem;font-weight:900;font-family:'Playfair Display',serif}
+.sbox .sv{font-size:1.5rem;font-weight:900;font-family:var(--font-display)}
 .sbox .sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--text2)}
 .sbox.c .sv{color:var(--green)}.sbox.w .sv{color:var(--red)}.sbox.p .sv{color:var(--accent)}
 .q-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.8rem;margin-bottom:1.5rem;transition:border-color .3s}
@@ -116,19 +139,19 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font
 .ctag{font-size:10px;font-weight:700;background:rgba(255,255,255,.06);color:var(--text2);padding:.2rem .55rem;border-radius:20px}
 .q-text{font-size:15px;font-weight:700;color:var(--white);margin-bottom:1.1rem;line-height:1.6}
 .opts{display:flex;flex-direction:column;gap:.5rem;margin-bottom:.9rem}
-.opt-btn{background:var(--card2);border:1px solid var(--border);color:var(--text3);padding:.7rem 1rem;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;text-align:left;transition:all .2s;display:flex;gap:.7rem;align-items:flex-start;width:100%}
+.opt-btn{background:var(--card2);border:1px solid var(--border);color:var(--text3);padding:.7rem 1rem;border-radius:10px;cursor:pointer;font-family:var(--font-body);font-size:14px;text-align:left;transition:all .2s;display:flex;gap:.7rem;align-items:flex-start;width:100%}
 .opt-btn:hover:not(:disabled){background:var(--border);border-color:var(--accent);color:var(--white)}
 .opt-btn:disabled{cursor:default}
 .opt-btn.ca{background:rgba(67,181,129,.15);border-color:var(--green);color:var(--green)}
 .opt-btn.wa{background:rgba(240,71,71,.1);border-color:var(--red);color:var(--red)}
 .ol{font-weight:900;font-size:12px;flex-shrink:0;width:18px;text-align:center;margin-top:1px}
 .tf-opts{display:flex;gap:1rem;margin-bottom:.9rem}
-.tf-btn{flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text3);padding:.8rem;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:16px;font-weight:800;text-align:center;transition:all .2s}
+.tf-btn{flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text3);padding:.8rem;border-radius:10px;cursor:pointer;font-family:var(--font-body);font-size:16px;font-weight:800;text-align:center;transition:all .2s}
 .tf-btn:hover:not(:disabled){background:var(--border)}
 .tf-btn:disabled{cursor:default}
 .tf-btn.ca{background:rgba(67,181,129,.15);border-color:var(--green);color:var(--green)}
 .tf-btn.wa{background:rgba(240,71,71,.1);border-color:var(--red);color:var(--red)}
-.open-btn{background:var(--card2);border:1px dashed var(--gold);color:var(--gold);padding:.65rem 1.4rem;border-radius:10px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;transition:all .2s;margin-bottom:.9rem}
+.open-btn{background:var(--card2);border:1px dashed var(--gold);color:var(--gold);padding:.65rem 1.4rem;border-radius:10px;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:700;transition:all .2s;margin-bottom:.9rem}
 .open-btn:hover{background:rgba(244,162,97,.1)}
 .exp-box{display:none;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:.9rem 1.1rem;margin-top:.6rem}
 .exp-box.vis{display:block}
@@ -137,7 +160,7 @@ body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font
 .res-ind{display:none;align-items:center;gap:.5rem;font-size:14px;font-weight:700;margin-bottom:.6rem}
 .res-ind.vis{display:flex}
 .res-ind.c{color:var(--green)}.res-ind.w{color:var(--red)}
-.reset-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:.6rem 1.5rem;border-radius:50px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;display:block;margin:2rem auto;transition:all .2s}
+.reset-btn{background:var(--card);border:1px solid var(--border);color:var(--text2);padding:.6rem 1.5rem;border-radius:50px;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:700;display:block;margin:2rem auto;transition:all .2s}
 .reset-btn:hover{border-color:var(--red);color:var(--red)}
 em.i{font-style:normal;color:var(--highlight);font-weight:700}
 em.g{font-style:normal;color:var(--gold);font-weight:700}
@@ -145,12 +168,35 @@ em.r{font-style:normal;color:var(--red);font-weight:700}
 em.gr{font-style:normal;color:var(--green);font-weight:700}
 @media(max-width:768px){.main-content{padding:1rem}.sg{grid-template-columns:1fr 1fr}.tf-opts{flex-direction:column}.fc-wrap{height:230px}.chapter-hero{padding:1.2rem}.header-inner{flex-direction:column;align-items:flex-start}.header-meta{align-items:flex-start}}
 @media(max-width:480px){.sg{grid-template-columns:1fr}.grid-2{grid-template-columns:1fr}}
+/* ── NAV PADRÃO BIOQUÍMICA ── */
+nav.tabs {
+  position:sticky; top:0; z-index:100;
+  display:flex; gap:4px; flex-wrap:wrap;
+  background: rgba(10,13,20,0.97);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px; justify-content: center;
+}
+nav.tabs button {
+  background: var(--card); border: 1px solid var(--border);
+  color: var(--muted); font-family: var(--font-body);
+  font-size:12px; font-weight:600; padding: 6px 14px;
+  border-radius: 8px; cursor:pointer; transition: all 0.2s; letter-spacing: 0.3px;
+}
+nav.tabs button:hover { color: var(--accent); border-color: var(--accent); }
+nav.tabs button.active {
+  background: var(--accent); color: var(--bg);
+  border-color: var(--accent); box-shadow: 0 0 20px rgba(79,156,249,0.4);
+}
+@media(max-width:768px){
+  nav.tabs{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; justify-content:flex-start; }
+  nav.tabs::-webkit-scrollbar{ display:none; }
+  nav.tabs button{ flex-shrink:0; white-space:nowrap; }
+}
 </style>
 </head>
 <body>
 
-<!-- PAGE_KEY: coluna 'fisiologia' na tabela profiles deve ser TRUE para acesso -->
-<script>window.PAGE_KEY = 'fisiologia';</script>
 <!-- 1. Oculta a página imediatamente (evita flash de conteúdo não autorizado) -->
 <script>document.documentElement.style.visibility = "hidden";</script>
 <!-- 2. Supabase SDK -->
@@ -310,9 +356,9 @@ em.gr{font-style:normal;color:var(--green);font-weight:700}
 
   <h3 class="section-title">💉 Tipos de Pressão Arterial</h3>
   <div class="grid-3">
-    <div class="card" style="text-align:center"><div style="font-size:2.2rem;font-weight:900;color:var(--red);font-family:'Playfair Display',serif">120</div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--red)">Sistólica</div><div style="font-size:12px;color:var(--text2);margin-top:.3rem">mmHg – pico por batimento</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:2.2rem;font-weight:900;color:var(--accent);font-family:'Playfair Display',serif">80</div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--accent)">Diastólica</div><div style="font-size:12px;color:var(--text2);margin-top:.3rem">mmHg – pressão mínima</div></div>
-    <div class="card" style="text-align:center"><div style="font-size:2.2rem;font-weight:900;color:var(--green);font-family:'Playfair Display',serif">40</div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--green)">Pulso</div><div style="font-size:12px;color:var(--text2);margin-top:.3rem">PAS – PAD</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2.2rem;font-weight:900;color:var(--red);font-family:var(--font-display)">120</div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--red)">Sistólica</div><div style="font-size:12px;color:var(--text2);margin-top:.3rem">mmHg – pico por batimento</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2.2rem;font-weight:900;color:var(--accent);font-family:var(--font-display)">80</div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--accent)">Diastólica</div><div style="font-size:12px;color:var(--text2);margin-top:.3rem">mmHg – pressão mínima</div></div>
+    <div class="card" style="text-align:center"><div style="font-size:2.2rem;font-weight:900;color:var(--green);font-family:var(--font-display)">40</div><div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--green)">Pulso</div><div style="font-size:12px;color:var(--text2);margin-top:.3rem">PAS – PAD</div></div>
   </div>
 
   <div class="hb law"><div class="bt">📐 Pressão de Pulso &amp; PAM</div>
@@ -1061,24 +1107,20 @@ renderQuiz();
 
 
 
+
 <!-- ── Botão Voltar ── -->
 <a href="dashboard.html" style="
   position:fixed; bottom:24px; left:24px; z-index:9999;
   display:flex; align-items:center; gap:9px;
-  padding:12px 26px;
-  background:rgba(2,10,22,0.93);
-  border:1.5px solid rgba(34,211,238,0.42);
-  border-radius:50px;
-  color:#e2f8fc;
-  font-size:13px; font-weight:600; letter-spacing:0.03em;
-  text-decoration:none;
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  padding:12px 26px; background:rgba(2,10,22,0.93);
+  border:1.5px solid rgba(34,211,238,0.42); border-radius:50px;
+  color:#e2f8fc; font-size:13px; font-weight:600; letter-spacing:0.03em;
+  text-decoration:none; backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
   box-shadow:0 4px 24px rgba(34,211,238,0.16), inset 0 1px 0 rgba(255,255,255,0.04);
   transition:all .25s ease;
-" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 32px rgba(34,211,238,0.26)'"
-   onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 24px rgba(34,211,238,0.16)'">
+" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)'"
+   onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)'">
   ← Voltar
 </a>
-
 </body>
 </html>

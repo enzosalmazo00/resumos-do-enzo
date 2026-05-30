@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo Completo P1 de Microbiologia — Enzo Salmazo</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #0a0d14;
+  --bg2: #111520;
+  --bg3: #161c2e;
+  --card: #1a2138;
+  --card2: #1f2845;
+  --accent: #4f9cf9;
+  --accent2: #38e8c0;
+  --accent3: #f9784f;
+  --accent4: #b84ff9;
+  --gold: #f9c94f;
+  --red: #f95f5f;
+  --green: #4ff984;
+  --text: #e8eaf6;
+  --muted: #8892b0;
+  --border: rgba(79,156,249,0.15);
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --radius: 16px;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PARTICLES BG ── */
+#particles { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+/* ── HEADER ── */
+header {
+  position: relative; z-index:10;
+  text-align: center;
+  padding: 48px 24px 32px;
+  background: linear-gradient(180deg, rgba(79,156,249,0.08) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+}
+header .badge {
+  display:inline-block;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  padding: 4px 14px; border-radius:20px; margin-bottom:16px;
+}
+header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 800; letter-spacing:-1px;
+  background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent2) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip: text; margin-bottom:8px;
+}
+header .sub {
+  color: var(--muted); font-size:13px; letter-spacing:1px;
+}
+header .by {
+  margin-top:12px;
+  color: var(--accent); font-family:var(--font-mono); font-size:12px;
+}
+
+/* ── NAV TABS ── */
+nav.tabs {
+  position:sticky; top:0; z-index:100;
+  display:flex; gap:4px; flex-wrap:wrap;
+  background: rgba(10,13,20,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  justify-content: center;
+}
+nav.tabs button {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-body); font-size:12px; font-weight:600;
+  padding: 6px 14px; border-radius: 8px; cursor:pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+nav.tabs button:hover { color: var(--accent); border-color: var(--accent); }
+nav.tabs button.active {
+  background: var(--accent); color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(79,156,249,0.4);
+}
+
+/* ── SECTIONS ── */
+.section { display:none; animation: fadeIn 0.4s ease; }
+.section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.container { max-width:1100px; margin:0 auto; padding: 32px 20px; position:relative; z-index:1; }
+
+/* ── CHAPTER HEADERS ── */
+.chapter-title {
+  font-family: var(--font-display); font-size:22px; font-weight:700;
+  color: var(--accent); margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+}
+.chapter-title::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.chap-icon { font-size:24px; }
+
+/* ── GLOSSARY TERMS ── */
+.glossary-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px; margin-bottom:32px;
+}
+.gloss-card {
+  background: var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 20px;
+  cursor:pointer; transition: all 0.25s;
+  position:relative; overflow:hidden;
+}
+.gloss-card::before {
+  content:''; position:absolute; top:0; left:0; right:0;
+  height:3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius:3px 3px 0 0;
+}
+.gloss-card:hover {
+  transform:translateY(-2px);
+  border-color: var(--accent);
+  box-shadow: 0 8px 30px rgba(79,156,249,0.2);
+}
+.gloss-card .term {
+  font-family:var(--font-mono); font-size:13px; color:var(--accent2);
+  font-weight:600; margin-bottom:6px;
+}
+.gloss-card .def { color:var(--text); font-size:13px; line-height:1.6; }
+
+/* ── INFO BLOCKS ── */
+.info-block {
+  background: var(--card2); border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px; margin-bottom:20px;
+}
+.info-block.warn { border-color: var(--gold); }
+.info-block.danger { border-color: var(--red); }
+.info-block.success { border-color: var(--green); }
+.info-block .label {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+}
+.info-block h4 { font-family:var(--font-display); font-weight:700; margin-bottom:8px; font-size:15px; }
+
+/* ── COMPARISON TABLE ── */
+.compare-table {
+  width:100%; border-collapse:separate; border-spacing:0;
+  border-radius:var(--radius); overflow:hidden;
+  margin-bottom:28px;
+}
+.compare-table th {
+  background: var(--card2); color:var(--accent);
+  font-family:var(--font-display); font-size:13px; font-weight:700;
+  padding:12px 16px; text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.compare-table td {
+  background: var(--card); padding:10px 16px; font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+}
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:hover td { background: var(--card2); }
+.tag {
+  display:inline-block; padding:2px 8px; border-radius:4px;
+  font-size:11px; font-weight:700; font-family:var(--font-mono);
+}
+.tag-pos { background:rgba(79,249,132,0.15); color:var(--green); }
+.tag-neg { background:rgba(249,95,95,0.15); color:var(--red); }
+.tag-var { background:rgba(249,201,79,0.15); color:var(--gold); }
+
+/* ── FLASH CARDS ── */
+.flashcard-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:20px; margin-bottom:32px;
+}
+.flashcard {
+  perspective:1000px; height:260px; cursor:pointer;
+}
+.flashcard-inner {
+  position:relative; width:100%; height:100%;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+}
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+.flashcard-front, .flashcard-back {
+  position:absolute; inset:0; border-radius:var(--radius);
+  backface-visibility:hidden; padding:24px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.flashcard-front {
+  background: linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+  border: 1px solid var(--border);
+}
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #1a2f4a 0%, #1a3a2e 100%);
+  border: 1px solid rgba(56,232,192,0.3);
+  overflow-y: auto;
+}
+.fc-pathogen {
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--accent2); letter-spacing:1px; text-transform:uppercase;
+}
+.fc-name {
+  font-family:var(--font-display); font-size:18px; font-weight:700;
+  color:#fff; line-height:1.2; margin:8px 0;
+}
+.fc-disease {
+  font-size:12px; color:var(--muted);
+}
+.fc-hint {
+  font-size:11px; color:var(--accent); text-align:right;
+  opacity:0.7;
+}
+.fc-label {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--accent2); margin-bottom:4px;
+}
+.fc-value {
+  font-size:12px; color:var(--text); margin-bottom:10px; line-height:1.5;
+}
+.fc-atb {
+  background: rgba(249,201,79,0.15); border:1px solid rgba(249,201,79,0.3);
+  border-radius:8px; padding:8px 12px; margin-top:8px;
+}
+.fc-atb .fc-label { color:var(--gold); }
+.fc-atb .fc-value { color:var(--gold); font-weight:600; }
+
+/* GRAM BADGES */
+.gram-pos { background:rgba(79,156,249,0.2); color:var(--accent); padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700; display:inline-block; }
+.gram-neg { background:rgba(249,95,95,0.2); color:var(--red); padding:3px 8px; border-radius:4px; font-size:11px; font-weight:700; display:inline-block; }
+.spore-yes { background:rgba(249,201,79,0.2); color:var(--gold); padding:3px 8px; border-radius:4px; font-size:11px; display:inline-block; }
+.spore-no { background:rgba(136,146,176,0.15); color:var(--muted); padding:3px 8px; border-radius:4px; font-size:11px; display:inline-block; }
+
+/* ── SECTION DIVIDER ── */
+.sec-divider {
+  display:flex; align-items:center; gap:12px;
+  margin: 32px 0 20px;
+}
+.sec-divider h3 {
+  font-family:var(--font-display); font-weight:700; font-size:17px;
+  color:var(--accent3); white-space:nowrap;
+}
+.sec-divider::before, .sec-divider::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* ── QUIZ ── */
+.quiz-container { max-width:750px; margin:0 auto; }
+.quiz-progress-bar {
+  height:4px; background:var(--card2);
+  border-radius:4px; margin-bottom:28px; overflow:hidden;
+}
+.quiz-progress-fill {
+  height:100%; border-radius:4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition:width 0.4s ease;
+}
+.quiz-num {
+  font-family:var(--font-mono); font-size:12px; color:var(--muted);
+  margin-bottom:8px; letter-spacing:1px;
+}
+.quiz-q {
+  font-family:var(--font-display); font-size:18px; font-weight:700;
+  color:#fff; margin-bottom:24px; line-height:1.5;
+}
+.quiz-context {
+  background:var(--card2); border-radius:12px; padding:14px 18px;
+  font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;
+  border-left:3px solid var(--accent3);
+  font-style:italic;
+}
+.quiz-opts { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.quiz-opt {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:14px 18px;
+  cursor:pointer; transition:all 0.2s;
+  font-size:14px; text-align:left;
+  display:flex; align-items:flex-start; gap:12px;
+}
+.quiz-opt:hover:not(.answered) { border-color:var(--accent); background:var(--card2); }
+.quiz-opt .opt-letter {
+  font-family:var(--font-mono); font-size:12px; font-weight:700;
+  color:var(--accent); min-width:20px;
+}
+.quiz-opt.correct { border-color:var(--green); background:rgba(79,249,132,0.08); }
+.quiz-opt.wrong { border-color:var(--red); background:rgba(249,95,95,0.08); }
+.quiz-opt.correct .opt-letter { color:var(--green); }
+.quiz-opt.wrong .opt-letter { color:var(--red); }
+.quiz-explain {
+  background: var(--card2); border-radius:12px; padding:18px 20px;
+  border-left:3px solid var(--accent2); margin-top:16px;
+  font-size:13px; line-height:1.7; color:var(--text);
+  display:none;
+}
+.quiz-explain.show { display:block; animation:fadeIn 0.3s ease; }
+.quiz-explain strong { color:var(--accent2); }
+.quiz-nav {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:24px; flex-wrap:wrap; gap:12px;
+}
+.btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--bg); font-family:var(--font-display);
+  font-weight:700; font-size:14px; border:none;
+  padding:10px 24px; border-radius:10px; cursor:pointer;
+  transition:all 0.2s; letter-spacing:0.5px;
+}
+.btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(79,156,249,0.4); }
+.btn-ghost {
+  background:var(--card); color:var(--muted);
+  border:1px solid var(--border);
+  font-family:var(--font-display); font-weight:600;
+  font-size:14px; padding:10px 24px; border-radius:10px;
+  cursor:pointer; transition:all 0.2s;
+}
+.btn-ghost:hover { color:var(--text); border-color:var(--muted); }
+.score-card {
+  text-align:center; padding:48px 32px;
+  background:var(--card); border-radius:20px;
+  border:1px solid var(--border);
+}
+.score-big {
+  font-family:var(--font-display); font-size:72px; font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.score-msg { color:var(--muted); font-size:16px; margin-top:8px; }
+
+/* ── CASE STUDIES ── */
+.case-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); overflow:hidden; margin-bottom:24px;
+}
+.case-header {
+  background: linear-gradient(135deg, var(--card2), var(--card));
+  padding:20px 24px;
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:flex-start; gap:16px;
+}
+.case-icon { font-size:32px; flex-shrink:0; }
+.case-header h3 {
+  font-family:var(--font-display); font-weight:700; font-size:16px;
+  color:#fff; margin-bottom:4px;
+}
+.case-header p { color:var(--muted); font-size:13px; }
+.case-body { padding:24px; }
+.case-body .story {
+  font-size:13px; line-height:1.8; color:var(--text);
+  background:var(--card2); border-radius:10px; padding:16px 18px;
+  margin-bottom:16px; font-style:italic; border-left:3px solid var(--accent3);
+}
+.case-qa { }
+.case-qa details {
+  border:1px solid var(--border); border-radius:10px;
+  margin-bottom:8px; overflow:hidden;
+}
+.case-qa summary {
+  padding:12px 16px; cursor:pointer;
+  font-weight:600; font-size:13px; color:var(--accent);
+  background:var(--card2); list-style:none;
+  display:flex; justify-content:space-between; align-items:center;
+  transition:background 0.2s;
+}
+.case-qa summary:hover { background:rgba(79,156,249,0.1); }
+.case-qa summary::after { content:'▼'; font-size:10px; color:var(--muted); }
+.case-qa details[open] summary::after { content:'▲'; }
+.case-qa .answer {
+  padding:14px 16px; font-size:13px; line-height:1.7;
+  color:var(--text); background:var(--card);
+}
+
+/* ── TEST SECTION: Staph vs Strep ── */
+.test-flow {
+  display:flex; gap:12px; flex-wrap:wrap; margin-bottom:24px;
+}
+.test-step {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 18px; flex:1; min-width:200px;
+}
+.test-step .step-num {
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--accent3); letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:8px;
+}
+.test-step h4 {
+  font-family:var(--font-display); font-weight:700; color:#fff;
+  margin-bottom:6px; font-size:15px;
+}
+.test-step p { font-size:12px; color:var(--muted); }
+.arrow-right { display:flex; align-items:center; color:var(--accent); font-size:24px; }
+
+/* OXYGEN TABLE */
+.oxy-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(220px,1fr));
+  gap:14px; margin-bottom:28px;
+}
+.oxy-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:16px 18px;
+}
+.oxy-card .oxy-type {
+  font-family:var(--font-mono); font-size:11px;
+  letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;
+}
+.oxy-card h4 { font-family:var(--font-display); font-weight:700; font-size:14px; margin-bottom:6px; }
+.oxy-card p { font-size:12px; color:var(--muted); }
+.oxy-card .example { font-style:italic; color:var(--accent2); margin-top:6px; font-size:12px; }
+
+/* TOXIN CARDS */
+.toxin-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr));
+  gap:14px; margin-bottom:28px;
+}
+.toxin-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:18px; position:relative;
+}
+.toxin-card::before {
+  content:''; position:absolute; top:0; right:0;
+  width:60px; height:60px;
+  background: radial-gradient(circle at top right, rgba(249,120,79,0.15), transparent);
+  border-radius:0 12px 0 0;
+}
+.toxin-card .tox-name {
+  font-family:var(--font-display); font-weight:700; font-size:15px; color:var(--accent3);
+  margin-bottom:6px;
+}
+.toxin-card .tox-sub { font-size:12px; color:var(--muted); margin-bottom:10px; }
+.toxin-card .tox-detail { font-size:12px; color:var(--text); line-height:1.6; }
+
+/* SCROLL TOP */
+#scrolltop {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:var(--accent); color:var(--bg);
+  width:40px; height:40px; border-radius:50%;
+  border:none; cursor:pointer; font-size:18px;
+  box-shadow:0 4px 20px rgba(79,156,249,0.4);
+  transition:all 0.2s; display:none;
+}
+#scrolltop:hover { transform:translateY(-2px); }
+
+/* MOBILE */
+@media(max-width:600px) {
+  nav.tabs { padding:8px; }
+  nav.tabs button { font-size:11px; padding:5px 10px; }
+  .flashcard-grid { grid-template-columns:1fr; }
+  header h1 { font-size:22px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<header>
+  <div class="badge">🧫 Microbiologia Médica P1 · 2026</div>
+  <h1>Resumo Completo P1 de Microbiologia</h1>
+  <p class="sub">Jawetz, Melnick & Adelberg · 28ª Edición · Dr. Marcos Rigonato</p>
+  <p class="by">⚡ Feito por Enzo Salmazo</p>
+</header>
+
+<nav class="tabs">
+  <button class="active" onclick="showSection('intro')">📖 Introdução</button>
+  <button onclick="showSection('morfologia')">🔬 Morfologia</button>
+  <button onclick="showSection('estructura')">🧱 Estrutura</button>
+  <button onclick="showSection('genetica')">🧬 Genética</button>
+  <button onclick="showSection('patogenia')">⚔️ Patogenia</button>
+  <button onclick="showSection('patogenos')">🦠 Patógenos</button>
+  <button onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button onclick="showSection('diferencial')">🧪 Testes</button>
+  <button onclick="showSection('casos')">🏥 Casos Clínicos</button>
+  <button onclick="showSection('quiz')">❓ Quiz</button>
+</nav>
+
+<!-- ================================================================== -->
+<!-- SECTION: INTRODUÇÃO -->
+<!-- ================================================================== -->
+<div id="intro" class="section active">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">📖</span> Introdução à Microbiologia</div>
+
+<div class="info-block">
+  <div class="label">Definición</div>
+  <h4>¿Qué es la Microbiología?</h4>
+  <p>La palabra Microbiología deriva de tres palabras griegas: <strong>Mikros</strong> (pequeño), <strong>Bios</strong> (vida) y <strong>Logos</strong> (ciencia). Es la ciencia que estudia los microorganismos — bacterias, hongos y virus — que son demasiado pequeños para ser observados a simple vista.</p>
+</div>
+
+<div class="sec-divider"><h3>📚 Glossário de Termos Técnicos Essenciais</h3></div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:16px;">Clique em cada cartão para expandir a explicação em Português Brasileiro.</p>
+
+<div class="glossary-grid">
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">LPS — Lipopolissacarídeo</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> O LPS é uma molécula presente na membrana externa das bactérias Gram-negativas. É também chamada de <em>endotoxina</em>. Quando o LPS entra na corrente sanguínea, provoca uma resposta inflamatória intensa no organismo: febre, hipotensão, coagulação intravascular disseminada (CIVD). É o responsável pelo "choque séptico" nas infecções por Gram-negativos. Estrutura: Lipídio A + Núcleo de oligossacarídeo + Antígeno O.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Plasmídio</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> São moléculas de DNA circular extracoromossômicas, menores que o cromossomo bacteriano. Os plasmídios se replicam de forma independente e carregam genes que conferem vantagens seletivas, como <em>resistência a antibióticos</em> (Plasmídios R) ou capacidade de conjugação (Plasmídio F). Podem ser transferidos entre bactérias por conjugação, sendo os grandes responsáveis pela disseminação de resistência bacteriana.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Resistência Bacteriana</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Capacidade que uma bactéria adquire de sobreviver na presença de um antibiótico que antes a matava. Pode ocorrer por: (1) Produção de enzimas que destroem o antibiótico (ex: beta-lactamase destrói penicilina); (2) Alteração do alvo do antibiótico (ex: MRSA altera as PBPs); (3) Bombas de efluxo que expulsam o antibiótico para fora. A transferência de genes de resistência ocorre principalmente por <em>conjugação via plasmídios R</em>.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Endotoxina vs Exotoxina</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> <strong>Endotoxina</strong>: É o LPS da parede de bactérias Gram-negativas. Liberada quando a bactéria morre. Estável ao calor (60°C). Baixa especificidade. Provoca febre, choque. <strong>Exotoxina</strong>: Proteínas secretadas <em>ativamente</em> por bactérias Gram+ ou Gram-. Instável ao calor. Altamente específica. Exemplos: tetanoespasmina (tétano), toxina botulínica (botulismo). As exotoxinas podem ser neutralizadas por antitoxinas e são usadas para criar vacinas (toxoides).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Peptidoglicano (Mureína)</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Estrutura única dos procariotos que forma a parede celular bacteriana. É o alvo de vários antibióticos como a penicilina e a vancomicina. <strong>Gram-positivas</strong>: camada espessa (45-50% da massa seca), responsável por reter o corante cristal violeta. <strong>Gram-negativas</strong>: camada fina (&lt;5% da massa seca), por isso descoram com o álcool na coloração de Gram.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Esporo Bacteriano (Endósporo)</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Estrutura de resistência formada por bactérias Gram-positivas dos gêneros <em>Bacillus</em> e <em>Clostridium</em> em resposta a condições adversas (falta de nutrientes, água). O esporo é extremamente resistente ao calor (suporta 100°C por horas), desinfetantes e radiação. Quando as condições voltam a ser favoráveis, germina e a bactéria volta à vida. Esta é a razão pela qual esterilização com calor úmido (autoclave) é necessária para eliminá-los.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Coloração de Gram</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Método desenvolvido por Christian Gram em 1884. Permite classificar bactérias em dois grupos: <strong>Gram-positivas (roxas/violetas)</strong>: têm parede espessa de peptidoglicano que retém o cristal violeta mesmo após a lavagem com álcool. <strong>Gram-negativas (vermelhas/rosa)</strong>: têm parede fina de peptidoglicano + membrana externa com LPS; descoram com álcool e absorvem a fucsina (contra-corante). Esta distinção é fundamental para escolher o antibiótico correto!</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Bacteriemia vs Sepse</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> <strong>Bacteriemia</strong>: presença de bactérias viáveis no sangue, evidenciada por hemocultura. É um conceito microbiológico. <strong>Sepse</strong>: é a resposta inflamatória sistêmica a uma infecção. É um conceito clínico. A sepse é MUITO mais grave pois indica que o organismo está respondendo de forma exagerada à infecção, podendo levar a falência múltipla de órgãos. <strong>Neutrófilos bastão (jovens)</strong> no hemograma indicam processo bacteriano agudo.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Superantígeno</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Toxinas que ativam o sistema imune de forma inespecífica e exagerada, sem precisar causar dano direto à célula. Eles estimulam um número enorme de linfócitos T (até 20% de todos os linfócitos!) ao invés do normal (&lt;0,01%). Isso libera uma "tempestade" de citocinas que causa inflamação sistêmica grave. Exemplos: TSST-1 do S. aureus (síndrome do choque tóxico) e toxina pirogênica do Streptococcus pyogenes (escarlatina).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Virulência</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Capacidade quantificável de um agente causar doença. Medida pela DL50 (dose letal para 50% dos animais inoculados). Quanto menor a DL50, mais virulento é o microrganismo. <strong>Fatores de virulência</strong> incluem: (1) Fatores de adesão (fímbrias); (2) Invasividade; (3) Produção de toxinas; (4) Produção de enzimas; (5) Fatores antifagocíticos (cápsulas, proteína M). <strong>Virulência ≠ Toxicidade ≠ Toxigenicidade</strong> (termos distintos!).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Antibiótico Beta-Lactâmico</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Classe de antibióticos que inclui penicilinas, cefalosporinas e carbapenêmicos. Agem inibindo a síntese da parede celular bacteriana ao se ligar às PBPs (Proteínas Ligadoras de Penicilina). As bactérias podem desenvolver resistência produzindo <em>beta-lactamase</em>, enzima que destrói o anel beta-lactâmico do antibiótico. O MRSA é resistente a todos os beta-lactâmicos (exceto os mais novos) por ter PBPs modificadas (gene mecA).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Coagulase</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Enzima produzida por <em>Staphylococcus aureus</em> que coagula o plasma, formando uma barreira de fibrina ao redor da bactéria — dificultando a fagocitose. É o principal teste para identificar S. aureus entre os estafilococos. <strong>Coagulase positiva = S. aureus</strong> (único coagulase positivo clinicamente relevante em humanos). A coagulase é uma cascata com 14 cofatores. Existem 3 tipos de teste: livre rápida (20 seg), conjugada (4h/37°C) e confirmação (24h).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Catalase</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Enzima que catalisa a reação: H₂O₂ → H₂O + O₂. É o <strong>primeiro teste diferencial</strong> entre estafilococos e estreptococos: <strong>Catalase positiva = Staphylococcus</strong>. <strong>Catalase negativa = Streptococcus</strong>. Teste: adiciona-se uma gota de H₂O₂ na colônia; se borbulhar (O₂), é catalase positivo. Os estafilococos usam a catalase para se proteger do peróxido de hidrogênio produzido pelos neutrófilos durante a fagocitose.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Espaço Periplasmático</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> Espaço encontrado somente em bactérias Gram-negativas, entre a membrana interna (citoplasmática) e a membrana externa. Contém: peptidoglicano, enzimas hidrolíticas (proteases, nucleases, lipases) que degradam macromoléculas, e a <em>beta-lactamase</em> (enzima que inativa penicilina). Representa 20-40% do volume celular e é rico em proteínas periplasmáticas de transporte. Funciona como um compartimento de defesa e digestão da bactéria.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Conjugação Bacteriana</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> É o principal mecanismo de transferência de resistência a antibióticos entre bactérias. Requer <strong>contato direto</strong> entre bactérias e usa o <strong>pili sexual</strong> como estrutura de conexão. O plasmídio (geralmente plasmídio R de resistência) é transferido da bactéria doadora para a receptora. É por isso que resistências se espalham tão rapidamente nos hospitais! Os transposons também participam, movendo genes de resistência dentro dos plasmídios.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Ciclo Lítico vs Lisogênico</div>
+    <div class="def" style="display:none"><strong>🇧🇷 PT-BR:</strong> <strong>Ciclo Lítico</strong>: O bacteriófago infecta a bactéria, replica seu material genético, produz muitas cópias de si mesmo e lisa (rompe) a célula, liberando novos vírus. Resultado: morte da bactéria. <strong>Ciclo Lisogênico</strong>: O DNA viral se integra ao cromossomo bacteriano (profago) e replica junto com ele. Permanece latente. Em condições de estresse (ex: luz UV), ativa o ciclo lítico. Importância clínica: a toxina diftérica é codificada por um bacteriófago lisogênico!</div>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>🕐 Períodos Históricos da Microbiologia</h3></div>
+<div class="compare-table" style="display:block">
+<table class="compare-table">
+  <tr><th>Cientista</th><th>Contribuição</th><th>Ano</th></tr>
+  <tr><td><strong>Antonie van Leeuwenhoek</strong></td><td>Descobriu microorganismos ("animálculos") em gota d'água</td><td>1675</td></tr>
+  <tr><td><strong>Edward Jenner</strong></td><td>Vacina contra varíola (primeiro método de vacinação)</td><td>1798</td></tr>
+  <tr><td><strong>Louis Pasteur</strong></td><td>Refutou geração espontânea; fermentação; pasteurização; vacinas carbúnculo e raiva</td><td>1800s</td></tr>
+  <tr><td><strong>Robert Koch</strong></td><td>Postulados de Koch; descobriu bacilo tuberculoso; método da placa; frotis bacteriano</td><td>1870-1900</td></tr>
+  <tr><td><strong>Ignaz Semmelweis</strong></td><td>Lavagem das mãos com cloreto de cal; reduziu mortalidade puerperal para 1%</td><td>1846</td></tr>
+  <tr><td><strong>Joseph Lister</strong></td><td>Uso de ácido fênico em cirurgias — método antisséptico</td><td>1860s</td></tr>
+  <tr><td><strong>Christian Gram</strong></td><td>Desenvolveu a coloração de Gram (classifica bactérias em + e −)</td><td>1884</td></tr>
+</table>
+</div>
+
+<div class="info-block warn">
+  <div class="label">Postulados de Koch — Importante para Provas!</div>
+  <h4>Os 4 Postulados</h4>
+  <p><strong>1°</strong> O microrganismo deve ser encontrado em TODOS os casos da doença e sua distribuição deve concordar com as lesões observadas — e NÃO encontrado em pessoas sãs.<br>
+  <strong>2°</strong> Deve crescer em cultura pura <em>in vitro</em> (fora do hospedeiro) por várias gerações.<br>
+  <strong>3°</strong> Quando inoculado em animal suscetível, deve produzir a doença típica.<br>
+  <strong>4°</strong> O microrganismo deve ser re-isolado das lesões produzidas experimentalmente.</p>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: MORFOLOGIA -->
+<!-- ================================================================== -->
+<div id="morfologia" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🔬</span> Morfologia Bacteriana</div>
+
+<div class="info-block">
+  <div class="label">Dimensões</div>
+  <p>A maioria das bactérias tem dimensões entre <strong>0,5 e 5 micrômetros</strong> (μm) — invisíveis ao olho nu. Uma única célula eucariótica poderia abrigar um elevado número de bactérias.</p>
+</div>
+
+<div class="sec-divider"><h3>🔵 Formas Bacterianas</h3></div>
+<table class="compare-table">
+  <tr><th>Forma</th><th>Nome</th><th>Agrupamentos</th><th>Exemplos Clínicos</th></tr>
+  <tr><td>⚪ Esfera</td><td><strong>Coco</strong></td><td>Diplococo (pares), Estreptococo (cadeias), Estafilococo (cachos), Sarcina (grupos cúbicos de 8)</td><td>S. aureus, S. pyogenes, S. pneumoniae</td></tr>
+  <tr><td>🟫 Bastão</td><td><strong>Bacilo</strong></td><td>Diplobacilo (pares), Estreptobacilo (cadeias)</td><td>B. anthracis, C. botulinum, E. coli</td></tr>
+  <tr><td>🌀 Vírgula</td><td><strong>Vibrio</strong></td><td>Isolados (corpo rígido em forma de vírgula)</td><td>Vibrio cholerae</td></tr>
+  <tr><td>🌀 Espiral rígida</td><td><strong>Espirilo</strong></td><td>Isolados (corpo rígido, múltiplas espirais)</td><td>—</td></tr>
+  <tr><td>🌀 Espiral flexível</td><td><strong>Espiroqueta</strong></td><td>Isolados (corpo flexível)</td><td>Treponema pallidum (sífilis)</td></tr>
+</table>
+
+<div class="sec-divider"><h3>🎨 Coloração de Gram — Passo a Passo</h3></div>
+<div class="test-flow">
+  <div class="test-step">
+    <div class="step-num">Passo 1</div>
+    <h4>Cristal Violeta</h4>
+    <p>Todas as bactérias (Gram+ e Gram−) absorvem igualmente o cristal violeta e ficam roxas</p>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="test-step">
+    <div class="step-num">Passo 2</div>
+    <h4>Lugol (iodo)</h4>
+    <p>Forma complexo com o cristal violeta dentro da parede celular. Todas permanecem roxas</p>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="test-step">
+    <div class="step-num">Passo 3</div>
+    <h4>Álcool (descolorante)</h4>
+    <p><span class="tag tag-pos">Gram+</span> retêm a cor roxa (parede espessa). <span class="tag tag-neg">Gram−</span> perdem a cor (parede fina + membrana externa)</p>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="test-step">
+    <div class="step-num">Passo 4</div>
+    <h4>Fucsina (contra-corante)</h4>
+    <p><span class="tag tag-neg">Gram−</span> ficam <strong style="color:var(--red)">vermelhas/rosas</strong>. <span class="tag tag-pos">Gram+</span> permanecem <strong style="color:var(--accent)">roxas</strong></p>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>🌡️ Classificação por Necessidade de Oxigênio</h3></div>
+<div class="oxy-grid">
+  <div class="oxy-card">
+    <div class="oxy-type" style="color:var(--accent)">Aeróbias Estritas</div>
+    <h4>Precisam de O₂</h4>
+    <p>Não sobrevivem sem oxigênio</p>
+    <p class="example">Ex: <em>Mycobacterium tuberculosis</em> — habita o ápice do pulmão pois é mais oxigenado!</p>
+  </div>
+  <div class="oxy-card">
+    <div class="oxy-type" style="color:var(--red)">Anaeróbias Estritas</div>
+    <h4>O₂ é tóxico</h4>
+    <p>Morrem rapidamente na presença de oxigênio</p>
+    <p class="example">Ex: <em>Clostridium botulinum</em>, <em>Clostridium tetani</em></p>
+  </div>
+  <div class="oxy-card">
+    <div class="oxy-type" style="color:var(--gold)">Anaeróbias Facultativas</div>
+    <h4>Usam O₂ se disponível</h4>
+    <p>Mas podem fermentar ou respirar anaerobicamente</p>
+    <p class="example">Ex: <em>Escherichia coli</em> (diarreia), <em>S. aureus</em></p>
+  </div>
+  <div class="oxy-card">
+    <div class="oxy-type" style="color:var(--accent2)">Microaerófilas</div>
+    <h4>Precisam de POUCO O₂</h4>
+    <p>Não toleram concentração atmosférica normal</p>
+    <p class="example">Ex: <em>Helicobacter pylori</em> (gastrite), <em>Campylobacter jejuni</em></p>
+  </div>
+</div>
+
+<div class="info-block warn">
+  <div class="label">Dica clínica importante</div>
+  <h4>Por que a tuberculose afeta o ápice do pulmão?</h4>
+  <p>Porque <em>M. tuberculosis</em> é aeróbia estrita e o ápice pulmonar é a região com <strong>maior concentração de oxigênio</strong>! Já pneumonias tendem a aparecer na base posterior do pulmão.</p>
+</div>
+
+<div class="info-block">
+  <div class="label">Temperatura de Crescimento</div>
+  <h4>Classificação por Temperatura</h4>
+  <p>• <strong>Psicrófila</strong>: cresce melhor entre 0°C e 18°C<br>
+  • <strong>Mesófila</strong>: cresce entre 25°C e 40°C (maioria dos patógenos humanos — temperatura corporal 37°C)<br>
+  • <strong>Termófila</strong>: cresce entre 50°C e 80°C</p>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: ESTRUTURA -->
+<!-- ================================================================== -->
+<div id="estructura" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🧱</span> Estrutura Bacteriana</div>
+
+<div class="sec-divider"><h3>Gram-Positiva vs Gram-Negativa — Comparação Completa</h3></div>
+<table class="compare-table">
+  <tr><th>Estrutura</th><th>Gram-Positiva</th><th>Gram-Negativa</th></tr>
+  <tr><td>Peptidoglicano</td><td>Espesso (45-50% massa seca) — <span class="tag tag-pos">multicamadas</span></td><td>Fino (&lt;5% massa seca) — <span class="tag tag-neg">monocamada</span></td></tr>
+  <tr><td>Membrana Externa</td><td>❌ Ausente</td><td>✅ Presente (com LPS)</td></tr>
+  <tr><td>LPS (endotoxina)</td><td>❌ Ausente</td><td>✅ Presente (causa febre e choque)</td></tr>
+  <tr><td>Ácido Teicoico</td><td>✅ Presente (ácido teicoico + lipoteicoico)</td><td>❌ Ausente</td></tr>
+  <tr><td>Espaço Periplasmático</td><td>❌ Ausente</td><td>✅ Presente (contém enzimas e beta-lactamase)</td></tr>
+  <tr><td>Cor no Gram</td><td><span class="gram-pos">ROXO/VIOLETA</span></td><td><span class="gram-neg">VERMELHO/ROSA</span></td></tr>
+  <tr><td>Susceptibilidade a penicilina</td><td>Geralmente mais susceptíveis</td><td>Mais resistentes (barreira da membrana externa)</td></tr>
+  <tr><td>Resposta ao álcool</td><td>NÃO descoram</td><td>Descoram (perdem o cristal violeta)</td></tr>
+</table>
+
+<div class="sec-divider"><h3>Funções das Estruturas Bacterianas</h3></div>
+<div class="glossary-grid">
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Membrana Citoplasmática</div>
+    <div class="def" style="display:none"><strong>Funções:</strong> (1) Permeabilidade seletiva — barreira osmótica; (2) Transporte ativo de nutrientes; (3) Síntese de lipídeos e parede celular; (4) Excreção de exoenzimas hidrolíticas; (5) Replicação do DNA; (6) Quimiotaxia. Composta por 60% proteínas e 40% lipídeos. Espessura aproximada: 8nm. Os <em>mesossomos</em> são invaginações desta membrana que participam na divisão celular.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Cápsula Bacteriana</div>
+    <div class="def" style="display:none"><strong>Função principal:</strong> ANTIFAGOCÍTICA — protege a bactéria da fagocitose pelo sistema imune do hospedeiro. Cápsulas encapsuladas são mais virulentas! Também protege contra desidratação, bacteriófagos e anticorpos. Ex: S. pneumoniae (91 tipos capsulares — por isso é difícil desenvolver vacuna universal), N. meningitidis. A cápsula do B. anthracis é de ácido poliglutâmico (único composto por proteína, não polissacarídeo).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Flagelo</div>
+    <div class="def" style="display:none"><strong>Função:</strong> (1) Locomoção (quimiotaxia, fototaxia); (2) Antígeno H (antígeno flagelar) — utilizado para identificar e tipificar bactérias (ex: E. coli O157:H7). Composto inteiramente por proteína (flagelina). Classificação por localização: <em>Polar</em> (nas extremidades) ou <em>Perítrico</em> (em todo redor da célula). São finos demais para ser vistos em microscópio óptico simples — necessitam coloração especial.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Fímbrias (Pili)</div>
+    <div class="def" style="display:none"><strong>Função:</strong> Adesão a superfícies (células de mamíferos, mucosas, catéteres). São menores que flagelos. <strong>Pili sexual (Fímbria F)</strong>: conduto para transferência de DNA (conjugação). <strong>Fímbrias tipo 1</strong>: E. coli se liga a receptores de manose em células uroteliais. <strong>Fímbrias P</strong>: E. coli se liga a antígenos do grupo sanguíneo P nas infecções urinárias. A adesão é o PRIMEIRO passo obrigatório da infecção — sem adesão, bactérias são eliminadas pelo muco.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Ribossomos Procarióticos</div>
+    <div class="def" style="display:none"><strong>Coeficiente de sedimentação:</strong> 70S (subunidades: 30S + 50S). Eucarióticos: 80S (40S + 60S). Esta diferença é explorada pelos antibióticos: Aminoglicosídeos e tetraciclinas bloqueiam a subunidade 30S; Cloranfenicol, eritromicina e lincosamidas bloqueiam a subunidade 50S. Isso garante seletividade — o antibiótico mata a bactéria sem afetar os ribossomos humanos 80S.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Membrana Externa (Gram-)</div>
+    <div class="def" style="display:none"><strong>Composição:</strong> Camada interna: fosfolipídeos. Camada externa: LPS + proteínas (porinas, OMP, lipoproteínas). <strong>Porinas:</strong> proteínas triméricas que formam poros para passagem passiva de solutos. A membrana externa é uma barreira hidrofóbica que dificulta a penetração de antibióticos como eritromicina, cristal violeta e metais pesados — por isso Gram-negativas são mais resistentes a muitos antibióticos!</div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: GENÉTICA -->
+<!-- ================================================================== -->
+<div id="genetica" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🧬</span> Genética Bacteriana</div>
+
+<div class="info-block">
+  <div class="label">Conceito Fundamental</div>
+  <h4>DNA Bacteriano</h4>
+  <p>O DNA bacteriano é uma <strong>dupla hélice circular</strong> com aproximadamente 1,1 mm de comprimento — muito maior que a célula (1-2μm)! Por isso está superenrolado e compactado dentro do nucleoide (sem membrana nuclear). Aproximadamente <strong>98% do genoma</strong> bacteriano é composto por sequências codificadoras.</p>
+</div>
+
+<div class="sec-divider"><h3>🔄 Mecanismos de Transferência Genética</h3></div>
+<table class="compare-table">
+  <tr><th>Mecanismo</th><th>Como Funciona</th><th>Requer Vírus?</th><th>Requer Contato?</th></tr>
+  <tr><td><strong>Transformação</strong></td><td>Bactéria absorve DNA livre do meio ambiente (da bactéria morta vizinha). Célula deve estar em "estado de competência". DNA captado → altera o genótipo</td><td>Não</td><td>Não</td></tr>
+  <tr><td><strong>Transdução</strong></td><td>Bacteriófago transfere DNA bacteriano entre células. Generalizada (qualquer gene) ou Especializada (genes próximos ao sítio de integração viral)</td><td>✅ Sim (fago)</td><td>Não</td></tr>
+  <tr><td><strong>Conjugação</strong></td><td>Transferência de plasmídio por contato direto entre bactérias via pili sexual. Principal mecanismo de disseminação de resistência a antibióticos!</td><td>Não</td><td>✅ Sim (direto)</td></tr>
+</table>
+
+<div class="sec-divider"><h3>🦠 Plasmídios e Transposons</h3></div>
+<div class="glossary-grid">
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Plasmídio F (Fator F / Fator Sexual)</div>
+    <div class="def" style="display:none">Plasmídio envolvido na conjugação bacteriana. A bactéria doadora (F+) usa o pili sexual para conectar-se à receptora (F−) e transferir o plasmídio. Etapas: (1) Formação da união por pili sexual; (2) Mobilização do DNA; (3) Transferência; (4) Formação de plasmídio funcional na receptora.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Plasmídio R (de Resistência)</div>
+    <div class="def" style="display:none">Confere resistência a antibióticos. É o principal responsável pela disseminação rápida de resistência bacteriana, inclusive entre espécies e gêneros diferentes! Pode carregar genes de resistência a múltiplos antibióticos simultaneamente (multirresistência). Os <em>transposons</em> inserem genes de resistência dentro dos plasmídios R.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">Transposons ("genes saltadores")</div>
+    <div class="def" style="display:none">Descobertos por Barbara McClintock nos anos 1940-50. São elementos genéticos móveis que permitem a migração de genes de um lócus para outro dentro do genoma, criando mutações de inserção. Bacterianos: disseminam genes de resistência a antibióticos via plasmídios, mesmo entre espécies e gêneros diferentes!</div>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>🦠 Bacteriófagos (Fagos)</h3></div>
+<div class="info-block">
+  <div class="label">Importante para Provas</div>
+  <h4>Ciclo Lítico vs Ciclo Lisogênico</h4>
+  <p><strong>Ciclo Lítico:</strong> Fago infecta → replica → produz cópias → lisa e mata a célula.<br>
+  <strong>Ciclo Lisogênico:</strong> DNA do fago integra ao cromossomo bacteriano (torna-se profago) → replica junto → pode ativar o ciclo lítico por estímulos (luz UV).<br>
+  <strong>⚠️ Relevância Clínica:</strong> A toxina diftérica de <em>C. diphtheriae</em> é codificada por um bacteriófago lisogênico! Sem o fago, a bactéria não produz a toxina.</p>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: PATOGENIA -->
+<!-- ================================================================== -->
+<div id="patogenia" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">⚔️</span> Patogenia da Infecção Bacteriana</div>
+
+<div class="sec-divider"><h3>🔑 Fatores de Virulência</h3></div>
+<div class="glossary-grid">
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">1. Fatores de Aderência (Fímbrias)</div>
+    <div class="def" style="display:none">Sem adesão → sem infecção. As fímbrias se ligam a receptores específicos nas células epiteliais. Anticorpos podem bloquear esses ligantes e prevenir a infecção. A adesão também ativa genes de virulência da bactéria e causa alterações no citoesqueleto da célula hospedeira que facilitam a invasão. Exemplos: E. coli (tipo 1 e P), S. pyogenes (ácido lipoteicoico e proteína F e M).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">2. Invasividade</div>
+    <div class="def" style="display:none">Entrada ativa nas células hospedeiras. Mecanismos: através de junções celulares (Salmonella), invasão de células específicas (Yersinia, N. gonorrhoeae), fagocitose induzida. Destinos dentro da célula: (1) Permanece em vacuola; (2) Dissolve a vacuola e se espalha no citoplasma (Shigella, Listeria); (3) Multiplica-se intracelularmente. A Listeria usa polimerização de actina para se mover dentro e entre células!</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">3. Toxinas — Exotoxinas Tipo I (Superantígenos)</div>
+    <div class="def" style="display:none">NÃO precisam entrar nas células para agir. Ativam massivamente linfócitos T (até 20% de todos os linfócitos). Liberam tempestade de citocinas → inflamação sistêmica grave → falência múltipla de órgãos. Exemplos: TSST-1 do S. aureus (síndrome do choque tóxico), toxina pirogênica estreptocócica (escarlatina).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">3. Toxinas — Exotoxinas Tipo II</div>
+    <div class="def" style="display:none">Dañam diretamente as membranas celulares. Incluem: hemolisinas (destroem hemácias), leucocidinas (destroem leucócitos), fosfolipases. Exemplos: Leucocidina de Panton-Valentine (PVL) do S. aureus → necrose pulmonar e hemorragia. Alfa-toxina do C. perfringens (lecitinase) → destrói membranas celulares → gangrena gasosa.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">3. Toxinas — Exotoxinas Tipo III (Binária A-B)</div>
+    <div class="def" style="display:none">Estrutura: Subunidade B (binding = ligação) + Subunidade A (ativa, causa dano). A subunidade B se liga ao receptor da célula e "abre a porta". A subunidade A entra e causa o dano. Exemplos: Toxina diftérica, toxina botulínica, toxina do carbúnculo. A subunidade B é usada para fazer VACINAS toxoides — neutraliza a toxina sem causar doença.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">4. Endotoxinas (LPS)</div>
+    <div class="def" style="display:none">Parte da parede de Gram-negativas. Liberada quando a bactéria morre (ou ao ser destruída pelos antibióticos!). Estável a 60°C. Efeitos: febre (libera IL-1 em 60-90 min), leucopenia seguida de leucocitose, hipotensão/choque, CIVD (coagulação intravascular disseminada). TNF-alfa, IL-1 e IL-6 são as principais citocinas liberadas em resposta ao LPS.</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">5. Enzimas Extracelulares</div>
+    <div class="def" style="display:none">Facilitam invasão e disseminação: <strong>Hialuronidase</strong> (destrói ácido hialurônico do tecido conjuntivo → "fator difusor"); <strong>Colagenase</strong> (C. perfringens → destrói colágeno → disseminação da gangrena); <strong>Coagulase</strong> (S. aureus → coagula plasma → barreira de fibrina antifagocítica); <strong>Estreptoquinase</strong> (S. pyogenes → dissolve coágulos de fibrina → facilita disseminação); <strong>Protease IgA1</strong> (N. gonorrhoeae, H. influenzae → destrói a IgA das mucosas).</div>
+  </div>
+  <div class="gloss-card" onclick="toggleGloss(this)">
+    <div class="term">5. Fatores Antifagocíticos</div>
+    <div class="def" style="display:none">Permitem à bactéria escapar da fagocitose: <strong>Cápsulas polissacarídicas</strong> (S. pneumoniae, N. meningitidis, H. influenzae tipo b — todas encapsuladas!); <strong>Proteína M</strong> (S. pyogenes — antifagocítica e fator de virulência chave); <strong>Proteína A</strong> (S. aureus — se liga ao fragmento Fc das IgG impedindo a opsonização → anticorpos não conseguem marcar a bactéria para fagocitose).</div>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>💉 Vias de Transmissão</h3></div>
+<table class="compare-table">
+  <tr><th>Via</th><th>Descrição</th><th>Exemplos</th></tr>
+  <tr><td>Disseminação Direta</td><td>Contato direto ou partículas no ar (doenças contagiosas)</td><td>Sarampo, Varicela, COVID-19, Difteria</td></tr>
+  <tr><td>Alimentos/Água/Solo</td><td>Reservatórios humanos ou ambientais</td><td>Salmonela, Cólera, B. cereus (arroz)</td></tr>
+  <tr><td>Infecções Perinatais</td><td>Durante gravidez (placenta) ou parto</td><td>AIDS, Listeria, Sífilis congênita</td></tr>
+  <tr><td>Zoonoses</td><td>Animal → homem</td><td>Raiva, Carbúnculo (B. anthracis)</td></tr>
+  <tr><td>Fômite</td><td>Objetos inanimados contaminados ("vetor passivo")</td><td>Mãos, catéteres, instrumentos cirúrgicos</td></tr>
+</table>
+
+<div class="info-block warn">
+  <div class="label">Porta de Entrada das Bactérias</div>
+  <h4>Locais de Entrada</h4>
+  <p>(1) Locais onde mucosas se unem à pele; (2) Trato respiratório; (3) Gastrointestinal (boca); (4) Genital; (5) Urinário; (6) Pele lesionada</p>
+</div>
+
+<div class="sec-divider"><h3>🌡️ Sinais Laboratoriais de Infecção Bacteriana Aguda</h3></div>
+<div class="info-block danger">
+  <div class="label">Hemograma — Muito cobrado em provas!</div>
+  <h4>Neutrófilos em Processo Bacteriano Agudo</h4>
+  <p><strong>Neutrófilo Bastonete (bastão)</strong>: são células JOVENS que são liberadas precocemente da medula quando há demanda aumentada por infecção aguda. Indica processo bacteriano agudo!<br>
+  <strong>Neutrófilo Segmentado (S)</strong>: célula madura. Quando AMBOS (bastonete + segmentado) estão alterados, o paciente está em processo bacteriano agudo grave!</p>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: PATÓGENOS -->
+<!-- ================================================================== -->
+<div id="patogenos" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🦠</span> Patógenos — Resumo Completo</div>
+
+<div class="sec-divider"><h3>🟣 GRAM-POSITIVOS FORMADORES DE ESPORO</h3></div>
+
+<div class="info-block success">
+  <div class="label">Regra de ouro</div>
+  <h4>Bacillus = Aeróbio | Clostridium = Anaeróbio</h4>
+  <p>Ambos são Gram+, formadores de esporos e Bacilos. A diferença fundamental: Bacillus cresce na presença de oxigênio; Clostridium morre na presença de oxigênio (anaeróbio estrito).</p>
+</div>
+
+<table class="compare-table">
+  <tr><th>Bactéria</th><th>Gram</th><th>Forma</th><th>Esporo</th><th>O₂</th><th>Doença</th><th>ATB 1ª Escolha</th></tr>
+  <tr><td><em>Bacillus anthracis</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo (cadeias serpentinas)</td><td><span class="spore-yes">✓ Central</span></td><td>Facultativo anaeróbio</td><td>Carbúnculo (ántrax)</td><td><span style="color:var(--gold)">Ciprofloxacina</span></td></tr>
+  <tr><td><em>Bacillus cereus</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo (cadeias)</td><td><span class="spore-yes">✓ Presente</span></td><td>Aeróbio</td><td>Intoxicação alimentar (síndrome emética/diarreica)</td><td>Vancomicina ou Clindamicina</td></tr>
+  <tr><td><em>Clostridium botulinum</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo</td><td><span class="spore-yes">✓ Subterminal/Central</span></td><td>Anaeróbio estrito</td><td>Botulismo</td><td>Penicilina ou Metronidazol</td></tr>
+  <tr><td><em>Clostridium tetani</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo (aspecto de raquete)</td><td><span class="spore-yes">✓ Terminal oval</span></td><td>Anaeróbio estrito</td><td>Tétano</td><td>Penicilina</td></tr>
+  <tr><td><em>Clostridium perfringens</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo</td><td><span class="spore-yes">✓ Subterminal</span></td><td>Anaeróbio (aerotolerante)</td><td>Gangrena gasosa, intoxicação alimentar</td><td>Penicilina + desbridamento</td></tr>
+  <tr><td><em>Clostridium difficile</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo</td><td><span class="spore-yes">✓ Oval subterminal</span></td><td>Anaeróbio estrito</td><td>Colite pseudomembranosa</td><td>Vancomicina ou Metronidazol</td></tr>
+</table>
+
+<div class="sec-divider"><h3>🔵 GRAM-POSITIVOS SEM ESPORO — Bacilos</h3></div>
+<table class="compare-table">
+  <tr><th>Bactéria</th><th>Gram</th><th>Forma</th><th>Esporo</th><th>Doença</th><th>ATB 1ª Escolha</th></tr>
+  <tr><td><em>Corynebacterium diphtheriae</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo pleomórfico (letras chinesas / paliçada)</td><td><span class="spore-no">✗ Não</span></td><td>Difteria</td><td>Penicilina + Antitoxina</td></tr>
+  <tr><td><em>Listeria monocytogenes</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo curto</td><td><span class="spore-no">✗ Não</span></td><td>Listeriose (meningite, sepse neonatal)</td><td>Ampicilina</td></tr>
+  <tr><td><em>Erysipelothrix rhusiopathiae</em></td><td><span class="gram-pos">GRAM+</span></td><td>Bacilo pleomórfico</td><td><span class="spore-no">✗ Não</span></td><td>Erisipeloide (dedo de baleia)</td><td>Penicilina G</td></tr>
+</table>
+
+<div class="sec-divider"><h3>🔵 GRAM-POSITIVOS — Cocos</h3></div>
+<table class="compare-table">
+  <tr><th>Bactéria</th><th>Gram</th><th>Forma/Agrupamento</th><th>Catalase</th><th>Coagulase</th><th>Doença</th><th>ATB 1ª Escolha</th></tr>
+  <tr><td><em>Staphylococcus aureus</em></td><td><span class="gram-pos">GRAM+</span></td><td>Coco em cachos (uvas)</td><td><span class="tag tag-pos">+</span></td><td><span class="tag tag-pos">+</span></td><td>Infecções de pele, pneumonia necrotizante, TSST, endocardite</td><td>Oxacilina (sensível) / Vancomicina (MRSA)</td></tr>
+  <tr><td><em>Staphylococcus epidermidis</em></td><td><span class="gram-pos">GRAM+</span></td><td>Coco em cachos</td><td><span class="tag tag-pos">+</span></td><td><span class="tag tag-neg">−</span></td><td>Infecções de catéteres e próteses</td><td>Vancomicina</td></tr>
+  <tr><td><em>Staphylococcus saprophyticus</em></td><td><span class="gram-pos">GRAM+</span></td><td>Coco em cachos</td><td><span class="tag tag-pos">+</span></td><td><span class="tag tag-neg">−</span></td><td>ITU em mulheres jovens (2ª causa após E. coli)</td><td>Nitrofurantoína ou TMP-SMX</td></tr>
+</table>
+
+<div class="info-block danger">
+  <div class="label">Diferencial Importante — S. saprophyticus vs E. coli na ITU</div>
+  <h4>Como diferenciar na urinálise?</h4>
+  <p><strong>E. coli</strong>: Nitrito <span style="color:var(--green)">POSITIVO</span> (reduz nitrato a nitrito); Bacilo Gram-negativo<br>
+  <strong>S. saprophyticus</strong>: Nitrito <span style="color:var(--red)">NEGATIVO</span> (não reduz nitrato); Coco Gram-positivo; Resistente à novobiocina (diferencia de S. epidermidis)</p>
+</div>
+
+<div class="sec-divider"><h3>Staphylococcus — Doenças e Toxinas Detalhadas</h3></div>
+<div class="toxin-grid">
+  <div class="toxin-card">
+    <div class="tox-name">Síndrome do Choque Tóxico (TSS)</div>
+    <div class="tox-sub">Toxina: TSST-1 (superantígeno)</div>
+    <div class="tox-detail">Ativa macrófagos e libera mediadores inflamatórios → inflamação sistêmica → falência de múltiplos órgãos. Mais comum em mulheres usando tampão (S. aureus é aeróbio → O₂ no tampão favorece produção de toxina). Troca a cada 4 horas!</div>
+  </div>
+  <div class="toxin-card">
+    <div class="tox-name">Síndrome da Pele Escaldada (SSSS)</div>
+    <div class="tox-sub">Toxinas: ETA e ETB (exfoliativas)</div>
+    <div class="tox-detail">Clivam a desmogliena-1 → separação da camada superficial da pele. Mais comum em crianças &lt;5 anos (falta de anticorpos + rins imaturos que não eliminam a toxina). Sinal de Nikolski positivo.</div>
+  </div>
+  <div class="toxin-card">
+    <div class="tox-name">Pneumonia Necrotizante</div>
+    <div class="tox-sub">Toxina: Leucocidina de Panton-Valentine (PVL)</div>
+    <div class="tox-detail">Causa necrose pulmonar e hemorragia. Lise de leucócitos e destruição tecidual. Fatores de risco: infecção prévia por influenza, ventilação mecânica, imunossupressão.</div>
+  </div>
+  <div class="toxin-card">
+    <div class="tox-name">Intoxicação Alimentar Estafilocócica</div>
+    <div class="tox-sub">Toxinas: Enterotoxinas (SE) &gt;11 tipos</div>
+    <div class="tox-detail">Toxinas preformadas no alimento. Vômito em 2-6h (esporádico com intervalos). Autolimitada em 24-48h. Age estimulando o nervo vago. NÃO é necessário cozinhar mal — a toxina já está no alimento!</div>
+  </div>
+</div>
+
+<div class="info-block warn">
+  <div class="label">MRSA — Resistência à Meticilina</div>
+  <h4>Como funciona a resistência?</h4>
+  <p>Em 1961, surgiu o S. aureus resistente à meticilina (MRSA). A resistência não é por beta-lactamase, mas por <strong>modificação das PBPs (Proteínas Ligadoras de Penicilina)</strong> — gene mecA. As PBPs alteradas não se ligam aos antibióticos beta-lactâmicos → a bactéria continua construindo a parede normalmente. Resistência a TODOS os beta-lactâmicos. Tratamento: <strong>Vancomicina</strong>.</p>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: FLASH CARDS -->
+<!-- ================================================================== -->
+<div id="flashcards" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🃏</span> Flash Cards — Todos os Patógenos</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px;">👆 Clique em cada cartão para virar e ver os detalhes completos!</p>
+
+<div class="sec-divider"><h3>🟡 Formadores de Esporo — Bacillus</h3></div>
+<div class="flashcard-grid" id="fc-bacillus"></div>
+
+<div class="sec-divider"><h3>🟠 Formadores de Esporo — Clostridium</h3></div>
+<div class="flashcard-grid" id="fc-clostridium"></div>
+
+<div class="sec-divider"><h3>🔵 Gram+ Sem Esporo — Bacilos</h3></div>
+<div class="flashcard-grid" id="fc-gram-pos-bacilos"></div>
+
+<div class="sec-divider"><h3>🟣 Gram+ Cocos</h3></div>
+<div class="flashcard-grid" id="fc-cocos-pos"></div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: TESTES DIFERENCIAIS -->
+<!-- ================================================================== -->
+<div id="diferencial" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🧪</span> Testes Diferenciais Essenciais</div>
+
+<div class="sec-divider"><h3>Estafilococo vs Estreptococo — Fluxo de Identificação</h3></div>
+
+<div class="test-flow" style="flex-wrap:wrap">
+  <div class="test-step" style="background:linear-gradient(135deg,var(--card2),var(--card));border-color:var(--accent)">
+    <div class="step-num">Teste 1 — PRIMEIRO PASSO</div>
+    <h4>Teste da Catalase</h4>
+    <p>Adicionar H₂O₂ (água oxigenada) na colônia bacteriana</p>
+    <p style="margin-top:8px"><span class="tag tag-pos">Borbulhas (+)</span> → <strong style="color:var(--accent)">STAPHYLOCOCCUS</strong></p>
+    <p><span class="tag tag-neg">Sem borbulhas (−)</span> → <strong style="color:var(--red)">STREPTOCOCCUS</strong></p>
+    <p style="margin-top:8px;font-size:11px;color:var(--muted)">A catalase converte H₂O₂ em H₂O + O₂ (bolhas)</p>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="test-step" style="background:linear-gradient(135deg,var(--card2),var(--card));border-color:var(--gold)">
+    <div class="step-num">Teste 2 — Se Catalase +</div>
+    <h4>Teste da Coagulase</h4>
+    <p>Misturar bactéria com plasma de coelho</p>
+    <p style="margin-top:8px"><span class="tag tag-pos">Coágulo (+)</span> → <strong style="color:var(--accent)">S. aureus</strong></p>
+    <p><span class="tag tag-neg">Sem coágulo (−)</span> → <strong>S. epidermidis, S. saprophyticus...</strong></p>
+    <p style="margin-top:8px;font-size:11px;color:var(--muted)">S. aureus é o ÚNICO coagulase positivo clinicamente relevante</p>
+  </div>
+  <div class="arrow-right">→</div>
+  <div class="test-step" style="background:linear-gradient(135deg,var(--card2),var(--card));border-color:var(--accent2)">
+    <div class="step-num">Teste 3 — Se Coagulase −</div>
+    <h4>Novobiocina (para SCoN)</h4>
+    <p>Sensibilidade ao antibiótico novobiocina</p>
+    <p style="margin-top:8px"><span class="tag tag-neg">Resistente</span> → <strong style="color:var(--accent2)">S. saprophyticus</strong> (ITU mulher jovem)</p>
+    <p><span class="tag tag-pos">Sensível</span> → <strong>S. epidermidis</strong> (infecções de catéter)</p>
+    <p style="margin-top:8px;font-size:11px;color:var(--muted)">Nitrito negativo + mulher jovem = S. saprophyticus!</p>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>Identificação do Clostridium difficile</h3></div>
+<div class="info-block">
+  <div class="label">C. difficile — Diagnóstico</div>
+  <h4>Como Identificar</h4>
+  <p>Agente já presente na microbiota intestinal (pode ser adquirido por endoscopia ou colonoscopia). É um bacilo Gram-positivo anaeróbio. Causa processo inflamatório pseudomembranoso (pseudo = falso).<br><br>
+  <strong>Diagnóstico:</strong> Detecção de toxinas A e B nas fezes + observação de pseudomembranas por endoscopia.<br>
+  <strong>Fatores de risco:</strong> Uso de antibióticos (especialmente ampicilina, clindamicina, fluoroquinolonas) que destroem a microbiota normal e permitem proliferação de C. difficile.<br>
+  <strong>Tratamento:</strong> Vancomicina oral ou Metronidazol. Casos recorrentes: transplante fecal!</p>
+</div>
+
+<div class="sec-divider"><h3>Diagnóstico da Difteria — Teste de Elek</h3></div>
+<div class="info-block">
+  <div class="label">Corynebacterium diphtheriae — Importante!</div>
+  <h4>Diagnóstico</h4>
+  <p><strong>Placa pseudomembrana:</strong> Quando raspa com espátula → SANGRA (diferente da amigdalite estreptocócica que NÃO sangra).<br>
+  <strong>Teste de Elek modificado:</strong> Disco de papel com antitoxina → bandas de precipitina indicam toxigenicidade.<br>
+  <strong>PCR:</strong> Detecta gene tox (mais rápido).<br>
+  <strong>Cultivo:</strong> Agar cistina-telúrito → colônias negras com halo marrom.<br>
+  <strong>Atenção:</strong> Diagnóstico de TÉTANO é TOTALMENTE CLÍNICO! Não depende de cultivo.</p>
+</div>
+
+<div class="sec-divider"><h3>Teste Manitol Salgado — S. aureus</h3></div>
+<div class="info-block warn">
+  <div class="label">Meio Seletivo de Manitol Salgado</div>
+  <h4>Como Funciona</h4>
+  <p>Composto por sal (alta concentração seleciona estafilococos) + manitol (açúcar) + indicador de pH (rosa/vermelho). Somente <em>S. aureus</em> fermenta o manitol → produz ácido → muda o meio de ROSA para <strong>AMARELO</strong>. S. epidermidis e S. saprophyticus não fermentam o manitol → meio permanece rosa. É o teste de confirmação para S. aureus.</p>
+</div>
+
+<div class="sec-divider"><h3>Bacterias de Importância — Resumo Antibióticos</h3></div>
+<table class="compare-table">
+  <tr><th>Bactéria</th><th>ATB 1ª Linha</th><th>ATB Alternativo</th><th>Observação</th></tr>
+  <tr><td>B. anthracis</td><td>Ciprofloxacina</td><td>Penicilina G, Doxiciclina</td><td>Profilaxia pós-exposição: cipro/doxi 60 dias</td></tr>
+  <tr><td>B. cereus (infecção grave)</td><td>Vancomicina</td><td>Clindamicina + aminoglicosídeos</td><td>Resistente a penicilinas e cefalosporinas</td></tr>
+  <tr><td>C. tetani</td><td>Penicilina</td><td>Metronidazol</td><td>+Antitoxina tetânica + toxoide</td></tr>
+  <tr><td>C. botulinum</td><td>Penicilina ou Metronidazol</td><td>—</td><td>+Antitoxina trivalente (A,B,E); suporte ventilatório</td></tr>
+  <tr><td>C. perfringens</td><td>Penicilina</td><td>—</td><td>+Desbridamento cirúrgico; câmara hiperbárica</td></tr>
+  <tr><td>C. difficile</td><td>Vancomicina oral</td><td>Metronidazol, Fidaxomicina</td><td>Suspender ATB causador; transplante fecal (recorrente)</td></tr>
+  <tr><td>C. diphtheriae</td><td>Penicilina ou Macrolídeo</td><td>Azitromicina, Eritromicina</td><td>+Antitoxina diftérica 20.000-120.000 UI</td></tr>
+  <tr><td>L. monocytogenes</td><td>Ampicilina</td><td>TMP-SMX</td><td>Cefalosporinas NÃO funcionam!</td></tr>
+  <tr><td>E. rhusiopathiae</td><td>Penicilina G</td><td>—</td><td>Sem pus na lesão (diferencia de Staph/Strep)</td></tr>
+  <tr><td>S. aureus (MSSA)</td><td>Oxacilina/Nafcilina</td><td>Cefalosporinas</td><td>—</td></tr>
+  <tr><td>S. aureus (MRSA)</td><td>Vancomicina</td><td>Linezolida, Daptomicina</td><td>Todos os beta-lactâmicos falham</td></tr>
+  <tr><td>S. saprophyticus (ITU)</td><td>Nitrofurantoína</td><td>TMP-SMX</td><td>Resistente à novobiocina</td></tr>
+</table>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: CASOS CLÍNICOS -->
+<!-- ================================================================== -->
+<div id="casos" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🏥</span> Casos Clínicos — Dr. Marcos Rigonato</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <div class="case-icon">🌾</div>
+    <div>
+      <h3>Caso Clínico 1 — Trabalhador Rural</h3>
+      <p>Homem, 45 anos, pecuarista, com lesão progressiva no braço</p>
+    </div>
+  </div>
+  <div class="case-body">
+    <div class="story">Homem de 45 anos que trabalha como pecuarista em área rural onde se criam vacas e cavalos. Nos últimos dias notou uma lesão no braço direito que começou como pequena úlcera indolor, mas rapidamente se alargou, ficou vermelha e desenvolveu uma crosta negra central. Apresenta febre, dor muscular e cefaleia. A lesão piorou com dificuldade respiratória e sensação de opressão no peito.</div>
+    <div class="case-qa">
+      <details><summary>1. O que é Bacillus anthracis?</summary>
+      <div class="answer">Bacillus anthracis é o agente causador do <strong>carbúnculo (ántrax)</strong>. Bacilo Gram-positivo, formador de esporos (esporos centrais), aeróbio (facultativo anaeróbio). Descrito por Koch em 1887 como o PRIMEIRO microrganismo vinculado conclusivamente a uma doença. No século XIX causou a morte de 50% dos carneiros na Europa. É considerado arma biológica potencial (ataques com esporos em 2001 nos EUA — 22 casos, 5 mortes).</div></details>
+      <details><summary>2. Como se transmite o B. anthracis?</summary>
+      <div class="answer">• <strong>Cutâneo:</strong> Esporos penetram através de pele lesionada ao contato com animais infectados ou produtos contaminados (pele, pelo, lã, ossos) — 95% dos casos. <br>• <strong>Pulmonar (inalação):</strong> Inalação de esporos — "doença do esquilador de ovelhas" — 5% dos casos, ALTA mortalidade por diagnóstico tardío (confunde com gripe!). <br>• <strong>Gastrointestinal:</strong> Ingestão de esporas — MUITO RARO em humanos, mais comum em gado. <br>• <strong>Por injeção:</strong> Heroína contaminada com esporos.</div></details>
+      <details><summary>3. Características clínicas do ántrax cutâneo</summary>
+      <div class="answer">Localização: braços, mãos, face e pescoço (superfícies expostas). Evolução: (1) Pápula pruriginosa (similar a picada de inseto) → (2) Vesícula ou anel de vesículas → (3) <strong>Úlcera necrótica com escara negra central</strong> (1-3 cm diâmetro) — muito característica! + Edema pronunciado, linfangite e linfadenopatia. Sintomas gerais: febre, mal-estar, cefaleia. Cicatriza em 7-10 dias. Complicação: septicemia (20% dos casos), meningite e morte em casos graves.</div></details>
+      <details><summary>4. Qual o antibiótico de primeira escolha para ántrax?</summary>
+      <div class="answer"><strong>Ciprofloxacina</strong> é o tratamento de primeira linha para o carbúnculo humano. Alternativas: Penicilina G, Doxiciclina, Eritromicina, Vancomicina. Profilaxia pós-exposição (arma biológica): Ciprofloxacina ou Doxiciclina por 60 dias + 3 doses da vacuna AVA. Alta mortalidade na forma pulmonar porque o diagnóstico é TARDIO — confunde-se com gripe!</div></details>
+      <details><summary>5. Fatores de virulência do B. anthracis</summary>
+      <div class="answer">• <strong>Cápsula de ácido poliglutâmico:</strong> ÚNICA cápsula de bactéria composta por proteína (não polissacarídeo). Função antifagocítica. Sem cápsula = sem virulência. <br>• <strong>Toxina do Carbúnculo</strong> (3 componentes): (1) <strong>Antígeno Protetor (PA)</strong>: liga-se ao receptor celular e forma canal de entrada; (2) <strong>Fator de Edema (FE)</strong>: adenilciclase → aumenta AMPc → acumulo de líquido; (3) <strong>Fator Letal (FL)</strong>: interage com macrófagos → libera IL-1 e TNF → lise de macrófagos → choque e morte.</div></details>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <div class="case-icon">🍚</div>
+    <div>
+      <h3>Caso Clínico 2 — Intoxicação Alimentar</h3>
+      <p>Mulher, 30 anos, com vômitos após ingestão de arroz cozido deixado à temperatura ambiente</p>
+    </div>
+  </div>
+  <div class="case-body">
+    <div class="story">Mulher de 30 anos na sala de emergência com dor abdominal intensa, náuseas e vômitos. No dia anterior consumiu arroz cozido que ficou à temperatura ambiente por várias horas após uma refeição familiar. Aproximadamente 6 horas depois começou a ter cólicas abdominais e vômitos com diarreia aquosa. Vários familiares apresentaram sintomas similares. Sinais vitais estáveis, mas com sinais de desidratação moderada.</div>
+    <div class="case-qa">
+      <details><summary>1. O que é Bacillus cereus e como causa intoxicação?</summary>
+      <div class="answer"><em>Bacillus cereus</em> é um bacilo Gram-positivo, aeróbio, formador de esporos. Microrganismo da terra, comum no ambiente. Causa intoxicação alimentar por dois mecanismos distintos: (1) Síndrome emética — toxina termoestável (cereulida) preformada no alimento; (2) Síndrome diarreica — enterotoxina termolábil produzida no intestino após ingestão.</div></details>
+      <details><summary>2. Diferença entre síndrome emética e diarreica</summary>
+      <div class="answer"><strong>Síndrome Emética:</strong> Toxina TERMOESTÁVEL (cereulida) — resiste ao calor! Preformada no alimento. Tempo de aparição: 1-6 horas. Sintomas: náuseas intensas e vômitos, pouca diarreia. Alimento típico: arroz frito/recalentado deixado à temperatura ambiente. Recuperação espontânea em 24h.<br><br><strong>Síndrome Diarreica:</strong> Toxina TERMOLÁBIL (enterotoxina) — destruída pelo calor. Produzida no intestino após ingestão. Tempo de aparição: 8-16 horas. Sintomas: diarreia aquosa, dor abdominal, raramente vômito. Alimentos: carnes, vegetais, molhos. Duração média 24h.</div></details>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <div class="case-icon">🔩</div>
+    <div>
+      <h3>Caso Clínico 3 — Tétano</h3>
+      <p>Homem, 35 anos, trabalhador rural, com dificuldade para abrir a boca após pisar em prego enferrujado</p>
+    </div>
+  </div>
+  <div class="case-body">
+    <div class="story">Homem de 35 anos, há uma semana sofreu ferida no pé direito ao pisar em prego enferrujado no campo. Inicialmente a ferida pareceu leve. Desde há 48 horas, começou a ter dor e rigidez nos músculos da mandíbula, piorando progressivamente, limitando a capacidade de abrir a boca (TRISMO). Apresenta espasmos musculares dolorosos nas costas e pescoço. Não recebeu vacina antitetânica nos últimos 10 anos. Temperatura: 37,8°C.</div>
+    <div class="case-qa">
+      <details><summary>1. O que é o tétano e qual é o agente causal?</summary>
+      <div class="answer"><em>Clostridium tetani</em> — bacilo Gram-positivo, anaeróbio estrito, formador de esporos ovais terminais (aspecto de "raquete de tênis"). Distribução mundial, encontrado no solo e fezes de cavalos e outros animais. NÃO é um microorganismo invasor — a doença é principalmente uma <strong>toxemia</strong> (mediada por toxina). Os esporos germinam em tecido necrótico (feridas com pouco oxigênio) → produzem tetanoespasmina.</div></details>
+      <details><summary>2. Como age a tetanoespasmina?</summary>
+      <div class="answer">Mecanismo de ação da tetanoespasmina (neurotoxina): (1) Liga-se a receptores nas membranas pré-sinápticas de neurônios motores; (2) Transporte retrógrado até os corpos celulares na medula espinal e tronco encefálico; (3) Degrada a <strong>sinaptobrevina (VAMP2)</strong> — proteína essencial para liberação de neurotransmissores; (4) Bloqueia a liberação de <strong>GABA e glicina</strong> (neurotransmissores inibidores)! Resultado: <strong>hiperreflexia, espasmos musculares e parálise espástica</strong> (rigidez, não flacidez como no botulismo).</div></details>
+      <details><summary>3. Manifestações clínicas do tétano</summary>
+      <div class="answer">Período de incubação: 2-14 dias. Primeiro sintoma: <strong>TRISMO</strong> (espasmo do músculo masseter — dificuldade de abrir a boca). Depois: <strong>Riso sardônico</strong> (espasmo dos músculos faciais — expressão forçada). Progride para: espasmos generalizados, postura arqueada (<strong>opistótonos</strong>). O paciente permanece <strong>CONSCIENTE</strong>! Espasmos desencadeados por luz e ruído (estimulação sensitiva). Principal causa de morte: falência respiratória (espasmo do diafragma).</div></details>
+      <details><summary>4. Diagnóstico e tratamento do tétano</summary>
+      <div class="answer"><strong>Diagnóstico: TOTALMENTE CLÍNICO!</strong> Não depende de cultivo. Apenas 50% dos pacientes têm ferida evidente. Diagnóstico diferencial: intoxicação por estricnina. Confirmação: produção de toxina + neutralização com antitoxina específica.<br><br><strong>Tratamento:</strong> (1) Antitoxina tetânica: 3.000-10.000 UI imunoglobulina tetânica intravenosa; (2) Penicilina (inibe proliferação de C. tetani); (3) Relaxantes musculares e sedantes; (4) Respiração assistida nos casos graves; (5) Desbridamento cirúrgico do tecido necrótico.</div></details>
+      <details><summary>5. Prevenção — Vacina antitetânica</summary>
+      <div class="answer">Vacina com <strong>toxoide tetânico</strong> (toxina inativada pelo calor). Esquema: 3 doses iniciais + 4ª dose 1 ano depois + reforço ao entrar na escola. <strong>Reforço a cada 10 anos</strong> para manter nível sérico de antitoxina &gt;0,01 U/ml. Em feridas de risco: reforço de toxoide + antitoxina se não atualizado. Vacinas combinadas: DTPa (difteria + tétano + coqueluche). <strong>Tétano neonatal:</strong> contaminação do cordão umbilical em bebês de mães não vacinadas.</div></details>
+    </div>
+  </div>
+</div>
+
+<div class="case-card">
+  <div class="case-header">
+    <div class="case-icon">🫙</div>
+    <div>
+      <h3>Caso Clínico 4 — Botulismo</h3>
+      <p>Mulher, 45 anos, com paralisia progressiva após consumo de conserva caseira</p>
+    </div>
+  </div>
+  <div class="case-body">
+    <div class="story">Mulher de 45 anos com fraqueza muscular progressiva e dificuldade para respirar. Consumiu conserva caseira de pimentões (preparada pela tia há 1 mês, armazenada à temperatura ambiente) 3 dias antes dos sintomas. Apresenta secura na boca, visão turva, dificuldade para engolir, e nas últimas 24h fraqueza muscular progressiva. Ao exame: ptose (queda da pálpebra), disfagia, disartria, debilidade muscular generalizada com sinais de insuficiência respiratória.</div>
+    <div class="case-qa">
+      <details><summary>1. O que é o botulismo e o que o causa?</summary>
+      <div class="answer"><em>Clostridium botulinum</em> — bacilo Gram-positivo, anaeróbio estrito, formador de esporos. Distribução mundial; habita no solo e fezes de animais. Esporos muito resistentes ao calor (suportam 100°C por horas). Produz a <strong>toxina botulínica</strong> — uma das substâncias mais tóxicas conhecidas (dose letal: 1-2 μg/kg). Destruída pelo calor a 100°C por 20 minutos. Classificada em sorotipos A-G (A, B, E e F afetam humanos).</div></details>
+      <details><summary>2. Mecanismo de ação da toxina botulínica</summary>
+      <div class="answer">Absorção desde o intestino → circulação sanguínea → liga-se a receptores nas membranas pré-sinápticas de neurônios motores periféricos → inibe a liberação de <strong>acetilcolina</strong> na sinapse → <strong>PARALISIA FLÁCIDA</strong> (diferente do tétano que causa paralisia espástica!). Resultado: parálise bulbar progressiva, morte por paralisia respiratória ou parada cardíaca. Sem febre. Paciente consciente até pouco antes de morrer.</div></details>
+      <details><summary>3. Tipos de botulismo</summary>
+      <div class="answer">• <strong>Alimentar:</strong> Ingestão de toxina preformada em alimentos alcalinos, defumados, enlatados. Principal fator de risco: conservas caseiras. Início: 18-24h após ingestão. <br>• <strong>Por feridas:</strong> Esporos germinam em tecido lesionado. Risco: usuários de drogas injetáveis (heroína). <br>• <strong>Infantil:</strong> Esporos ingeridos germinam no intestino do lactente. MEL é o principal veículo — NÃO dar mel para crianças menores de 1 ano! Pode causar síndrome da morte súbita infantil. <br>• <strong>Pulmonar:</strong> Inalação de toxina — muito raro, associado a bioterrorismo.</div></details>
+      <details><summary>4. Tratamento do botulismo</summary>
+      <div class="answer">• <strong>Suporte ventilatório:</strong> FUNDAMENTAL — pode ser necessário por até 8 semanas! <br>• <strong>Antitoxina trivalente (A, B, E):</strong> Administração intravenosa rápida. NÃO reverte a paralisia já instalada, mas detém a progressão. <br>• <strong>Botulismo infantil:</strong> Imunoglobulina botulínica humana (BIG). <br>• <strong>Antibióticos</strong> (penicilina/metronidazol): Controversos — risco de liberar mais toxina ao lisar bactérias. <br>• <strong>Identificação de alimentos contaminados:</strong> Latas estufadas ou com aspecto incomum são suspeitas!</div></details>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- ================================================================== -->
+<!-- SECTION: QUIZ -->
+<!-- ================================================================== -->
+<div id="quiz" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">❓</span> Quiz — 30 Questões Nível Dr. Marcos</div>
+<div class="quiz-container" id="quiz-container"></div>
+</div>
+</div>
+
+<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ── PARTICLES ──
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+for(let i=0;i<60;i++) {
+  particles.push({
+    x: Math.random()*canvas.width,
+    y: Math.random()*canvas.height,
+    r: Math.random()*2+0.5,
+    dx: (Math.random()-0.5)*0.3,
+    dy: (Math.random()-0.5)*0.3,
+    alpha: Math.random()*0.4+0.1
+  });
+}
+function animParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(79,156,249,${p.alpha})`;
+    ctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// ── NAV ──
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── GLOSS TOGGLE ──
+function toggleGloss(el) {
+  const def = el.querySelector('.def');
+  def.style.display = def.style.display==='none'?'block':'none';
+  el.style.borderColor = def.style.display==='none'?'var(--border)':'var(--accent2)';
+}
+
+// ── SCROLL TOP ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrolltop').style.display = window.scrollY>300?'block':'none';
+});
+
+// ── FLASH CARDS DATA ──
+const flashcardsData = {
+  'fc-bacillus': [
+    {
+      pathogen:'Bacillus anthracis',
+      name:'B. anthracis',
+      disease:'Carbúnculo (Ántrax)',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo (cadeias largas e serpentinas)',
+      spore:'✓ Esporo CENTRAL',
+      sporeClass:'spore-yes',
+      oxygen:'Facultativo Anaeróbio',
+      howGot:'Contato com animais/produtos contaminados (cutâneo); Inalação de esporos (pulmonar); Ingestão (gastrointestinal — RARO)',
+      virulence:'Cápsula de ácido poliglutâmico (única proteica!) + Toxina: PA + FE (edema) + FL (letal = morte)',
+      clinical:'Pápula pruriginosa → Vesícula → Úlcera com ESCARA NEGRA central. Edema pronunciado. Confunde com gripe (forma pulmonar → diagnóstico tardio → alta mortalidade)',
+      atb:'Ciprofloxacina',
+      extra:'Arma biológica! Cremação ou enterramento profundo com cal ao morrer'
+    },
+    {
+      pathogen:'Bacillus cereus',
+      name:'B. cereus',
+      disease:'Intoxicação Alimentar (Emética e Diarreica)',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo (cadenas)',
+      spore:'✓ Esporo Presente',
+      sporeClass:'spore-yes',
+      oxygen:'Aeróbio',
+      howGot:'Arroz frito/recalentado deixado à temperatura ambiente (emética); Carnes, vegetais, molhos (diarreica)',
+      virulence:'Cereulida (termoestável) → vômito. Enterotoxina (termolábil) → diarreia',
+      clinical:'Emética: vômito em 1-6h, recuperação 24h. Diarreica: diarreia em 8-16h. Infecções oculares graves! Endoftalmite',
+      atb:'Vancomicina ou Clindamicina (infecções graves)',
+      extra:'Resistente a penicilinas e cefalosporinas. Infecções sistêmicas em imunodeprimidos'
+    }
+  ],
+  'fc-clostridium': [
+    {
+      pathogen:'Clostridium botulinum',
+      name:'C. botulinum',
+      disease:'Botulismo',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo',
+      spore:'✓ Esporo Subterminal/Central',
+      sporeClass:'spore-yes',
+      oxygen:'Anaeróbio ESTRITO',
+      howGot:'Alimentos enlatados caseiros (conservas); Mel → botulismo infantil; Feridas (heroína)',
+      virulence:'Toxina botulínica: inibe liberação de ACETILCOLINA → PARALISIA FLÁCIDA',
+      clinical:'Sem febre! Alterações visuais, dificuldade de deglutir/falar. Progressão → paralisia respiratória → morte. Paciente CONSCIENTE até o fim. Lata estufada = sinal de alerta!',
+      atb:'Penicilina (controverso) + Antitoxina trivalente (A,B,E)',
+      extra:'NÃO dar mel para crianças <1 ano! Toxina mais potente conhecida. Usado em bioterrorismo. BOTOX é uso terapêutico!'
+    },
+    {
+      pathogen:'Clostridium tetani',
+      name:'C. tetani',
+      disease:'Tétano',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo (aspecto de RAQUETE de tênis)',
+      spore:'✓ Esporo Terminal OVAL',
+      sporeClass:'spore-yes',
+      oxygen:'Anaeróbio ESTRITO',
+      howGot:'Esporos do solo penetram em feridas (pregos enferrujados, feridas contaminadas)',
+      virulence:'Tetanoespasmina: bloqueia liberação de GABA e GLICINA → hiperreflexia → PARALISIA ESPÁSTICA',
+      clinical:'TRISMO (primeiro sinal!), riso sardônico, opistótonos, rigidez generalizada. Espasmos com luz e ruído. Paciente CONSCIENTE. Diagnóstico TOTALMENTE CLÍNICO',
+      atb:'Penicilina + Antitoxina tetânica + Toxoide (vacinação)',
+      extra:'Prevenção: reforço a cada 10 anos. Tétano neonatal: cordão umbilical. NÃO esquecer desbridamento cirúrgico!'
+    },
+    {
+      pathogen:'Clostridium perfringens',
+      name:'C. perfringens',
+      disease:'Gangrena Gasosa + Intoxicação Alimentar',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo',
+      spore:'✓ Esporo Subterminal',
+      sporeClass:'spore-yes',
+      oxygen:'Anaeróbio (aerotolerante)',
+      howGot:'Esporos em tecidos traumatizados (terra, fezes); Ingestão de carne contaminada',
+      virulence:'Alfa-toxina (lecitinase/fosfolipase C): hemolítica, destrói membranas + produção de GÁS nos tecidos',
+      clinical:'Crepitação (barulho ao apertar o tecido = GÁS nos tecidos!). Gangrena negra e fétida. Inicio 1-3 dias após ferida. Intoxicação: diarreia em 7-30h sem febre/vômito',
+      atb:'Penicilina + Desbridamento cirúrgico (câmara hiperbárica)',
+      extra:'Fermentação de carboidratos → produção de gás → distensão tecidual. 90% dos casos de gangrena gasosa clostridiana'
+    },
+    {
+      pathogen:'Clostridium difficile',
+      name:'C. difficile',
+      disease:'Colite Pseudomembranosa',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo',
+      spore:'✓ Esporo Oval Subterminal',
+      sporeClass:'spore-yes',
+      oxygen:'Anaeróbio ESTRITO',
+      howGot:'Uso de antibióticos desequilibra microbiota → proliferação de C. difficile. Também por endoscopia/colonoscopia',
+      virulence:'Toxina A (TcdA = enterotoxina): dano ao epitélio intestinal. Toxina B (TcdB = citotoxina): apoptose e exsudato capilar',
+      clinical:'Diarreia líquida ou hemorrágica, cólicas abdominais, leucocitose, febre. Pseudomembrana = FALSA membrana (endoscopia)',
+      atb:'Vancomicina oral ou Metronidazol. Casos recorrentes: TRANSPLANTE FECAL!',
+      extra:'Suspender o ATB causador! Fatores de risco: idosos, imunodeprimidos, uso excessivo de ATB. Pseudo = FALSO!'
+    }
+  ],
+  'fc-gram-pos-bacilos': [
+    {
+      pathogen:'Corynebacterium diphtheriae',
+      name:'C. diphtheriae',
+      disease:'Difteria',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo Pleomórfico (letras chinesas / paliçada / palito de tambor)',
+      spore:'✗ NÃO forma esporos',
+      sporeClass:'spore-no',
+      oxygen:'Aeróbio ou Anaeróbio Facultativo',
+      howGot:'Gotículas de secreções respiratórias (aerossol) / contato direto. Transmissão por conversas, contato, pelo ar',
+      virulence:'Toxina diftérica (polipeptídeo termolábil) — codificada por BACTERIÓFAGO LISOGÊNICO! Fragmento B: liga ao receptor. Fragmento A: inibe síntese proteica por ADP-ribosilação do fator de elongação',
+      clinical:'Pseudomembrana CINZENTA sobre amígdalas/faringe/laringe (SANGRA ao raspar!). "Pescoço de touro" (edema ganglionar). Miocardite, neurotoxicidade (desmielinização), danos renais e hepáticos',
+      atb:'Penicilina ou Azitromicina + ANTITOXINA diftérica 20.000-120.000 UI',
+      extra:'Diagnóstico: raspar placa → SANGRA (diferente de amigdalite estreptocócica que NÃO sangra). Doença de notificação obrigatória! Pacientes alcoolistas/indigentes em risco'
+    },
+    {
+      pathogen:'Listeria monocytogenes',
+      name:'L. monocytogenes',
+      disease:'Listeriose (Meningite, Sepse Neonatal, Gastroenterite)',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo curto',
+      spore:'✗ NÃO forma esporos',
+      sporeClass:'spore-no',
+      oxygen:'Anaeróbio Facultativo',
+      howGot:'Alimentos contaminados: leite não pasteurizado, queijos moles, sushi, carnes, frutas (melão!). Transmissão vertical mãe→feto',
+      virulence:'Listeriolisina O: permite escapar do fagolisossoma. Internalinas A e B: facilitam invasão. Polimerização de actina: move-se dentro e entre células sem exposição ao sistema imune!',
+      clinical:'Imunodeprimidos: meningoencefalite (rigidez de nuca, febre, fotofobia). Gestantes: aborto, sepse neonatal. Adultos saudáveis: gastroenterite febril leve. Granulomat infan. séptica',
+      atb:'Ampicilina (+ gentamicina em casos graves). CEFALOSPORINAS NÃO FUNCIONAM!',
+      extra:'Sobrevive a 4°C (geladeira!). Tolerante a pH baixo e alta salinidade. Patógeno INTRACELULAR facultativo. Afeta principalmente grávidas, idosos, imunodeprimidos e recém-nascidos'
+    },
+    {
+      pathogen:'Erysipelothrix rhusiopathiae',
+      name:'E. rhusiopathiae',
+      disease:'Erisipeloide (Dedo de baleia/foca)',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Bacilo Pleomórfico (bastões curtos em cadeias ou filamentos longos)',
+      spore:'✗ NÃO forma esporos',
+      sporeClass:'spore-no',
+      oxygen:'Anaeróbio Facultativo, IMÓVEL',
+      howGot:'Contato com carnes contaminadas através de excoriações na pele. Risco: açougueiros, pescadores, manipuladores de peixe',
+      virulence:'Mecanismo não completamente definido. Invasão através de abrasões cutâneas',
+      clinical:'Dedo de baleia/foca: vermelho, doloroso, edematoso, eritematoso, lesão elevada e violácea. SEM SECREÇÃO (diferencia de Staph e Strep que têm pus!). Incubação: 2-7 dias',
+      atb:'Penicilina G (infecções graves)',
+      extra:'Pode levar a bacteriemia e endocardite. Distribução mundial, comensal em trato digestivo de aves e mamíferos. Erisipeloide ≠ Erisipela (que é por Streptococcus)'
+    }
+  ],
+  'fc-cocos-pos': [
+    {
+      pathogen:'Staphylococcus aureus',
+      name:'S. aureus',
+      disease:'Infecções de pele, Pneumonia, Endocardite, Osteomielite, TSST, SSSS, Intoxicação alimentar',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Coco em CACHOS (uvas) — daí o nome "staphylé" = cacho de uvas',
+      spore:'✗ NÃO forma esporos',
+      sporeClass:'spore-no',
+      oxygen:'Anaeróbio Facultativo',
+      howGot:'Colonização nas narinas anteriores (20% portadores persistentes). Fômites, mãos. Endocardite: drogas injetáveis',
+      virulence:'Coagulase (+), catalase (+), proteína A (anticomplemento), TSST-1 (superantígeno), leucocidina PVL, toxinas ETA/ETB (exfoliativas), alfa/beta/delta hemolisinas',
+      clinical:'Impetigo, furúnculo, celulite, pneumonia necrotizante (PVL), TSS (tampão 4h!), SSSS (crianças <5 anos), Intoxicação alimentar (vômito em 2-6h), Osteomielite em crianças',
+      atb:'MSSA: Oxacilina. MRSA: VANCOMICINA',
+      extra:'Manitol salgado → AMARELO. MRSA: gene mecA → PBPs modificadas → resistência a todos os beta-lactâmicos. Único Staph coagulase POSITIVO e DNase POSITIVO'
+    },
+    {
+      pathogen:'Staphylococcus epidermidis',
+      name:'S. epidermidis',
+      disease:'Infecções de catéteres e próteses (nosocomial)',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Coco em cachos',
+      spore:'✗ NÃO forma esporos',
+      sporeClass:'spore-no',
+      oxygen:'Anaeróbio Facultativo',
+      howGot:'Dispositivos médicos (catéteres, próteses). Pele é o nicho natural. Transmissão hospitalar',
+      virulence:'Formação de biofilme (principal fator!). PGA (ácido poli-γ-glutâmico) protege de neutrófilos. PSM (phenol-soluble modulin) — citotoxina',
+      clinical:'Bacteremia primária, endocardite de prótese. Sintomas menos evidentes que S. aureus. Biofilme dificulta ação de antibióticos',
+      atb:'Vancomicina (muitas cepas resistentes a múltiplos ATB)',
+      extra:'Coagulase NEGATIVA. Sensível à novobiocina (diferencia de S. saprophyticus). Não fermenta manitol. 75-90% das cepas hospitalares são resistentes à meticilina'
+    },
+    {
+      pathogen:'Staphylococcus saprophyticus',
+      name:'S. saprophyticus',
+      disease:'Infecção do Trato Urinário (ITU)',
+      gram:'GRAM +', gramClass:'gram-pos',
+      shape:'Coco em cachos',
+      spore:'✗ NÃO forma esporos',
+      sporeClass:'spore-no',
+      oxygen:'Anaeróbio Facultativo',
+      howGot:'Trato genitourinário feminino. Mulheres jovens sexualmente ativas. Segunda causa mais frequente de cistite após E. coli (80%)',
+      virulence:'Adesinas (variam a matriz celular). Uroase produz ambiente alcalino',
+      clinical:'Disúria, urgência, polaquiúria. Nitrito NEGATIVO (não reduz nitrato!). Piúria (leucócitos na urina). Infecções recorrentes',
+      atb:'Nitrofurantoína ou TMP-SMX',
+      extra:'RESISTENTE à novobiocina (chave diagnóstica!). Sensível: S. epidermidis. Nitrito (−) + mulher jovem + coco Gram+ = SEMPRE pensar em S. saprophyticus!'
+    }
+  ]
+};
+
+function buildFlashCards() {
+  Object.entries(flashcardsData).forEach(([containerId, cards]) => {
+    const container = document.getElementById(containerId);
+    if(!container) return;
+    cards.forEach((card, i) => {
+      const fc = document.createElement('div');
+      fc.className = 'flashcard';
+      fc.innerHTML = `
+        <div class="flashcard-inner">
+          <div class="flashcard-front">
+            <div>
+              <div class="fc-pathogen">${card.pathogen}</div>
+              <div class="fc-name">${card.name}</div>
+              <div class="fc-disease">${card.disease}</div>
+              <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap">
+                <span class="${card.gramClass}">${card.gram}</span>
+                <span class="${card.sporeClass}">${card.spore}</span>
+              </div>
+            </div>
+            <div class="fc-hint">👆 Clique para ver detalhes</div>
+          </div>
+          <div class="flashcard-back">
+            <div style="overflow-y:auto;height:100%">
+              <div class="fc-label">FORMA</div>
+              <div class="fc-value">${card.shape}</div>
+              <div class="fc-label">OXIGÊNIO</div>
+              <div class="fc-value">${card.oxygen}</div>
+              <div class="fc-label">COMO ADQUIRE</div>
+              <div class="fc-value">${card.howGot}</div>
+              <div class="fc-label">VIRULÊNCIA</div>
+              <div class="fc-value">${card.virulence}</div>
+              <div class="fc-label">CLÍNICA</div>
+              <div class="fc-value">${card.clinical}</div>
+              <div class="fc-atb">
+                <div class="fc-label">💊 ATB 1ª ESCOLHA</div>
+                <div class="fc-value">${card.atb}</div>
+              </div>
+              <div class="fc-label" style="margin-top:8px">⚠️ EXTRA</div>
+              <div class="fc-value" style="font-size:11px">${card.extra}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      fc.addEventListener('click', () => fc.classList.toggle('flipped'));
+      container.appendChild(fc);
+    });
+  });
+}
+
+buildFlashCards();
+
+// ── QUIZ DATA ──
+const quizData = [
+  {
+    q:"Un hombre de 45 años, ganadero, presenta una lesión en el brazo con escara negra central, edema y fiebre. ¿Cuál es el agente etiológico más probable?",
+    context:"Trabajaba con ganado vacuno y caballos. La lesión comenzó como una úlcera indolora y se expandió con escara negra central.",
+    opts:["Clostridium perfringens","Bacillus anthracis","Staphylococcus aureus","Erysipelothrix rhusiopathiae"],
+    correct:1,
+    explain:"<strong>Bacillus anthracis</strong> causa el carbunco cutáneo — presentación más frecuente (95% de los casos). La escara negra central (necrosis) sobre la lesión, en un trabajador con exposición a herbívoros, es el signo patognomónico. El antibiótico de primera elección es la <strong>ciprofloxacina</strong>."
+  },
+  {
+    q:"¿Cuál es la principal diferencia CLÍNICA entre el tétanos y el botulismo?",
+    context:"Ambas son enfermedades causadas por toxinas de Clostridium que afectan el sistema nervioso.",
+    opts:["El tétanos causa parálisis flácida; el botulismo causa parálisis espástica","El tétanos causa parálisis espástica; el botulismo causa parálisis flácida","El tétanos causa fiebre alta; el botulismo no causa ningún síntoma neurológico","El botulismo bloquea GABA; el tétanos bloquea acetilcolina"],
+    correct:1,
+    explain:"<strong>Tétanos</strong> = tetanoespasmina bloquea GABA y glicina (inhibidores) → <strong>PARÁLISIS ESPÁSTICA</strong> (rigidez, trismo, opistótonos). <strong>Botulismo</strong> = toxina botulínica bloquea acetilcolina (excitador) → <strong>PARÁLISIS FLÁCCIDA</strong> (parálisis descendente, ptosis, debilidad muscular). Ambos: paciente consciente hasta el final."
+  },
+  {
+    q:"¿Cuál es el PRIMER síntoma clásico del tétanos generalizado?",
+    context:"El diagnóstico del tétanos es totalmente clínico.",
+    opts:["Opistótonos (postura arqueada)","Risa sardónica","Trismo (espasmo del músculo masetero)","Fiebre alta (>39°C)"],
+    correct:2,
+    explain:"El <strong>TRISMO</strong> es el primer síntoma del tétanos — dificultad para abrir la boca por espasmo del músculo masetero. Progresión: trismo → risa sardónica → espasmos generalizados → opistótonos. El diagnóstico es TOTALMENTE CLÍNICO. La fiebre generalmente NO está presente en el tétanos."
+  },
+  {
+    q:"¿Cuál prueba PRIMERO diferencia Staphylococcus de Streptococcus?",
+    context:"Un frotis de una lesión muestra cocos Gram-positivos. ¿Cuál es el primer paso para diferenciar el género?",
+    opts:["Prueba de coagulasa","Prueba de catalasa","Prueba de manitol salado","Sensibilidad a novobiocina"],
+    correct:1,
+    explain:"El <strong>TEST DE CATALASA</strong> es el primer paso: catalasa positiva (H₂O₂ → burbujas) = <strong>Staphylococcus</strong>. Catalasa negativa = <strong>Streptococcus</strong>. Solo después se procede con la coagulasa (para diferenciar S. aureus de los otros Staph). La catalasa protege a la bacteria del peróxido de hidrógeno producido por los neutrófilos."
+  },
+  {
+    q:"Una mujer joven sexualmente activa presenta cistitis con nitritos NEGATIVOS en el uroanálisis y se aisla un coco Gram-positivo resistente a novobiocina. ¿Cuál es el agente?",
+    context:"Segunda causa más frecuente de ITU en mujeres jóvenes, después de E. coli.",
+    opts:["Staphylococcus aureus","Staphylococcus epidermidis","Staphylococcus saprophyticus","Streptococcus agalactiae"],
+    correct:2,
+    explain:"<strong>Staphylococcus saprophyticus</strong> — segunda causa de ITU en mujeres jóvenes (E. coli 80%, S. saprophyticus 20%). Claves: nitrito NEGATIVO (no reduce nitrato), coco Gram+, RESISTENTE a novobiocina (diferencia de S. epidermidis que es sensible). Tratamiento: nitrofurantoína o TMP-SMX."
+  },
+  {
+    q:"¿Cuál es la toxina de C. difficile que actúa directamente como ENTEROTOXINA dañando el epitelio intestinal?",
+    context:"C. difficile produce dos toxinas principales que actúan por mecanismos diferentes.",
+    opts:["Toxina B (TcdB) — citotoxina","Toxina A (TcdA) — enterotoxina","Toxina binaria CDT","TSST-1"],
+    correct:1,
+    explain:"La <strong>Toxina A (TcdA)</strong> es la enterotoxina que se une a receptores en el intestino y daña el epitelio intestinal causando inflamación. La <strong>Toxina B (TcdB)</strong> es la citotoxina más potente (modifica moléculas de señalización). Ambas actúan por glucosiltransferasa. Tratamiento: suspender ATB causador + vancomicina oral o metronidazol."
+  },
+  {
+    q:"¿Por qué la tuberculosis afecta preferentemente el ÁPICE PULMONAR?",
+    context:"Mycobacterium tuberculosis tiene requerimientos específicos de oxígeno.",
+    opts:["Porque el ápice tiene mayor temperatura","Porque el ápice tiene mayor concentración de oxígeno (bacteria aerobia estricta)","Porque el ápice tiene mayor flujo linfático","Porque el ápice tiene menor defensa inmunológica"],
+    correct:1,
+    explain:"<em>Mycobacterium tuberculosis</em> es una bacteria <strong>aerobia estricta</strong> — necesita oxígeno para sobrevivir. El ápice pulmonar tiene la <strong>mayor concentración de oxígeno</strong> del pulmón. Por el contrario, las neumonías tienden a aparecer en la base posterior del pulmón. Esta es una pregunta clásica del Dr. Marcos!"
+  },
+  {
+    q:"¿Cuál bacteriófago es RESPONSABLE de la toxigenicidad de Corynebacterium diphtheriae?",
+    context:"Sin este elemento genético, la bacteria no produce la toxina diftérica.",
+    opts:["Plásmido R","Bacteriófago lisogénico (gen tox)","Transposón","Plásmido F"],
+    correct:1,
+    explain:"La toxina diftérica es codificada por un <strong>bacteriófago lisogénico</strong> (gen tox). Sin este fago, C. diphtheriae es avirulenta. Cuando el fago infecta cepas no toxígenas, las convierte en toxígenas (conversión lisogénica). La toxigenicidad es controlada por genes del fago; la invasividad por genes bacterianos."
+  },
+  {
+    q:"Una madre refiere que su bebé de 5 meses está 'hipotônico', con dificultad para succionar y alimentarse mal. Ella le daba miel de abeja. ¿Diagnóstico más probable?",
+    context:"Botulismo infantil — relacionado con la ingesta de esporas en la miel.",
+    opts:["Tétano neonatal","Botulismo infantil","Intoxicación por B. cereus","Listeriosis neonatal"],
+    correct:1,
+    explain:"<strong>Botulismo infantil</strong> — los esporos de C. botulinum en la miel germinan en el intestino del lactente (flora intestinal inmadura) → toxina absorbida → parálisis fláccida ('bebé hipotônico'). <strong>NUNCA dar miel a menores de 1 año!</strong> Puede causar síndrome de muerte súbita infantil. Diagnóstico: detectar C. botulinum y toxina en heces."
+  },
+  {
+    q:"¿Cuál es el mecanismo de resistencia de MRSA a los antibióticos beta-lactámicos?",
+    context:"La resistencia a meticilina (MRSA) confiere resistencia a TODOS los beta-lactámicos.",
+    opts:["Producción de beta-lactamasa que destruye la penicilina","Modificación de las PBPs (Proteínas Ligadoras de Penicilina) — gen mecA","Bombas de efluxo que expulsan el antibiótico","Impermeabilidad de la membrana externa"],
+    correct:1,
+    explain:"El MRSA posee el <strong>gen mecA</strong> que codifica una PBP modificada (PBP2a) que tiene baja afinidad por los antibióticos beta-lactámicos → la bacteria continúa construyendo la pared celular normalmente aunque el ATB esté presente. Esto confiere resistencia a TODOS los beta-lactámicos. Tratamiento: <strong>Vancomicina</strong> (primer antibiótico que todavía funciona)."
+  },
+  {
+    q:"¿Cuál es el principal factor de virulencia que diferencia el S. aureus de los otros estafilococos coagulasa-negativos?",
+    context:"Solo una especie de Staphylococcus coagulase-positivo es clínicamente relevante en humanos.",
+    opts:["Producción de catalasa","Producción de coagulasa","Resistencia a novobiocina","Producción de biofilm"],
+    correct:1,
+    explain:"La <strong>coagulasa</strong> es el principal factor diferencial — S. aureus es la ÚNICA especie de Staphylococcus comúnmente aislada en humanos que es coagulasa POSITIVA. La coagulasa convierte fibrinógeno en fibrina → forma una barrera alrededor de la bacteria → evita la fagocitosis. También es DNase positiva (test confirmatorio)."
+  },
+  {
+    q:"¿Cuál condición es NECESARIA para que ocurra la conjugación bacteriana?",
+    context:"Es el principal mecanismo de diseminación de resistencia a antibióticos entre bacterias.",
+    opts:["Presencia de ADN libre en el ambiente","Contacto directo entre dos bacterias (usando pili sexual)","Presencia de un bacteriófago","Ausencia de oxígeno en el medio"],
+    correct:1,
+    explain:"La <strong>conjugación</strong> requiere <strong>contacto directo</strong> entre bacteria donadora y receptora, mediado por el <strong>pili sexual (fímbria F)</strong>. El plásmido (generalmente plasmídio R de resistencia) es transferido. Este es el principal mecanismo de diseminación de resistencia a antibióticos, incluso entre especies y géneros diferentes."
+  },
+  {
+    q:"¿Cuál es el mecanismo de acción del antibiótico VANCOMICINA?",
+    context:"Vancomicina es el ATB de elección para MRSA y C. difficile.",
+    opts:["Inhibe la síntesis de proteínas en el ribosoma 30S","Inhibe la formación de la pared celular bloqueando transpeptidación (se une a D-alanil-D-alanina)","Inhibe la DNA girasa","Destruye la membrana citoplasmática"],
+    correct:1,
+    explain:"La vancomicina inhibe la formación de la pared celular bacteriana, bloqueando la <strong>transpeptidación</strong> de los terminales peptídicos del peptidoglicano. Se une específicamente al residuo <strong>D-alanil-D-alanina</strong>, impidiendo la acción de las PBPs. Solo actúa contra Gram-positivos (no penetra la membrana externa de Gram-negativos). Introducida en 1956."
+  },
+  {
+    q:"Una trabajadora de pesca presenta una lesión en el dedo con eritema violáceo elevado, edema, dolor intenso, SIN SECRECIÓN. ¿Cuál es el agente más probable?",
+    context:"Infección cutánea en personas que trabajan con peixe o carnes.",
+    opts:["Staphylococcus aureus","Streptococcus pyogenes","Erysipelothrix rhusiopathiae","Listeria monocytogenes"],
+    correct:2,
+    explain:"<strong>Erysipelothrix rhusiopathiae</strong> — 'dedo de ballena/foca'. Erisipeloide: lesión elevada, violácea, dolorosa, edematosa, eritematosa, <strong>SIN SECRECIÓN</strong> (esto la diferencia de infecciones estafilocócicas y estreptocócicas que tienen pus). Afecta pescadores, carniceros, manipuladores de pescado. Transmisión por excoriaciones en la piel. Tratamiento: Penicilina G."
+  },
+  {
+    q:"La toxina del Síndrome de Piel Escaldada Estafilocócica (SSSS) actúa sobre qué proteína?",
+    context:"Las toxinas exfoliativas ETA y ETB causan el desprendimiento de la capa superficial de la piel.",
+    opts:["Queratina de la capa córnea","Desmoglena-1 (proteína de unión entre queratinocitos)","Colágeno tipo IV de la membrana basal","Fibronectina de la dermis"],
+    correct:1,
+    explain:"Las toxinas exfoliativas (ETA y ETB) son <strong>serinoproteasas</strong> que clivan la <strong>desmoglena-1</strong> — proteína responsable de la unión célula-célula en la epidermis (desmosomas). Resultado: separación del estrato granuloso → desprendimiento de la capa superficial de la piel → piel escaldada. Más frecuente en <5 años (sin anticuerpos + riñones inmaduros)."
+  },
+  {
+    q:"¿Cuál es la diferencia entre ENDOTOXINA y EXOTOXINA en términos de estabilidad al calor?",
+    context:"Esta diferencia es fundamental para entender el manejo clínico.",
+    opts:["Endotoxina: inestable; Exotoxina: estable al calor","Endotoxina: estable a 60°C; Exotoxina: inestable al calor","Ambas son igualmente estables al calor","La temperatura no afecta a ninguna de las dos"],
+    correct:1,
+    explain:"<strong>Endotoxina (LPS)</strong>: ESTABLE a 60°C — resiste el calor. Es parte estructural de la pared de Gram-negativos. <strong>Exotoxina</strong>: generalmente INESTABLE al calor (termolábil), aunque hay excepciones como la cereulida de B. cereus (termoestable — por eso recalentar arroz no elimina la toxina!). Esta diferencia es clínicamente relevante para métodos de esterilización."
+  },
+  {
+    q:"Paciente con 'colitis seudomembranosa' — ¿cuál antibiótico causante es el principal factor de riesgo?",
+    context:"C. difficile prolifera cuando la microbiota intestinal normal es alterada.",
+    opts:["Vancomicina intravenosa","Amoxicilina, clindamicina, fluoroquinolonas","Nitrofurantoína","Metronidazol"],
+    correct:1,
+    explain:"Los antibióticos de <strong>amplio espectro</strong> que destruyen la microbiota intestinal normal son los principales factores de riesgo para C. difficile: <strong>ampicilina, clindamicina, fluoroquinolonas</strong>. Al eliminar la flora normal, C. difficile (resistente) puede proliferar y producir toxinas. El tratamiento es: suspender el ATB causador + vancomicina oral o metronidazol."
+  },
+  {
+    q:"¿Cuál es la función del espacio PERIPLASMÁTICO en bacterias Gram-negativas?",
+    context:"Solo existe en Gram-negativas, entre la membrana interna y externa.",
+    opts:["Sitio de síntesis de LPS y peptidoglicano","Contiene enzimas hidrolíticas (proteasas, nucleasas, lipasas) y beta-lactamasa","Lugar de almacenamiento de nutrientes","Sitio de replicación del ADN"],
+    correct:1,
+    explain:"El espacio periplasmático (entre membrana interna y externa en Gram-negativas) contiene: <strong>enzimas hidrolíticas</strong> (proteasas, nucleasas, lipasas) que degradan macromoléculas y <strong>beta-lactamasa</strong> (inactiva penicilina → mecanismo de resistencia!). Representa 20-40% del volumen celular. Función: digestión extracelular y defensa contra antibióticos."
+  },
+  {
+    q:"¿Por qué la Listeria monocytogenes es tan peligrosa en refrigerador (4°C)?",
+    context:"La mayoría de los patógenos alimentarios no sobreviven a la refrigeración.",
+    opts:["Porque produce esporos resistentes al frío","Porque sobrevive y crece a 4°C (temperatura de refrigeración)","Porque produce toxinas termoestables","Porque se convierte en forma esporulada en el frío"],
+    correct:1,
+    explain:"<em>Listeria monocytogenes</em> es la única bacteria patógena que <strong>sobrevive y se multiplica a 4°C</strong> (temperatura de refrigeración). Por eso alimentos como quesos blandos, carnes procesadas, leche no pasteurizada pueden estar contaminados aunque estén refrigerados. Transmisión vertical (mãe→feto). Afecta principalmente grávidas, idosos, imunodeprimidos. Tratamiento: Ampicilina (cefalosporinas NO funcionan!)."
+  },
+  {
+    q:"El diagnóstico del TÉTANO es:",
+    context:"Clostridium tetani es difícil de cultivar y la toxina no siempre se detecta en sangre.",
+    opts:["Por hemocultivo (aislamiento de C. tetani en sangre)","Totalmente CLÍNICO (manifestaciones clínicas + antecedente de lesión)","Por PCR del gen de la tetanoespasmina","Por detección de anticuerpos anti-tetanoespasmina en suero"],
+    correct:1,
+    explain:"El diagnóstico del tétanos es <strong>TOTALMENTE CLÍNICO</strong> — basado en manifestaciones clínicas (trismo, risa sardónica, espasmos) + antecedente de lesión (aunque solo 50% de los pacientes tienen herida evidente). C. tetani raramente se aísla en cultivo. La confirmación puede hacerse con producción de toxina y neutralización con antitoxina específica. ¡Esta es una pregunta favorita del Dr. Marcos!"
+  },
+  {
+    q:"¿Cuál bacteria produce una cápsula ÚNICA entre todos los patógenos bacterianos porque está compuesta por PROTEÍNA y no por polisacárido?",
+    context:"La mayoría de las cápsulas bacterianas son polisacáridicas.",
+    opts:["Streptococcus pneumoniae","Neisseria meningitidis","Bacillus anthracis (ácido poliglutámico)","Klebsiella pneumoniae"],
+    correct:2,
+    explain:"<em>Bacillus anthracis</em> produce una cápsula de <strong>ácido poli-γ-glutámico (proteína)</strong> — única cápsula de composición proteica entre los patógenos bacterianos. Todas las demás cápsulas son polisacáridicas. Esta cápsula tiene función antifagocítica. Cepas no encapsuladas = NO son virulentas."
+  },
+  {
+    q:"¿Cuál antibiótico NO es efectivo para tratar Listeria monocytogenes?",
+    context:"Listeria es un patógeno intracelular que requiere ATB específicos.",
+    opts:["Ampicilina","Eritromicina","Cefalosporinas","TMP-SMX"],
+    correct:2,
+    explain:"Las <strong>cefalosporinas</strong> (y las fluoroquinolonas) NO son efectivas contra Listeria monocytogenes. El fármaco de primera elección es la <strong>ampicilina</strong> (± gentamicina en casos graves). Alternativa: TMP-SMX. Para alérgicos a penicilina: TMP-SMX. Esto es clínicamente importante porque las cefalosporinas son frecuentemente usadas en meningitis, pero FALLAN en meningitis por Listeria!"
+  },
+  {
+    q:"¿Cuál es el mecanismo de la difteria cutánea que da inmunidad natural?",
+    context:"La absorción de toxina en la forma cutánea tiene un efecto inmunológico.",
+    opts:["La bacteria penetra más profundo en la forma cutánea","La absorción LEVE de toxina favorece la producción de anticuerpos antitoxina (inmunidad natural)","La forma cutánea activa linfocitos T citotóxicos","La forma cutánea no tiene relevancia inmunológica"],
+    correct:1,
+    explain:"En la difteria cutánea, la <strong>absorción leve de toxina</strong> desde la herida favorece la producción de <strong>anticuerpos antitoxina</strong> — esto confiere inmunidad natural. Por eso, personas en regiones tropicales donde la difteria cutánea es común tienen mayor inmunidad natural. Esta es también la base para las vacunas de toxoide (toxina inactivada que genera anticuerpos sin causar enfermedad)."
+  },
+  {
+    q:"El síndrome del choque tóxico (TSS) menstrual está asociado principalmente con:",
+    context:"S. aureus produce TSST-1 bajo condiciones específicas.",
+    opts:["Uso de antibióticos durante la menstruación","Uso de tampones súper absorbentes (el O₂ en el tampón favorece la producción de TSST-1)","Infección por Streptococcus durante la menstruación","Uso de anticonceptivos orales"],
+    correct:1,
+    explain:"El TSS menstrual está asociado al uso de <strong>tampones súper absorbentes</strong>. El oxígeno presente en los tampones favorece el crecimiento de S. aureus (aeróbio) y la producción de <strong>TSST-1</strong> (superantígeno). La TSST-1 activa masivamente macrófagos → liberación de mediadores inflamatorios → inflamación sistémica → choque. Solución: cambiar el tampón cada 4 horas!"
+  },
+  {
+    q:"¿Cuál es el PRIMER mecanismo de acción de la toxina botulínica en el organismo?",
+    context:"La toxina actúa en la sinapsis neuromuscular.",
+    opts:["Activa receptores de GABA en la médula espinal","Inhibe la liberación de acetilcolina en la sinapsis (membranas presinápticas)","Destruye la mielina de los nervios","Bloquea el transporte de calcio en el músculo"],
+    correct:1,
+    explain:"La toxina botulínica se une a <strong>receptores en las membranas presinápticas</strong> de las neuronas motoras periféricas e inhibe la liberación de <strong>acetilcolina</strong> en la sinapsis neuromuscular. Sin acetilcolina → sin contracción muscular → <strong>parálisis flácida</strong>. Esto es lo opuesto al tétanos (que bloquea GABA y glicina → exceso de acetilcolina → espasticidad)."
+  },
+  {
+    q:"¿Qué bacteria de importancia médica produce la enzima HIALURONIDASA como factor de virulencia?",
+    context:"Esta enzima degrada el ácido hialurónico del tejido conectivo.",
+    opts:["Mycobacterium tuberculosis","Streptococcus pyogenes (estreptoquinasa hialuronidasa — 'factor difusor')","Clostridium botulinum","Listeria monocytogenes"],
+    correct:1,
+    explain:"La <strong>hialuronidasa</strong> (también llamada 'factor difusor') degrada el ácido hialurónico del tejido conectivo, facilitando la propagación bacteriana. Producida por <em>Streptococcus pyogenes</em> (también por S. aureus y Clostridium). Es uno de los factores que permite que las infecciones estreptocócicas se diseminen rápidamente por los tejidos."
+  },
+  {
+    q:"¿Cuál es la diferencia clave entre BACTERIEMIA y SEPSE?",
+    context:"Términos frecuentemente confundidos en la práctica clínica.",
+    opts:["Son sinónimos, describen la misma condición","Bacteriemia = concepto microbiológico (bacteria en sangre); Sepse = respuesta inflamatória sistémica clínica a infección (MUITO mais grave)","Sepse = bacteria en sangre; Bacteriemia = respuesta inflamatória","La sepse ocurre solo con bacterias Gram-negativas"],
+    correct:1,
+    explain:"<strong>Bacteriemia</strong>: concepto MICROBIOLÓGICO — presencia de bacterias viables en el torrente circulatorio, evidenciada en hemocultivo. <strong>Sepse</strong>: concepto CLÍNICO — respuesta inflamatória sistémica a infección. La sepse es MUCHO más grave porque indica que el organismo responde de forma exagerada → puede llevar a fallo multiorgánico y muerte."
+  },
+  {
+    q:"¿Cuál bacteria Gram-positiva es patógeno INTRACELULAR facultativo que usa polimerización de ACTINA para moverse entre células?",
+    context:"Esta bacteria puede diseminarse de célula en célula sin exposición al sistema inmune.",
+    opts:["Clostridium perfringens","Bacillus anthracis","Listeria monocytogenes","Corynebacterium diphtheriae"],
+    correct:2,
+    explain:"<em>Listeria monocytogenes</em> es un patógeno <strong>intracelular facultativo</strong>: penetra en células (con ayuda de listeriolisina O y internalinas), escapa del fagolisossoma y usa la <strong>polimerización de actina</strong> (formando una 'cola de cometa') para propulsarse de célula en célula — sin exposición al sistema inmune extracelular. Por eso los anticuerpos no son suficientes; se necesita <strong>inmunidad celular</strong> para eliminarla."
+  },
+  {
+    q:"Un hombre con úlcera necrótica y gases en tejido muscular 2 días después de un trauma. La tinción de Gram muestra bacilos Gram-positivos grandes sin esporos visibles. ¿Cuál es el diagnóstico y tratamiento?",
+    context:"Infección mixta en tejido traumatizado.",
+    opts:["Tétano — Penicilina + antitoxina","Gangrena gaseosa por Clostridium perfringens — Penicilina + desbridamento cirúrgico + cámara hiperbárica","Carbunco — Ciprofloxacina","Botulismo por heridas — Penicilina + antitoxina"],
+    correct:1,
+    explain:"<strong>Gangrena gasosa (mionecrosis)</strong> por <em>Clostridium perfringens</em>. La crepitación (gas en tejidos = fermentación de carbohidratos por la bacteria) es patognomónica. La alpha-toxina (lecitinasa) destruye membranas celulares → necrosis. Tratamiento: <strong>penicilina + desbridamiento quirúrgico inmediato</strong> (amputación si necesario) + <strong>cámara hiperbárica</strong> (el O₂ bajo presión inhibe crecimiento anaeróbio). Los esporos pueden no ser visibles en cultivos iniciales (fase vegetativa)."
+  },
+  {
+    q:"¿Por qué se considera al Bacillus anthracis una amenaza de bioterrorismo?",
+    context:"Características únicas de B. anthracis lo hacen potencialmente peligroso como arma.",
+    opts:["Porque es altamente contagioso de persona a persona","Porque sus esporos son extremadamente resistentes, pueden inhalarse y la forma pulmonar tiene alta mortalidad con diagnóstico tardío","Porque no tiene tratamiento antibiótico disponible","Porque produce toxinas que afectan al sistema nervioso central"],
+    correct:1,
+    explain:"B. anthracis es amenaza de bioterrorismo porque: (1) Los <strong>esporos son extremadamente resistentes</strong> (resisten calor, desinfectantes, sobreviven décadas en tierra seca); (2) Pueden ser aerosolizados para <strong>inhalación</strong>; (3) La forma pulmonar tiene <strong>alta mortalidad</strong> porque se confunde con gripe → diagnóstico tardío. En 2001 en EE.UU.: 22 casos por correo con esporas, 5 muertes. Profilaxia: ciprofloxacina 60 días + vacuna AVA."
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+let userAnswers = [];
+
+function renderQuiz() {
+  const c = document.getElementById('quiz-container');
+  if(currentQ >= quizData.length) {
+    const pct = Math.round((score/quizData.length)*100);
+    let msg = pct>=90?"🏆 Excelente! Dr. Marcos ficaria impressionado!":pct>=70?"✅ Bom! Continue estudando!":pct>=50?"📚 Precisa revisar mais o conteúdo.":"💪 Não desista! Revise o material e tente novamente!";
+    c.innerHTML = `<div class="score-card">
+      <div style="font-size:48px;margin-bottom:16px">🧫</div>
+      <div class="score-big">${score}/${quizData.length}</div>
+      <div style="font-size:24px;margin:8px 0;color:var(--accent2)">${pct}%</div>
+      <div class="score-msg">${msg}</div>
+      <button class="btn" style="margin-top:24px" onclick="restartQuiz()">🔄 Tentar Novamente</button>
+    </div>`;
+    return;
+  }
+  const q = quizData[currentQ];
+  const pct = Math.round((currentQ/quizData.length)*100);
+  c.innerHTML = `
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+    <div class="quiz-num">QUESTÃO ${currentQ+1} DE ${quizData.length} • Pontos: ${score}</div>
+    <div class="quiz-q">${q.q}</div>
+    ${q.context?`<div class="quiz-context">📋 ${q.context}</div>`:''}
+    <div class="quiz-opts">
+      ${q.opts.map((o,i)=>`
+        <button class="quiz-opt" onclick="selectAnswer(${i})" id="opt-${i}">
+          <span class="opt-letter">${String.fromCharCode(65+i)})</span>
+          <span>${o}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div class="quiz-explain" id="quiz-explain"></div>
+    <div class="quiz-nav">
+      <span style="color:var(--muted);font-size:12px">${score} acertos até agora</span>
+      <button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none">Próxima →</button>
+    </div>
+  `;
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = quizData[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.classList.add('answered'));
+  opts[q.correct].classList.add('correct');
+  if(idx !== q.correct) {
+    opts[idx].classList.add('wrong');
+  } else {
+    score++;
+  }
+  const ex = document.getElementById('quiz-explain');
+  ex.innerHTML = `<strong>${idx===q.correct?'✅ Correto!':'❌ Incorreto.'}</strong><br><br>${q.explain}`;
+  ex.classList.add('show');
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQuestion() {
+  currentQ++;
+  renderQuiz();
+}
+
+function restartQuiz() {
+  currentQ=0; score=0; answered=false;
+  renderQuiz();
+}
+
+renderQuiz();
+</script>
+</body>
+</html>
