@@ -43,7 +43,7 @@
 
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
-.page{display:none;min-height:100vh}.page.active{display:block}
+.page{display:none;}.page.active{display:block;min-height:calc(100vh - 120px);}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--ac)}
 .top-nav{position:sticky;top:0;z-index:200;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
 .btn-home{background:var(--ac);color:#000;border:none;padding:8px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-family:var(--font-body);font-size:14px;transition:all .2s;display:flex;align-items:center;gap:6px}
@@ -305,6 +305,14 @@ nav.tabs button.active {
 body{background:var(--bg)!important;color:var(--text)!important;font-family:var(--font-body)!important;}
 h1,h2,.hero-t,.mod-title,.chapter-title,.cov-h1,.dash-h1,.sec-nm{font-family:var(--font-display)!important;}
 code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
+
+/* ── Scroll fix desktop ── */
+html{overflow-x:hidden!important;overflow-y:auto!important;}
+body{overflow:visible!important;}
+
+/* ── Botão próxima seção ── */
+.next-btn{background:linear-gradient(135deg,var(--accent2,#38e8c0),var(--accent,#4f9cf9));color:#0a0d14;border:none;padding:1rem 2rem;border-radius:50px;font-family:var(--font-body);font-size:15px;font-weight:800;cursor:pointer;margin:3rem auto 1rem;display:block;text-align:center;transition:all .3s;max-width:380px;letter-spacing:.4px;}
+.next-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(79,156,249,0.45);}
 </style>
 </head>
 <body>
@@ -783,6 +791,13 @@ function initDashboard(){
 </div>`).join('');
 }
 
+function getNextSection(currentId){
+  const order=['enterobac','nonferment','haemoph','neisseria','others','spirochetes'];
+  const labels={'enterobac':'Não-fermentadores →','nonferment':'Haemophilus →','haemoph':'Neisseria →','neisseria':'Outras Bactérias →','others':'Espiroquetas →','spirochetes':'📝 Quiz Final →'};
+  const nextId={'enterobac':'nonferment','nonferment':'haemoph','haemoph':'neisseria','neisseria':'others','others':'spirochetes','spirochetes':'quiz'};
+  return {id: nextId[currentId]||null, label: labels[currentId]||null};
+}
+
 function renderSections(){
   sections.forEach(sec=>{
     const p=document.getElementById('page-'+sec.id);
@@ -997,10 +1012,31 @@ function toggleAnswer(id){
 // ================================================================
 // INIT
 // ================================================================
+function addNextBtn(secId){
+  const page=document.getElementById('page-'+secId);
+  if(!page||page.querySelector('.section-next-btn'))return;
+  const map={
+    'enterobac':['page-nonferment','🧫 Não-fermentadores →'],
+    'nonferment':['page-haemoph','🔬 Haemophilus →'],
+    'haemoph':['page-neisseria','⚕️ Neisseria →'],
+    'neisseria':['page-others','🌿 Outras Bactérias →'],
+    'others':['page-spirochetes','🌀 Espiroquetas →'],
+    'spirochetes':['page-quiz','📝 Quiz Final →']
+  };
+  if(!map[secId])return;
+  const [nextPage,label]=map[secId];
+  const btn=document.createElement('button');
+  btn.className='next-btn section-next-btn';
+  btn.textContent=label;
+  btn.onclick=()=>{if(nextPage==='page-quiz')initQuiz();showPage(nextPage);};
+  page.appendChild(btn);
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
   initDashboard();
   renderSections();
   renderCases();
+  sections.forEach(s=>addNextBtn(s.id));
 });
 </script>
 

@@ -280,6 +280,14 @@ nav.tabs button.active {
 body{background:var(--bg)!important;color:var(--text)!important;font-family:var(--font-body)!important;}
 h1,h2,.hero-t,.mod-title,.chapter-title,.cov-h1,.dash-h1,.sec-nm{font-family:var(--font-display)!important;}
 code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
+
+/* ── Scroll fix desktop ── */
+html{overflow-x:hidden!important;overflow-y:auto!important;}
+body{overflow:visible!important;}
+
+/* ── Botão próxima seção ── */
+.next-btn{background:linear-gradient(135deg,var(--accent2,#38e8c0),var(--accent,#4f9cf9));color:#0a0d14;border:none;padding:1rem 2rem;border-radius:50px;font-family:var(--font-body);font-size:15px;font-weight:800;cursor:pointer;margin:3rem auto 1rem;display:block;text-align:center;transition:all .3s;max-width:380px;letter-spacing:.4px;}
+.next-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(79,156,249,0.45);}
 </style>
 </head>
 <body>
@@ -357,6 +365,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   <div class="cl cl-red"><div class="cl-lbl">❗ Diferença Crítica — Cálcio no Coração</div><p>Músculo esquelético usa Ca²⁺ quase exclusivamente <strong>intracelular</strong>. O coração <strong>NECESSITA OBRIGATORIAMENTE de Ca²⁺ extracelular</strong> — porque o RS cardíaco é menos desenvolvido. Esta distinção é fundamental para provas!</p></div>
   <div class="cl cl-red"><div class="cl-lbl">❗ Verdadeiro ou Falso — Discos Intercalares</div><p>"Discos intercalares são regiões de <strong>alta resistência</strong> ao fluxo de íons." → <strong>FALSO!</strong> São regiões de <strong>baixa resistência</strong> — facilitam (não dificultam) a transmissão do potencial.</p></div>
 </div>
+<button class="next-btn" onclick="sm(1,document.querySelectorAll('.ntab')[1])">02 · Propriedades →</button>
+
 
 <!-- ======= M1: PROPRIEDADES ======= -->
 <div class="mod" id="m1">
@@ -379,6 +389,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   <div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="card-t">🌊 Lusitropismo</div><span style="font-size:.65rem;background:rgba(39,174,96,.13);border:1px solid rgba(39,174,96,.3);color:var(--green-l);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;">Relaxamento</span></div><div class="card-b">Capacidade de <strong>RELAXAR</strong> após contração. Todo músculo contraído obrigatoriamente deve relaxar. ↓ Lusitropismo → disfunção diastólica (IC com FE preservada).</div></div>
   <div class="cl cl-red"><div class="cl-lbl">❗ Armadilha Clássica de Prova</div><p>"A propriedade que transmite potencial de estrutura para estrutura denomina-se <strong>cronotropismo</strong>." → <strong>FALSO!</strong> É o <strong>dromotropismo</strong>.<br>Cronotropismo = frequência. Dromotropismo = transmissão/condução.</p></div>
 </div>
+<button class="next-btn" onclick="sm(2,document.querySelectorAll('.ntab')[2])">03 · Automatismo →</button>
+
 
 <!-- ======= M2: AUTOMATISMO ======= -->
 <div class="mod" id="m2">
@@ -401,6 +413,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   </div>
   <div class="cl cl-warn"><div class="cl-lbl">⚠️ Não Podemos Separar Inotropismo e Cronotropismo</div><ul><li>Ambos dependem da entrada de Ca²⁺</li><li>↑ Ca²⁺ = ↑ força de contração (inotropismo) + ↑ frequência (cronotropismo) — simultâneo!</li><li>A entrada de Ca²⁺ está vinculada ao <strong>automatismo</strong> cardíaco</li><li>Idoso com hipocalcemia → rampa deitada → FC mais baixa → bradicardia fisiológica</li></ul></div>
 </div>
+<button class="next-btn" onclick="sm(3,document.querySelectorAll('.ntab')[3])">04 · Potenciais de Ação →</button>
+
 
 <!-- ======= M3: POTENCIAIS ======= -->
 <div class="mod" id="m3">
@@ -441,6 +455,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
     <tr><td><strong>Hiperpolarização</strong></td><td>Sim</td><td>Sim</td><td><strong>Não (coração não tem)</strong></td></tr>
   </tbody></table></div>
 </div>
+<button class="next-btn" onclick="sm(4,document.querySelectorAll('.ntab')[4])">05 · Período Refratário →</button>
+
 
 <!-- ======= M4: REFRATÁRIO ======= -->
 <div class="mod" id="m4">
@@ -460,6 +476,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   </div>
   <div class="cl cl-ok"><div class="cl-lbl">✓ Importância Clínica</div><ul><li>Protege contra <strong>tetania cardíaca</strong> — seria imediatamente fatal</li><li>Garante <strong>relaxamento completo</strong> entre batimentos (diástole + enchimento)</li><li><strong>Antiarrítmicos</strong> atuam modificando a duração do período refratário</li></ul></div>
 </div>
+<button class="next-btn" onclick="sm(5,document.querySelectorAll('.ntab')[5])">06 · Sistema de Condução →</button>
+
 
 <!-- ======= M5: CONDUÇÃO ======= -->
 <div class="mod" id="m5">
@@ -486,6 +504,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
     → ~133× mais discos intercalares nas fibras de Purkinje!
   </div>
 </div>
+<button class="next-btn" onclick="sm(6,document.querySelectorAll('.ntab')[6])">07 · Cálcio Cardíaco →</button>
+
 
 <!-- ======= M6: CÁLCIO ======= -->
 <div class="mod" id="m6">
@@ -505,6 +525,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
     <tr><td><strong>Bloqueadores Ca²⁺</strong></td><td>↓ Cronotropismo</td><td>↓ Inotropismo</td><td>Tx HAS, FA, angina</td></tr>
   </tbody></table></div>
 </div>
+<button class="next-btn" onclick="sm(7,document.querySelectorAll('.ntab')[7])">08 · Hemodinâmica →</button>
+
 
 <!-- ======= M7: HEMODINÂMICA ======= -->
 <div class="mod" id="m7">
@@ -531,6 +553,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
     <tr><td><strong>Sístole Ventricular</strong></td><td>Contração + ejeção de sangue</td><td>Aórtica/Pulmonar abertas; AV fechadas</td></tr>
   </tbody></table></div>
 </div>
+<button class="next-btn" onclick="sm(8,document.querySelectorAll('.ntab')[8])">09 · Frank-Starling →</button>
+
 
 <!-- ======= M8: FRANK-STARLING ======= -->
 <div class="mod" id="m8">
@@ -578,6 +602,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   </tbody></table></div>
   <div class="cl cl-ok"><div class="cl-lbl">✓ Questões Clássicas — Frank-Starling</div><p>"A lei de F-S se aplica principalmente a qual parte?" → <strong>Ventrículos</strong> (plural).<br>"A pré-carga se define em qual momento?" → <strong>Diástole</strong>.<br>"Como também se chama a pré-carga?" → <strong>Sobrecarga de volume</strong>.<br>"De que depende a pós-carga?" → <strong>Resistência aórtica (RCA) + RVP/RUA</strong>.</p></div>
 </div>
+<button class="next-btn" onclick="sm(9,document.querySelectorAll('.ntab')[9])">10 · Bainbridge →</button>
+
 
 <!-- ======= M9: BAINBRIDGE ======= -->
 <div class="mod" id="m9">
@@ -608,6 +634,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   </tbody></table></div>
   <div class="cl cl-ok"><div class="cl-lbl">✓ Questões Clássicas — Bainbridge</div><p>"Qual reflexo ajusta a FC ao retorno venoso auricular?" → <strong>Reflexo de Bainbridge</strong>.<br>"Qual aurícula?" → <strong>DIREITA</strong>.<br>"↑ retorno venoso → FC?" → <strong>Aumenta</strong>.</p></div>
 </div>
+<button class="next-btn" onclick="sm(10,document.querySelectorAll('.ntab')[10])">11 · Ruídos Cardíacos →</button>
+
 
 <!-- ======= M10: RUÍDOS ======= -->
 <div class="mod" id="m10">
@@ -632,6 +660,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
     <tr><td><strong>Contínuo</strong></td><td>PCA (persistência do canal arterial)</td><td>Sopro em "maquinaria"</td></tr>
   </tbody></table></div>
 </div>
+<button class="next-btn" onclick="sm(11,document.querySelectorAll('.ntab')[11])">12 · ECG — Ondas →</button>
+
 
 <!-- ======= M11: ECG ONDAS ======= -->
 <div class="mod" id="m11">
@@ -704,6 +734,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
     <tr><td><strong>BRDE</strong></td><td>QRS &gt;120ms, rSR' em V1</td><td>Bloqueio ramo direito feixe de His</td></tr>
   </tbody></table></div>
 </div>
+<button class="next-btn" onclick="sm(12,document.querySelectorAll('.ntab')[12])">13 · ECG — Eletrodos →</button>
+
 
 <!-- ======= M12: ECG ELETRODOS ======= -->
 <div class="mod" id="m12">
@@ -750,6 +782,8 @@ code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
   </tbody></table></div>
   <div class="cl cl-warn"><div class="cl-lbl">⚠️ Técnica das Isodifásicas</div><p>Encontrar derivação com ondas <strong>isodifásicas</strong> (metade acima, metade abaixo): o eixo está a <strong>90° desta derivação</strong>. Para definir qual dos dois lados: se D2 estiver com ondas normais (positivas) → sentido horário. Se invertidas → sentido anti-horário.</p></div>
 </div>
+<button class="next-btn" onclick="sm(13,document.querySelectorAll('.ntab')[13])">🃏 Ir para Flashcards →</button>
+
 
 <!-- ======= M13: FLASHCARDS ======= -->
 <div class="mod" id="m13">

@@ -58,7 +58,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
 .tab-btn.ft{color:#e76f51}.tab-btn.ft.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(244,162,97,.05)}
 .tab-btn.qt{color:#7c5cbf}.tab-btn.qt.active{color:#a78bfa;border-bottom-color:#a78bfa;background:rgba(124,92,191,.05)}
 .main-content{max-width:1200px;margin:0 auto;padding:2rem}
-.chapter-section{display:none}.chapter-section.active{display:block;animation:fsIn .3s ease}
+.chapter-section{display:none}.chapter-section.active{display:block;animation:fsIn .3s ease;min-height:calc(100vh - 200px);}
 @keyframes fsIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 .chapter-hero{background:linear-gradient(135deg,var(--card),var(--card2));border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:2rem;position:relative;overflow:hidden}
 .chapter-hero::before{content:'';position:absolute;top:-50%;right:-10%;width:280px;height:280px;background:radial-gradient(circle,rgba(0,180,216,.08),transparent 70%);pointer-events:none}
@@ -230,6 +230,10 @@ nav.tabs button.active {
 body{background:var(--bg)!important;color:var(--text)!important;font-family:var(--font-body)!important;}
 h1,h2,.hero-t,.mod-title,.chapter-title,.cov-h1,.dash-h1,.sec-nm{font-family:var(--font-display)!important;}
 code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
+
+/* ── Scroll fix desktop ── */
+html{overflow-x:hidden!important;overflow-y:auto!important;}
+body{overflow:visible!important;}
 </style>
 </head>
 <body>
