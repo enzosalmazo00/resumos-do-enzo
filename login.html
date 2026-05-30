@@ -6,7 +6,6 @@
   <title>Login — Resumos do Enzo</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="auth.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -213,7 +212,6 @@
     @keyframes fadeUp   { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
     @keyframes fadeIn   { from{opacity:0;}to{opacity:1;} }
 
-
     /* ── TERMOS DE USO ── */
     .terms-box {
       margin-bottom: 14px;
@@ -313,7 +311,6 @@
 
   <div class="brand">
     <div class="brand-main">RESUMOS DO <span>ENZO</span></div>
-    
   </div>
 
   <div class="glass-card">
@@ -427,7 +424,6 @@
     updatePositions();
   });
 
-  // ── LIGHTS ──
   scene.add(new THREE.AmbientLight(0x1a2a3a, 2.2));
   function addLight(color, intensity, x, y, z) {
     const l = new THREE.PointLight(color, intensity, 70);
@@ -440,7 +436,6 @@
   const lTop    = addLight(0xffffff, 2,   0,  7, 4);
   const lPurple = addLight(0x818cf8, 3,   0, -4, 5);
 
-  // ── DNA BUILDER ──
   const TURNS=4.0, HEIGHT=11.0, RADIUS=1.5, ZSCALE=0.55, STEPS=200, BPSTEP=6;
 
   const backboneMat = new THREE.MeshPhongMaterial({
@@ -491,7 +486,6 @@
     }
   }
 
-  // Dois grupos — esquerdo e direito
   const leftGroup  = new THREE.Group();
   const rightGroup = new THREE.Group();
   scene.add(leftGroup);
@@ -500,7 +494,6 @@
   buildDNA(leftGroup);
   buildDNA(rightGroup);
 
-  // Partículas de ambiente
   function makeParticles(count, spread, color, size, opacity) {
     const pos=new Float32Array(count*3);
     for (let i=0;i<pos.length;i++) pos[i]=(Math.random()-0.5)*spread;
@@ -511,12 +504,10 @@
   makeParticles(500, 28, 0x22d3ee, 0.04, 0.25);
   makeParticles(200, 32, 0x67e8f9, 0.022, 0.15);
 
-  // ── POSICIONAMENTO RESPONSIVO ──
   function getDNAOffset() {
     const aspect = window.innerWidth / window.innerHeight;
     const isMobile = window.innerWidth < 700;
     if (isMobile) return { x: 0, scale: 0.7, opacity: 0.35, showBoth: false };
-    // Desktop: offset proporcional à largura para ficar nas laterais
     const offset = Math.min(3.5 + aspect * 2.2, 8.0);
     return { x: offset, scale: 1.0, opacity: 1.0, showBoth: true };
   }
@@ -529,54 +520,35 @@
       leftGroup.visible  = true;
       rightGroup.visible = true;
     } else {
-      // Mobile: só o da direita centralizado atrás do card
       leftGroup.visible = false;
       rightGroup.position.x = 0;
     }
-    // Ajusta opacidade das backbones
     backboneMat.opacity = cfg.opacity * 0.90;
   }
 
   updatePositions();
 
-  // ── ANIMAÇÃO ──
   (function animate() {
     requestAnimationFrame(animate);
     const t = Date.now() * 0.001;
-
-    // DNAs rodam em direções opostas
     leftGroup.rotation.y  =  t * 0.18;
     rightGroup.rotation.y = -t * 0.18;
-
-    // Leve flutuação vertical alternada
     leftGroup.position.y  =  Math.sin(t * 0.22) * 0.3;
     rightGroup.position.y = -Math.sin(t * 0.22) * 0.3;
-
-    // Luzes orbitando cada lado
     lLeft.position.set( -getDNAOffset().x + Math.sin(t*0.35)*4, 2+Math.cos(t*0.2)*2, Math.cos(t*0.35)*5+4);
     lRight.position.set( getDNAOffset().x + Math.cos(t*0.28)*4, 2+Math.sin(t*0.18)*2, Math.sin(t*0.28)*5+4);
-
     renderer.render(scene, camera);
   })();
 })();
 </script>
 
-<!-- AUTH CONFIG -->
+<!-- ══ AUTH CONFIG ══ -->
 <script>
 window.authConfig = {
   SUPABASE_URL: "https://dmuwtmovrtlhvokdnmis.supabase.co",
   SUPABASE_KEY: "sb_publishable_TA6bGrJ_gMQ9A4l6G3XYTQ_2rEuNNAj",
-  generateDeviceId() {
-    const combined = navigator.userAgent+'|'+window.screen.width+'x'+window.screen.height+'|'+Intl.DateTimeFormat().resolvedOptions().timeZone;
-    let hash = 0xcbf29ce484222325n;
-    for (let i=0;i<combined.length;i++) {
-      hash ^= BigInt(combined.charCodeAt(i));
-      hash += (hash<<1n)+(hash<<4n)+(hash<<5n)+(hash<<7n)+(hash<<8n)+(hash<<40n);
-    }
-    return Math.abs(Number(hash%BigInt(1e10))).toString(36).padStart(16,'0');
-  },
 
-  // Device ID persistente — usa localStorage para ser estável
+  // [C4] Device ID via crypto (estável) — não usa userAgent
   getDeviceId() {
     const key = "_resumos_did";
     let id = localStorage.getItem(key);
@@ -588,6 +560,7 @@ window.authConfig = {
     }
     return id;
   },
+
   async initSupabase() {
     if (!window.supabase) { console.warn("Supabase nao carregado"); return null; }
     try { return supabase.createClient(this.SUPABASE_URL, this.SUPABASE_KEY); }
@@ -596,12 +569,12 @@ window.authConfig = {
 };
 </script>
 
-<!-- AUTH LOGIC -->
+<!-- ══ AUTH LOGIC ══ -->
 <script>
 (async function() {
   let supabaseClient = null;
   let isLogin        = true;
-  let pendingUserId  = null; // guarda userId durante conflito de dispositivo
+  let pendingUserId  = null;
 
   const email     = document.getElementById("email");
   const password  = document.getElementById("password");
@@ -620,36 +593,41 @@ window.authConfig = {
   }
   function showForceBtn(show) { forceBtn.style.display = show ? "block" : "none"; }
 
+  // Verifica se já está logado e redireciona direto para dashboard
   async function checkAlreadyAuthenticated() {
     if (!supabaseClient) return;
     try {
       const { data:{session} } = await supabaseClient.auth.getSession();
-      if (session) window.location.href = "dashboard.html";
+      if (session) window.location.replace("dashboard.html");
     } catch(err) { console.error(err); }
   }
 
-  // ── Registrar dispositivo e ir ao dashboard ──
+  // Registra dispositivo e redireciona para dashboard
   async function finalizeLogin(userId) {
     const deviceId = window.authConfig.getDeviceId();
-    await supabaseClient.from("profiles").update({
-      active_session: true,
-      device_id:      deviceId,
-      last_login:     new Date().toISOString()
-    }).eq("id", userId);
+    try {
+      await supabaseClient.from("profiles").update({
+        active_session: true,
+        device_id:      deviceId,
+        last_login:     new Date().toISOString()
+      }).eq("id", userId);
+    } catch(err) {
+      console.warn("[login] Erro ao registrar dispositivo:", err);
+      // Não bloqueia o login por falha no registro do device
+    }
 
     setMsg("✅ Acesso liberado...", "#4ade80");
     showForceBtn(false);
     await new Promise(r => setTimeout(r, 900));
-    window.location.href = "dashboard.html";
+    window.location.replace("dashboard.html");
   }
 
-  // ── Botão forçar desconexão ──
+  // Forçar desconexão do outro dispositivo
   forceBtn.addEventListener("click", async () => {
     if (!pendingUserId) return;
     forceBtn.disabled = true;
     forceBtn.textContent = "Desconectando...";
     try {
-      // Limpa o lock do outro dispositivo
       await supabaseClient.from("profiles").update({
         active_session: false,
         device_id:      null
@@ -664,17 +642,18 @@ window.authConfig = {
     }
   });
 
-  // ── Toggle login / cadastro ──
+  // Toggle login / cadastro
   toggleBtn.addEventListener("click", () => {
     isLogin = !isLogin;
-    title.textContent     = isLogin ? "Bem-vindo"  : "Criar conta";
-    mainBtn.textContent   = isLogin ? "Entrar"      : "Cadastrar";
-    toggleBtn.textContent = isLogin ? "Criar conta" : "Já tenho conta";
+    title.textContent     = isLogin ? "Bem-vindo"   : "Criar conta";
+    mainBtn.textContent   = isLogin ? "Entrar"       : "Cadastrar";
+    toggleBtn.textContent = isLogin ? "Criar conta"  : "Já tenho conta";
     msg.textContent = ""; email.value = ""; password.value = "";
     showForceBtn(false); pendingUserId = null;
+    setTimeout(updateMainBtn, 10);
   });
 
-  // ── Handler principal ──
+  // Handler principal
   mainBtn.addEventListener("click", async () => {
     if (!supabaseClient) { setMsg("Sistema indisponível", "#f87171"); return; }
     const emailVal = email.value.trim(), passVal = password.value;
@@ -685,7 +664,7 @@ window.authConfig = {
 
     try {
       if (isLogin) {
-        // ── LOGIN ──
+        // ── LOGIN ──────────────────────────────────────────────────────────
         const { data:authData, error:authError } = await supabaseClient.auth.signInWithPassword({
           email: emailVal, password: passVal
         });
@@ -694,24 +673,27 @@ window.authConfig = {
         const userId = authData.user.id;
 
         const { data:profile, error:profileError } = await supabaseClient
-          .from("profiles").select("*").eq("id", userId).single();
+          .from("profiles").select("is_approved, active_session, device_id").eq("id", userId).single();
 
         if (profileError || !profile) {
           await supabaseClient.auth.signOut();
-          setMsg("Erro ao carregar perfil", "#f87171"); setLoading(false); return;
+          setMsg("Erro ao carregar perfil. Tente novamente.", "#f87171");
+          setLoading(false);
+          return;
         }
 
         if (!profile.is_approved) {
           await supabaseClient.auth.signOut();
-          setMsg("⏳ Conta aguardando aprovação", "#fb923c"); setLoading(false); return;
+          setMsg("⏳ Conta aguardando aprovação. Envie o comprovante via WhatsApp.", "#fb923c");
+          setLoading(false);
+          return;
         }
 
-        // ── Verificar dispositivo ──
+        // Verificar dispositivo
         const currentDevice = window.authConfig.getDeviceId();
         const hasConflict   = profile.active_session && profile.device_id && profile.device_id !== currentDevice;
 
         if (hasConflict) {
-          // Guarda userId para o forceBtn usar
           pendingUserId = userId;
           setMsg("❌ Conta ativa em outro dispositivo.", "#ef4444");
           showForceBtn(true);
@@ -719,11 +701,10 @@ window.authConfig = {
           return;
         }
 
-        // Sem conflito — registra este dispositivo e entra
         await finalizeLogin(userId);
 
       } else {
-        // ── CADASTRO ──
+        // ── CADASTRO ────────────────────────────────────────────────────────
         if (passVal.length < 6) { setMsg("Senha deve ter pelo menos 6 caracteres", "#f87171"); setLoading(false); return; }
         if (!emailVal.includes("@")) { setMsg("Email inválido", "#f87171"); setLoading(false); return; }
 
@@ -733,9 +714,15 @@ window.authConfig = {
         if (signupError) { setMsg(signupError.message||"Erro ao criar conta", "#f87171"); setLoading(false); return; }
 
         const { error:insertError } = await supabaseClient.from("profiles").insert({
-          id: authData.user.id, email: authData.user.email, is_approved: true
+          id:          authData.user.id,
+          email:       authData.user.email,
+          is_approved: true   // aprovação direta no cadastro
         });
-        if (insertError) { setMsg("Erro ao criar perfil", "#f87171"); setLoading(false); return; }
+        if (insertError) {
+          setMsg("Erro ao criar perfil. Tente novamente.", "#f87171");
+          setLoading(false);
+          return;
+        }
 
         setMsg("✅ Conta criada! Entrando...", "#4ade80");
         await new Promise(r => setTimeout(r, 1000));
@@ -743,36 +730,34 @@ window.authConfig = {
       }
 
     } catch(err) {
-      console.error(err); setMsg("Erro inesperado", "#f87171"); setLoading(false);
+      console.error(err);
+      setMsg("Erro inesperado. Tente novamente.", "#f87171");
+      setLoading(false);
     }
   });
 
-  // ── Termos de uso ──
+  // Termos de uso
   window.toggleTerms = function() {
     var chk = document.getElementById("termsChk");
     chk.checked = !chk.checked;
     updateMainBtn();
   };
   window.updateMainBtn = function() {
-    var chk     = document.getElementById("termsChk");
-    var btn     = document.getElementById("mainBtn");
+    var chk       = document.getElementById("termsChk");
+    var btn       = document.getElementById("mainBtn");
     var isChecked = chk && chk.checked;
-    btn.disabled = !isChecked;
+    btn.disabled  = !isChecked;
     btn.style.opacity = isChecked ? "1" : "0.45";
   };
-  // Inicializa com botão desabilitado
   updateMainBtn();
 
-  // Reaplica ao trocar login/cadastro
-  var origToggle = toggleBtn.onclick;
-  toggleBtn.addEventListener("click", function() {
-    setTimeout(updateMainBtn, 10);
-  });
-
-  // ── Init ──
+  // Init
   supabaseClient = await window.authConfig.initSupabase();
-  if (supabaseClient) { await checkAlreadyAuthenticated(); }
-  else { setMsg("⚠ Serviços indisponíveis", "#fb923c"); }
+  if (supabaseClient) {
+    await checkAlreadyAuthenticated();
+  } else {
+    setMsg("⚠ Serviços indisponíveis. Recarregue a página.", "#fb923c");
+  }
 })();
 </script>
 

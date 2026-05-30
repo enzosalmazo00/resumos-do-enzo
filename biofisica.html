@@ -4,228 +4,88 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Biofísica Cardíaca P2 — Enzo Salmazo</title>
-
 <!-- PAGE_KEY: coluna "biofisica" na tabela profiles -->
 <script>window.PAGE_KEY = "biofisica";</script>
-<!-- 1. Oculta a página imediatamente (evita flash de conteúdo não autorizado) -->
 <script>document.documentElement.style.visibility = "hidden";</script>
-<!-- 2. Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- 3. Guard compartilhado: checa getSession() → redireciona ou dispara authReady -->
 <script src="auth-guard.js"></script>
-<!-- 4. Revela a página somente após auth OK -->
 <script>
   document.addEventListener("authReady", function () {
     document.documentElement.style.visibility = "visible";
   });
 </script>
-
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
 :root {
-  --bg: #0a0d14; --bg2: #111520; --bg3: #161c2e;
-  --card: #1a2138; --card2: #1f2845;
-  --accent: #4f9cf9; --accent2: #38e8c0; --accent3: #f9784f; --accent4: #b84ff9;
-  --gold: #f9c94f; --red: #f95f5f; --green: #4ff984;
-  --text: #e8eaf6; --muted: #8892b0;
+  --bg: #0a0d14;
+  --bg2: #111520;
+  --bg3: #161c2e;
+  --card: #1a2138;
+  --card2: #1f2845;
+  --accent: #4f9cf9;
+  --accent2: #38e8c0;
+  --accent3: #f9784f;
+  --accent4: #e74c3c;
+  --gold: #f9c94f;
+  --red: #f95f5f;
+  --green: #4ff984;
+  --text: #e8eaf6;
+  --muted: #8892b0;
   --border: rgba(79,156,249,0.15);
   --shadow: 0 8px 40px rgba(0,0,0,0.5);
   --radius: 16px;
   --font-body: 'DM Sans', sans-serif;
   --font-display: 'Syne', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-/* aliases */
---t1:var(--text); --t2:#a8b4cc; --t3:var(--muted);
---bdr:var(--border); --bdr-b:rgba(79,156,249,0.35); --card-h:var(--card2);
---red-b:#e74c3c; --blue:#4f9cf9; --blue-l:#7cb9fb;
---green-l:var(--green); --gold-l:#fbd97f;
---ac:var(--accent); --ac2:var(--accent2);
---tx:var(--text); --tx2:var(--muted);
 }
 
-*{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;overflow-x:hidden;overflow-y:scroll;}
-/* ── Scrollbar visível e clicável ── */
-html::-webkit-scrollbar{width:8px;}
-html::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);border-radius:4px;}
-html::-webkit-scrollbar-thumb{background:rgba(192,57,43,0.55);border-radius:4px;}
-html::-webkit-scrollbar-thumb:hover{background:rgba(231,76,60,0.85);}
-body{font-family:var(--font-body);background:var(--bg);color:var(--t1);min-height:100vh;overflow-y:auto;overflow-x:hidden;}
-body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");pointer-events:none;z-index:0;}
+* { margin:0; padding:0; box-sizing:border-box; }
 
-#pgbar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--red),var(--gold-l),var(--blue-l));z-index:9999;width:0%;transition:width .12s;box-shadow:0 0 12px var(--red);}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
 
-.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 32px;overflow:hidden;}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 115%,rgba(192,57,43,.16) 0%,transparent 65%),radial-gradient(ellipse 45% 45% at 8% 35%,rgba(192,57,43,.07) 0%,transparent 55%),radial-gradient(ellipse 40% 40% at 92% 15%,rgba(200,148,20,.06) 0%,transparent 55%);z-index:1;}
-.ecg-wrap{position:absolute;bottom:0;left:0;right:0;height:140px;overflow:hidden;opacity:.22;z-index:2;}
-.ecg-svg{width:200%;height:100%;animation:ecgScroll 3.8s linear infinite;}
-@keyframes ecgScroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
-.hero-content{position:relative;z-index:3;text-align:center;max-width:900px;}
-.badge{display:inline-flex;align-items:center;gap:9px;background:rgba(192,57,43,.12);border:1px solid var(--bdr-b);color:var(--red-b);padding:8px 20px;border-radius:100px;font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:30px;}
-.badge::before{content:'';width:7px;height:7px;background:var(--red-b);border-radius:50%;animation:pdot 1.3s ease-in-out infinite;}
-@keyframes pdot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.25;transform:scale(.6);}}
-.heart{font-size:3.8rem;animation:hbeat 1.05s ease-in-out infinite;display:inline-block;margin-bottom:20px;filter:drop-shadow(0 0 24px rgba(231,76,60,.5));}
-@keyframes hbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.22);}28%{transform:scale(1);}42%{transform:scale(1.14);}56%{transform:scale(1);}}
-h1.hero-t{font-family:var(--font-display);font-size:clamp(2.4rem,8vw,6.5rem);font-weight:900;line-height:1.05;margin-bottom:12px;background:linear-gradient(138deg,#f2edfb 15%,var(--red-b) 55%,var(--gold-l) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.hero-author{font-size:.82rem;color:var(--t3);font-weight:600;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;}
-.hero-ref{font-size:.75rem;color:var(--t3);margin-bottom:36px;font-style:italic;}
-.hero-sub{font-size:1.05rem;color:var(--t2);font-weight:300;max-width:580px;margin:0 auto 44px;line-height:1.8;}
-.stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;}
-.stat-n{font-family:var(--font-display);font-size:3rem;font-weight:900;color:var(--red-b);display:block;line-height:1;}
-.stat-l{font-size:.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;margin-top:4px;}
-.cta{display:inline-flex;align-items:center;gap:10px;padding:16px 42px;background:linear-gradient(135deg,var(--red),#a93226);color:#fff;border:none;border-radius:100px;font-size:1rem;font-weight:700;cursor:pointer;transition:all .3s;font-family:var(--font-body);box-shadow:0 0 40px rgba(192,57,43,.4);}
-.cta:hover{transform:scale(1.06);box-shadow:0 0 60px rgba(231,76,60,.55);}
-.scroll-hint{position:absolute;bottom:155px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--t3);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;animation:float 2.2s ease-in-out infinite;cursor:pointer;z-index:3;}
-.scroll-hint::after{content:'';width:1px;height:30px;background:linear-gradient(to bottom,var(--red-b),transparent);}
-@keyframes float{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-8px);}}
+#particles { position:fixed; inset:0; z-index:0; pointer-events:none; }
 
-.nav-wrap{position:sticky;top:0;z-index:100;background:rgba(5,5,10,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr);}
-.nav-inner{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;}
-.nav-inner::-webkit-scrollbar{display:none;}
-.ntab{flex-shrink:0;padding:16px 13px;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:all .22s;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;font-family:var(--font-body);}
-.ntab:hover{color:var(--t2);}
-.ntab.active{color:var(--red-b);border-bottom-color:var(--red-b);}
+header {
+  position: relative; z-index:10;
+  text-align: center;
+  padding: 48px 24px 32px;
+  background: linear-gradient(180deg, rgba(231,76,60,0.08) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+}
+header .badge {
+  display:inline-block;
+  background: linear-gradient(135deg, #e74c3c, #f9c94f);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  padding: 4px 14px; border-radius:20px; margin-bottom:16px;
+}
+header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 800; letter-spacing:-1px;
+  background: linear-gradient(135deg, #fff 0%, #e74c3c 50%, #f9c94f 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip: text; margin-bottom:8px;
+}
+header .sub { color: var(--muted); font-size:13px; letter-spacing:1px; }
+header .by { margin-top:12px; color: #e74c3c; font-family:var(--font-mono); font-size:12px; }
 
-.main{max-width:1120px;margin:0 auto;padding:60px 28px 100px;}
-.mod{display:none;animation:fadeUp .4s ease forwards;}
-.mod.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
-.mod-tag{font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--red-b);margin-bottom:10px;}
-.mod-title{font-family:var(--font-display);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.1;color:var(--t1);margin-bottom:12px;}
-.mod-desc{font-size:1rem;color:var(--t2);font-weight:300;max-width:600px;line-height:1.8;margin-bottom:46px;}
-.divl{height:1px;background:var(--bdr);margin:44px 0;}
-.stitle{font-family:var(--font-display);font-size:1.7rem;font-weight:700;color:var(--t1);margin-bottom:22px;display:flex;align-items:center;gap:16px;}
-.stitle::after{content:'';flex:1;height:1px;background:var(--bdr);}
-
-.cg2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin:24px 0;}
-.cg3{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:24px 0;}
-.card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:26px;transition:all .3s;position:relative;overflow:hidden;}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--red),transparent);opacity:0;transition:opacity .3s;}
-.card:hover{background:var(--card-h);border-color:var(--bdr-b);transform:translateY(-3px);box-shadow:0 20px 45px rgba(192,57,43,.1);}
-.card:hover::before{opacity:1;}
-.card-ico{font-size:2.1rem;margin-bottom:13px;display:block;}
-.card-t{font-family:var(--font-display);font-size:1.18rem;font-weight:700;color:var(--t1);margin-bottom:9px;}
-.card-b{font-size:.87rem;color:var(--t2);line-height:1.75;}
-.card-freq{margin-top:13px;padding:10px 14px;background:rgba(192,57,43,.1);border:1px solid rgba(192,57,43,.22);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--red-b);}
-
-.cl{border-radius:14px;padding:22px 26px;margin:22px 0;border-left:3px solid;}
-.cl-info{background:rgba(74,144,217,.07);border-color:var(--blue);}
-.cl-warn{background:rgba(201,148,26,.07);border-color:var(--gold);}
-.cl-red{background:rgba(192,57,43,.09);border-color:var(--red-b);}
-.cl-ok{background:rgba(39,174,96,.07);border-color:var(--green);}
-.cl-lbl{font-size:.67rem;font-weight:700;letter-spacing:.17em;text-transform:uppercase;margin-bottom:9px;}
-.cl-info .cl-lbl{color:var(--blue-l);}.cl-warn .cl-lbl{color:var(--gold-l);}.cl-red .cl-lbl{color:var(--red-b);}.cl-ok .cl-lbl{color:var(--green-l);}
-.cl p,.cl li{font-size:.9rem;color:var(--t2);line-height:1.78;}.cl ul{margin-left:20px;margin-top:8px;}
-
-p{font-size:.93rem;color:var(--t2);line-height:1.84;margin-bottom:14px;}
-ul,ol{margin-left:22px;margin-bottom:14px;}
-li{font-size:.88rem;color:var(--t2);line-height:1.74;margin-bottom:7px;}
-strong{color:var(--t1);font-weight:600;}
-h4{font-size:.73rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-l);margin:22px 0 10px;}
-
-.tw{border-radius:14px;overflow:hidden;border:1px solid var(--bdr);margin:22px 0;}
-table{width:100%;border-collapse:collapse;}
-thead{background:rgba(192,57,43,.12);}
-th{padding:14px 18px;text-align:left;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--red-b);}
-td{padding:13px 18px;font-size:.85rem;color:var(--t2);border-top:1px solid rgba(255,255,255,.04);}
-tr:hover td{background:rgba(255,255,255,.022);}
-
-.formula{background:rgba(3,3,8,.75);border:1px solid var(--bdr-b);border-radius:14px;padding:24px;margin:20px 0;font-family:'JetBrains Mono',monospace;font-size:.87rem;color:var(--gold-l);text-align:center;line-height:2.3;}
-
-.t2c{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:22px 0;}
-@media(max-width:700px){.t2c{grid-template-columns:1fr;}}
-
-.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:14px;margin:22px 0;}
-.pcard{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:24px;text-align:center;transition:all .3s;cursor:default;}
-.pcard:hover{border-color:var(--bdr-b);background:rgba(192,57,43,.07);transform:scale(1.04);}
-.pico{font-size:2.3rem;margin-bottom:10px;}
-.pname{font-family:var(--font-display);font-size:1.05rem;font-weight:700;color:var(--t1);margin-bottom:5px;}
-.pdef{font-size:.73rem;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;}
-
-.sbar{display:flex;align-items:center;gap:14px;margin:12px 0;}
-.sname{font-size:.84rem;color:var(--t1);width:200px;flex-shrink:0;}
-.strack{flex:1;height:7px;background:rgba(255,255,255,.05);border-radius:4px;overflow:hidden;}
-.sfill{height:100%;border-radius:4px;}
-.sval{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--red-b);width:100px;text-align:right;}
-
-.phase-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:26px;margin:18px 0;}
-.phaselist{display:flex;flex-direction:column;gap:10px;margin-top:16px;}
-.prow{display:flex;align-items:center;gap:14px;padding:11px 15px;border-radius:8px;background:rgba(255,255,255,.022);border:1px solid rgba(255,255,255,.04);}
-.prow.mestal{border:1px solid rgba(241,196,15,.28);background:rgba(241,196,15,.05);}
-.plabel{font-family:'JetBrains Mono',monospace;font-size:.78rem;width:80px;flex-shrink:0;}
-.pions{flex:1;font-size:.85rem;color:var(--t2);}
-.pdesc{font-size:.78rem;color:var(--t3);width:150px;text-align:right;}
-.ph{display:inline-block;padding:3px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;font-size:.72rem;font-weight:600;}
-.ph0{background:rgba(231,76,60,.14);color:#e74c3c;border:1px solid rgba(231,76,60,.3);}
-.ph1{background:rgba(230,126,34,.14);color:#e67e22;border:1px solid rgba(230,126,34,.3);}
-.ph2{background:rgba(241,196,15,.14);color:#f1c40f;border:1px solid rgba(241,196,15,.3);}
-.ph3{background:rgba(39,174,96,.14);color:#27ae60;border:1px solid rgba(39,174,96,.3);}
-.ph4{background:rgba(100,149,237,.14);color:#6495ed;border:1px solid rgba(100,149,237,.3);}
-
-.rbar{display:flex;height:60px;border-radius:10px;overflow:hidden;margin:22px 0;}
-.rabs{background:rgba(192,57,43,.32);border:1px solid rgba(192,57,43,.5);flex:3;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--red-b);text-align:center;}
-.rrel{background:rgba(201,148,26,.22);border:1px solid rgba(201,148,26,.3);flex:2;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--gold-l);text-align:center;}
-.rnrm{background:rgba(39,174,96,.13);border:1px solid rgba(39,174,96,.22);flex:3;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--green-l);text-align:center;}
-
-.scard{display:flex;align-items:center;gap:22px;background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin:12px 0;transition:all .3s;}
-.scard:hover{border-color:var(--bdr-b);transform:translateX(4px);}
-.snum{font-family:var(--font-display);font-size:2.8rem;font-weight:900;color:var(--red);line-height:1;width:56px;flex-shrink:0;}
-.sinfo h4{font-size:.9rem;color:var(--t1);text-transform:none;letter-spacing:0;margin-bottom:6px;}
-
-.wcard{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin:12px 0;display:flex;align-items:flex-start;gap:18px;transition:all .3s;}
-.wcard:hover{border-color:var(--bdr-b);background:rgba(192,57,43,.04);}
-.wlabel{font-family:var(--font-display);font-size:2.4rem;font-weight:900;color:var(--red-b);width:70px;flex-shrink:0;line-height:1;padding-top:4px;}
-.winfo p{margin-bottom:5px;font-size:.88rem;}
-.mono{font-family:'JetBrains Mono',monospace;font-size:.76rem;color:var(--t3);}
-
-.vol-bar{display:flex;flex-direction:column;gap:14px;margin:22px 0;}
-.vol-row{display:flex;align-items:center;gap:14px;}
-.vol-name{font-size:.84rem;color:var(--t1);width:200px;flex-shrink:0;}
-.vol-track{flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);}
-.vol-fill{height:100%;border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;}
-.vol-val{font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;color:#fff;}
-.vol-ml{font-size:.76rem;color:var(--t3);font-family:'JetBrains Mono',monospace;}
-
-/* FLASHCARDS */
-#flashcard-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px;margin:28px 0;}
-.fc-scene{perspective:1200px;width:100%;min-height:220px;cursor:pointer;}
-.fc-card{width:100%;height:100%;min-height:220px;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.4,0,.2,1);position:relative;}
-.fc-card.flipped{transform:rotateY(180deg);}
-.fc-front,.fc-back{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px 20px;text-align:center;}
-.fc-front{background:var(--card);border:1px solid var(--bdr);}
-.fc-back{background:rgba(192,57,43,.1);border:1px solid var(--bdr-b);transform:rotateY(180deg);}
-.fc-ico{font-size:1.8rem;margin-bottom:10px;opacity:.8;}
-.fc-q{font-size:.88rem;color:var(--t2);line-height:1.65;font-weight:500;}
-.fc-tag{font-size:.6rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--t3);margin-bottom:8px;}
-.fc-a{font-size:.85rem;color:var(--t1);line-height:1.7;font-weight:500;}
-.fc-hint{font-size:.68rem;color:var(--t3);margin-top:12px;letter-spacing:.06em;}
-.fc-counter{text-align:center;color:var(--t3);font-size:.75rem;margin-bottom:16px;font-family:'JetBrains Mono',monospace;}
-
-/* QUIZ */
-.quiz-q{font-size:1.05rem;color:var(--t1);font-weight:500;margin-bottom:22px;line-height:1.65;}
-.qopts{display:flex;flex-direction:column;gap:10px;}
-.qopt{padding:14px 18px;border:1px solid var(--bdr);border-radius:8px;font-size:.9rem;color:var(--t2);cursor:pointer;transition:all .2s;background:none;text-align:left;font-family:var(--font-body);}
-.qopt:hover:not(:disabled){border-color:var(--bdr-b);color:var(--t1);background:rgba(255,255,255,.03);}
-.qopt.cor{background:rgba(39,174,96,.12);border-color:var(--green);color:var(--green-l);}
-.qopt.incor{background:rgba(192,57,43,.12);border-color:var(--red-b);color:var(--red-b);}
-.qexp{margin-top:16px;padding:17px;border-radius:8px;background:rgba(255,255,255,.03);font-size:.87rem;color:var(--t2);display:none;line-height:1.72;border:1px solid rgba(255,255,255,.06);}
-.qexp.show{display:block;}
-.qnxt{margin-top:14px;padding:11px 26px;background:var(--red);color:#fff;border:none;border-radius:8px;font-size:.87rem;font-weight:700;cursor:pointer;display:none;transition:background .2s;font-family:var(--font-body);}
-.qnxt:hover{background:var(--red-b);}
-.qnxt.show{display:inline-block;}
-.qsnum{font-family:var(--font-display);font-size:5.5rem;font-weight:900;}
-
-footer{border-top:1px solid var(--bdr);padding:44px 30px;text-align:center;color:var(--t3);font-size:.78rem;}
-footer strong{color:var(--t2);}
-
-/* ── NAV PADRÃO BIOQUÍMICA ── */
 nav.tabs {
   position:sticky; top:0; z-index:100;
   display:flex; gap:4px; flex-wrap:wrap;
-  background: rgba(10,13,20,0.97);
+  background: rgba(10,13,20,0.95);
   backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border);
   padding: 10px 16px;
   justify-content: center;
@@ -238,679 +98,1206 @@ nav.tabs button {
   padding: 6px 14px; border-radius: 8px; cursor:pointer;
   transition: all 0.2s; letter-spacing: 0.3px;
 }
-nav.tabs button:hover { color: var(--accent); border-color: var(--accent); }
+nav.tabs button:hover { color: #e74c3c; border-color: #e74c3c; }
 nav.tabs button.active {
-  background: var(--accent); color: var(--bg);
-  border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(79,156,249,0.4);
-}
-@media(max-width:768px){
-  nav.tabs{ flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; justify-content:flex-start; }
-  nav.tabs::-webkit-scrollbar{ display:none; }
-  nav.tabs button{ flex-shrink:0; white-space:nowrap; }
+  background: #e74c3c; color: var(--bg);
+  border-color: #e74c3c;
+  box-shadow: 0 0 20px rgba(231,76,60,0.4);
 }
 
+.section { display:none; animation: fadeIn 0.4s ease; }
+.section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 
-/* ── Nav override: Bioquímica pill style ── */
-.ntab,.nav-btn,.tab-btn,.btn-home{
-  background:var(--card)!important;
-  border:1px solid var(--border)!important;
-  border-bottom:1px solid var(--border)!important;
-  border-radius:8px!important;
-  color:var(--muted)!important;
-  font-family:var(--font-body)!important;
-  font-size:12px!important;
-  font-weight:600!important;
-  padding:6px 14px!important;
-  cursor:pointer!important;
-  transition:all 0.2s!important;
-  white-space:nowrap!important;
-  letter-spacing:0.3px!important;
-  text-transform:none!important;
-  flex-shrink:0!important;
-  flex:none!important;
-  min-width:auto!important;
-  display:inline-flex!important;
-  align-items:center!important;
-  gap:4px!important;
+.container { max-width:1100px; margin:0 auto; padding: 32px 20px; position:relative; z-index:1; }
+
+.chapter-title {
+  font-family: var(--font-display); font-size:22px; font-weight:700;
+  color: #e74c3c; margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
 }
-.ntab:hover,.nav-btn:hover,.tab-btn:hover{color:var(--accent)!important;border-color:var(--accent)!important;background:var(--card2)!important;}
-.ntab.active,.nav-btn.active,.tab-btn.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important;box-shadow:0 0 20px rgba(79,156,249,0.4)!important;}
-.nav-wrap,.nav-inner,.tab-nav-wrapper,.tab-nav{background:rgba(10,13,20,0.97)!important;backdrop-filter:blur(20px)!important;border-bottom:1px solid var(--border)!important;}
-body{background:var(--bg)!important;color:var(--text)!important;font-family:var(--font-body)!important;}
-h1,h2,.hero-t,.mod-title,.chapter-title,.cov-h1,.dash-h1,.sec-nm{font-family:var(--font-display)!important;}
-code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
+.chapter-title::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.chap-icon { font-size:24px; }
 
-/* ── Scroll fix desktop ── */
-html{overflow-x:hidden!important;overflow-y:auto!important;}
-body{overflow:visible!important;}
+.glossary-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px; margin-bottom:32px;
+}
+.gloss-card {
+  background: var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 20px;
+  cursor:pointer; transition: all 0.25s;
+  position:relative; overflow:hidden;
+}
+.gloss-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, #e74c3c, #f9c94f);
+  border-radius:3px 3px 0 0;
+}
+.gloss-card:hover {
+  transform:translateY(-2px); border-color: #e74c3c;
+  box-shadow: 0 8px 30px rgba(231,76,60,0.2);
+}
+.gloss-card .term {
+  font-family:var(--font-mono); font-size:13px; color:var(--accent2);
+  font-weight:600; margin-bottom:6px;
+}
+.gloss-card .def { color:var(--text); font-size:13px; line-height:1.6; }
 
-/* ── Botão próxima seção ── */
-.next-btn{background:linear-gradient(135deg,var(--accent2,#38e8c0),var(--accent,#4f9cf9));color:#0a0d14;border:none;padding:1rem 2rem;border-radius:50px;font-family:var(--font-body);font-size:15px;font-weight:800;cursor:pointer;margin:3rem auto 1rem;display:block;text-align:center;transition:all .3s;max-width:380px;letter-spacing:.4px;}
-.next-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(79,156,249,0.45);}
+.info-block {
+  background: var(--card2); border-left: 3px solid #e74c3c;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px; margin-bottom:20px;
+}
+.info-block.warn { border-color: var(--gold); }
+.info-block.danger { border-color: var(--red); }
+.info-block.success { border-color: var(--green); }
+.info-block.blue { border-color: var(--accent); }
+.info-block .label {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+}
+.info-block h4 { font-family:var(--font-display); font-weight:700; margin-bottom:8px; font-size:15px; color:#fff; }
+.info-block p { color: var(--text); }
+.info-block ul, .info-block ol { padding-left:20px; margin-top:8px; color:var(--text); }
+.info-block li { margin:4px 0; }
+
+.compare-table {
+  width:100%; border-collapse:separate; border-spacing:0;
+  border-radius:var(--radius); overflow:hidden; margin-bottom:28px;
+}
+.compare-table th {
+  background: var(--card2); color:#e74c3c;
+  font-family:var(--font-display); font-size:13px; font-weight:700;
+  padding:12px 16px; text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.compare-table td {
+  background: var(--card); padding:10px 16px; font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text);
+}
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:hover td { background: var(--card2); }
+
+.sec-divider {
+  display:flex; align-items:center; gap:12px;
+  margin: 32px 0 20px;
+}
+.sec-divider h3 {
+  font-family:var(--font-display); font-weight:700; font-size:17px;
+  color:var(--accent3); white-space:nowrap;
+}
+.sec-divider::before, .sec-divider::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* FLASHCARDS */
+.flashcard-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:20px; margin-bottom:32px;
+}
+.flashcard { perspective:1000px; height:220px; cursor:pointer; }
+.flashcard-inner {
+  position:relative; width:100%; height:100%;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+}
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+.flashcard-front, .flashcard-back {
+  position:absolute; inset:0; border-radius:var(--radius);
+  backface-visibility:hidden; padding:24px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.flashcard-front {
+  background: linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+  border: 1px solid var(--border);
+}
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #2a1020 0%, #1a2030 100%);
+  border: 1px solid rgba(231,76,60,0.3);
+  overflow-y:auto; font-size:13px; line-height:1.6;
+}
+.fc-tag {
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--accent2); letter-spacing:1px; text-transform:uppercase;
+}
+.fc-q {
+  font-family:var(--font-display); font-size:17px; font-weight:700;
+  color:#fff; line-height:1.3; margin:8px 0;
+}
+.fc-hint { font-size:11px; color:#e74c3c; text-align:right; opacity:0.7; }
+
+/* QUIZ */
+.quiz-container { max-width:750px; margin:0 auto; }
+.quiz-progress-bar {
+  height:4px; background:var(--card2);
+  border-radius:4px; margin-bottom:28px; overflow:hidden;
+}
+.quiz-progress-fill {
+  height:100%; border-radius:4px;
+  background: linear-gradient(90deg, #e74c3c, #f9c94f);
+  transition:width 0.4s ease;
+}
+.quiz-num {
+  font-family:var(--font-mono); font-size:12px; color:var(--muted);
+  margin-bottom:8px; letter-spacing:1px;
+}
+.quiz-q {
+  font-family:var(--font-display); font-size:18px; font-weight:700;
+  color:#fff; margin-bottom:24px; line-height:1.5;
+}
+.quiz-opts { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.quiz-opt {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:14px 18px;
+  cursor:pointer; transition:all 0.2s;
+  font-size:14px; text-align:left;
+  display:flex; align-items:flex-start; gap:12px;
+  color:var(--text); font-family:var(--font-body);
+}
+.quiz-opt:hover:not(.answered) { border-color:#e74c3c; background:var(--card2); }
+.quiz-opt .opt-letter {
+  font-family:var(--font-mono); font-size:12px; font-weight:700;
+  color:#e74c3c; min-width:20px;
+}
+.quiz-opt.correct { border-color:var(--green); background:rgba(79,249,132,0.08); }
+.quiz-opt.wrong { border-color:var(--red); background:rgba(249,95,95,0.08); }
+.quiz-opt.correct .opt-letter { color:var(--green); }
+.quiz-opt.wrong .opt-letter { color:var(--red); }
+.quiz-explain {
+  background: var(--card2); border-radius:12px; padding:18px 20px;
+  border-left:3px solid var(--accent2); margin-top:16px;
+  font-size:13px; line-height:1.7; color:var(--text);
+  display:none;
+}
+.quiz-explain.show { display:block; animation:fadeIn 0.3s ease; }
+.quiz-explain strong { color:var(--accent2); }
+.quiz-nav {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:24px; flex-wrap:wrap; gap:12px;
+}
+.btn {
+  background: linear-gradient(135deg, #e74c3c, #f9c94f);
+  color: var(--bg); font-family:var(--font-display);
+  font-weight:700; font-size:14px; border:none;
+  padding:10px 24px; border-radius:10px; cursor:pointer;
+  transition:all 0.2s; letter-spacing:0.5px;
+}
+.btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(231,76,60,0.4); }
+.score-card {
+  text-align:center; padding:48px 32px;
+  background:var(--card); border-radius:20px;
+  border:1px solid var(--border);
+}
+.score-big {
+  font-family:var(--font-display); font-size:72px; font-weight:800;
+  background:linear-gradient(135deg,#e74c3c,#f9c94f);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.score-msg { color:var(--muted); font-size:16px; margin-top:8px; }
+
+.formula {
+  background: rgba(0,0,0,0.4); border:1px solid rgba(231,76,60,0.3);
+  border-radius:12px; padding:20px 24px; margin:20px 0;
+  font-family:var(--font-mono); font-size:13px; color:#f9c94f;
+  text-align:center; line-height:2.2;
+}
+
+.t2c { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin:20px 0; }
+@media(max-width:700px){ .t2c{ grid-template-columns:1fr; } }
+
+.cg2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin:20px 0; }
+.cg3 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin:20px 0; }
+
+.card-item {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:14px; padding:22px; transition:all .3s;
+}
+.card-item:hover { border-color:rgba(231,76,60,0.5); transform:translateY(-2px); }
+.card-ico { font-size:2rem; margin-bottom:10px; display:block; }
+.card-t { font-family:var(--font-display); font-size:1.1rem; font-weight:700; color:var(--text); margin-bottom:8px; }
+.card-b { font-size:.87rem; color:var(--muted); line-height:1.75; }
+
+.pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:20px 0; }
+.pcard { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; text-align:center; transition:all .3s; }
+.pcard:hover { border-color:rgba(231,76,60,0.4); background:rgba(231,76,60,0.05); transform:scale(1.03); }
+.pico { font-size:2.2rem; margin-bottom:10px; }
+.pname { font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+.pdef { font-size:.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; }
+
+p { margin: 8px 0; color: var(--text); }
+strong { color: #fff; }
+em { color: var(--accent2); }
+ul, ol { padding-left:20px; margin:10px 0; }
+li { margin:5px 0; }
+
+.tag-prova {
+  display:inline-block; background:rgba(249,95,95,0.15);
+  border:1px solid var(--red); color:var(--red);
+  font-family:var(--font-mono); font-size:10px; letter-spacing:2px;
+  padding:2px 10px; border-radius:6px; margin-left:8px;
+  vertical-align:middle; text-transform:uppercase;
+}
+
+.rbar { display:flex; height:56px; border-radius:10px; overflow:hidden; margin:20px 0; }
+.rabs { background:rgba(231,76,60,.3); border:1px solid rgba(231,76,60,.5); flex:3; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#e74c3c; text-align:center; }
+.rrel { background:rgba(249,201,79,.2); border:1px solid rgba(249,201,79,.3); flex:2; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#f9c94f; text-align:center; }
+.rnrm { background:rgba(79,249,132,.1); border:1px solid rgba(79,249,132,.2); flex:3; display:flex; align-items:center; justify-content:center; font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--green); text-align:center; }
+
+.sbar { display:flex; align-items:center; gap:14px; margin:10px 0; }
+.sname { font-size:.84rem; color:var(--text); width:200px; flex-shrink:0; }
+.strack { flex:1; height:7px; background:rgba(255,255,255,.05); border-radius:4px; overflow:hidden; }
+.sfill { height:100%; border-radius:4px; }
+.sval { font-family:var(--font-mono); font-size:.78rem; color:#e74c3c; width:110px; text-align:right; }
+
+.phase-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:22px; margin:14px 0; }
+.phaselist { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.prow { display:flex; align-items:center; gap:14px; padding:10px 14px; border-radius:8px; background:rgba(255,255,255,.022); border:1px solid rgba(255,255,255,.04); }
+.prow.mestal { border:1px solid rgba(249,201,79,.28); background:rgba(249,201,79,.05); }
+.plabel { font-family:var(--font-mono); font-size:.78rem; width:80px; flex-shrink:0; }
+.pions { flex:1; font-size:.85rem; color:var(--muted); }
+.pdesc { font-size:.78rem; color:var(--muted); width:150px; text-align:right; }
+
+.scard { display:flex; align-items:center; gap:20px; background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; margin:10px 0; transition:all .3s; }
+.scard:hover { border-color:rgba(231,76,60,.4); transform:translateX(3px); }
+.snum { font-family:var(--font-display); font-size:2.6rem; font-weight:900; color:#e74c3c; line-height:1; width:54px; flex-shrink:0; }
+.sinfo h4 { font-size:.9rem; color:var(--text); font-weight:600; margin-bottom:6px; }
+.sinfo p { font-size:.85rem; color:var(--muted); margin:3px 0; }
+
+.wcard { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; margin:10px 0; display:flex; align-items:flex-start; gap:16px; transition:all .3s; }
+.wcard:hover { border-color:rgba(231,76,60,.4); }
+.wlabel { font-family:var(--font-display); font-size:2.2rem; font-weight:900; color:#e74c3c; width:65px; flex-shrink:0; line-height:1; padding-top:4px; }
+.winfo p { font-size:.87rem; color:var(--muted); margin:4px 0; line-height:1.7; }
+
+#scrolltop {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:#e74c3c; color:var(--bg);
+  width:40px; height:40px; border-radius:50%;
+  border:none; cursor:pointer; font-size:18px;
+  box-shadow:0 4px 20px rgba(231,76,60,0.4);
+  transition:all 0.2s; display:none;
+}
+#scrolltop:hover { transform:translateY(-2px); }
+
+.divl { height:1px; background:var(--border); margin:32px 0; }
+
+/* FILL-IN */
+.fillin-container { max-width:800px; margin:0 auto; }
+.fillin-card {
+  background: var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:28px;
+  margin-bottom:20px; position:relative;
+}
+.fillin-card .fi-num {
+  font-family:var(--font-mono); font-size:11px; color:#e74c3c;
+  letter-spacing:2px; margin-bottom:12px; text-transform:uppercase;
+}
+.fillin-card .fi-q {
+  font-family:var(--font-display); font-size:16px; font-weight:700;
+  color:#fff; margin-bottom:20px; line-height:1.5;
+}
+.fi-opts { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:16px; }
+.fi-opt-btn {
+  background: var(--bg3); border:1px solid var(--border);
+  border-radius:8px; padding:8px 18px;
+  color:var(--text); font-family:var(--font-body); font-size:13px;
+  cursor:pointer; transition:all 0.2s; font-weight:600;
+}
+.fi-opt-btn:hover:not(.fi-answered) { border-color:#e74c3c; color:#e74c3c; }
+.fi-opt-btn.fi-correct { border-color:var(--green); background:rgba(79,249,132,0.1); color:var(--green); }
+.fi-opt-btn.fi-wrong { border-color:var(--red); background:rgba(249,95,95,0.1); color:var(--red); }
+.fi-explain {
+  background:var(--bg3); border-left:3px solid var(--accent2);
+  border-radius:0 8px 8px 0; padding:12px 16px;
+  font-size:13px; color:var(--text); display:none; margin-top:8px;
+}
+.fi-explain.show { display:block; animation:fadeIn 0.3s ease; }
+
+@media(max-width:768px) {
+  nav.tabs { flex-wrap:nowrap; overflow-x:auto; overflow-y:hidden; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:8px; gap:6px; }
+  nav.tabs::-webkit-scrollbar { display:none; }
+  nav.tabs button { flex-shrink:0; font-size:12px; padding:6px 12px; white-space:nowrap; }
+}
+@media(max-width:600px) {
+  header { padding: 32px 16px 24px; }
+  header h1 { font-size: clamp(20px, 7vw, 28px); }
+  .container { padding: 16px 14px; }
+  .flashcard-grid { grid-template-columns: 1fr; }
+  .t2c { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
-<div id="pgbar"></div>
 
-<!-- ======================== HERO ======================== -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="ecg-wrap">
-    <svg class="ecg-svg" viewBox="0 0 1000 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M0,70 L55,70 L62,70 L68,42 L74,102 L78,8 L83,115 L88,70 L108,70 L158,70 L165,70 L170,42 L176,102 L180,8 L185,115 L190,70 L210,70 L258,70 L264,70 L270,42 L276,102 L280,8 L285,115 L290,70 L308,70 L358,70 L364,70 L370,42 L376,102 L380,8 L385,115 L390,70 L408,70 L458,70 L464,70 L470,42 L476,102 L480,8 L485,115 L490,70 L508,70 L558,70 L564,70 L570,42 L576,102 L580,8 L585,115 L590,70 L608,70 L658,70 L664,70 L670,42 L676,102 L680,8 L685,115 L690,70 L708,70 L758,70 L764,70 L770,42 L776,102 L780,8 L785,115 L790,70 L808,70 L858,70 L864,70 L870,42 L876,102 L880,8 L885,115 L890,70 L908,70 L958,70 L964,70 L970,42 L976,102 L980,8 L985,115 L990,70 L1000,70"
-        stroke="rgba(231,76,60,.75)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-  <div class="hero-content">
-    <div class="badge">Biofísica Cardíaca · UCP · P2</div>
-    <div class="heart">🫀</div>
-    <p class="hero-author">Resumo por Enzo Salmazo</p>
-    <h1 class="hero-t">Biofísica<br>Cardíaca</h1>
-    <p class="hero-ref">Guyton &amp; Hall · Biofísica Médica e Biológica — Guilherme A. Micó</p>
-    <p class="hero-sub">Guia interativo completo sobre fundamentos elétricos, mecânicos e hemodinâmicos do coração humano.</p>
-    <div class="stats">
-      <div><span class="stat-n">14</span><span class="stat-l">Módulos</span></div>
-      <div><span class="stat-n">5</span><span class="stat-l">Propriedades</span></div>
-      <div><span class="stat-n">30</span><span class="stat-l">Flashcards</span></div>
-      <div><span class="stat-n">20</span><span class="stat-l">Questões</span></div>
+<canvas id="particles"></canvas>
+
+<header>
+  <div class="badge">🫀 Biofísica Cardíaca · UCP · P2 · 2026</div>
+  <h1>Biofísica Cardíaca P2</h1>
+  <p class="sub">Estrutura · Propriedades · Potenciais · Condução · Hemodinâmica · ECG</p>
+  <p class="by">⚡ Elaborado por Enzo Salmazo · Guyton &amp; Hall · Micó</p>
+</header>
+
+<nav class="tabs">
+  <button class="active" onclick="showSection('intro',this)">📖 Introdução</button>
+  <button onclick="showSection('estrutura',this)">🏠 Estrutura</button>
+  <button onclick="showSection('propriedades',this)">⚙️ Propriedades</button>
+  <button onclick="showSection('automatismo',this)">⭐ Automatismo</button>
+  <button onclick="showSection('potenciais',this)">⚡ Potenciais</button>
+  <button onclick="showSection('refratario',this)">🔴 Refratário</button>
+  <button onclick="showSection('conducao',this)">📡 Condução</button>
+  <button onclick="showSection('calcio',this)">🧪 Cálcio</button>
+  <button onclick="showSection('hemodinamica',this)">💉 Hemodinâmica</button>
+  <button onclick="showSection('frankstarling',this)">📏 Frank-Starling</button>
+  <button onclick="showSection('bainbridge',this)">🔄 Bainbridge</button>
+  <button onclick="showSection('ruidos',this)">🔊 Ruídos</button>
+  <button onclick="showSection('ecgondas',this)">📈 ECG Ondas</button>
+  <button onclick="showSection('ecgeleto',this)">🔌 ECG Eletrodos</button>
+  <button onclick="showSection('flashcards',this)">🃏 Flashcards</button>
+  <button onclick="showSection('fillin',this)">✏️ Completar</button>
+  <button onclick="showSection('quiz',this)">❓ Simulado</button>
+</nav>
+
+<!-- ===== INTRODUÇÃO ===== -->
+<div id="intro" class="section active">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">📖</span> Introdução — Biofísica Cardíaca P2</div>
+
+<div class="info-block">
+  <div class="label">Visão Geral</div>
+  <h4>Sobre este material</h4>
+  <p>Este resumo cobre o conteúdo de P2 de Biofísica Cardíaca organizado em 14 blocos temáticos: <strong>estrutura e função cardíaca</strong>, <strong>5 propriedades</strong>, <strong>automatismo</strong>, <strong>potenciais de ação</strong>, <strong>período refratário</strong>, <strong>sistema de condução</strong>, <strong>cálcio cardíaco</strong>, <strong>hemodinâmica</strong>, <strong>Lei de Frank-Starling</strong>, <strong>Reflexo de Bainbridge</strong>, <strong>ruídos cardíacos</strong> e <strong>ECG</strong>. Inclui 30 flashcards interativos, 5 questões de completar e simulado com 20 questões.</p>
+</div>
+
+<div class="info-block success">
+  <div class="label">Como estudar</div>
+  <h4>Rota de estudo sugerida</h4>
+  <ol>
+    <li>Leia cada capítulo em ordem: Estrutura → Propriedades → Automatismo → Potenciais → Refratário → Condução → Cálcio → Hemodinâmica → Frank-Starling → Bainbridge → Ruídos → ECG.</li>
+    <li>Revise os flashcards ao terminar cada capítulo.</li>
+    <li>Pratique as questões de completar (✏️ Completar).</li>
+    <li>Feche com o simulado completo e revise os erros.</li>
+  </ol>
+</div>
+
+<div class="sec-divider"><h3>📚 Glossário Essencial — Biofísica Cardíaca</h3></div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:16px;">Clique em cada cartão para expandir a definição.</p>
+
+<div class="glossary-grid">
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Inotropismo</div><div class="def" style="display:none">Capacidade de <strong>contração</strong> do coração. ↑ Inotropismo = ejeção mais potente. ↓ Inotropismo = IC sistólica. Depende de Ca²⁺ e SNS (adrenalina ↑ inotropismo).</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Cronotropismo</div><div class="def" style="display:none">Capacidade de gerar <strong>frequência cardíaca</strong>. ↑ = taquicardia. ↓ = bradicardia. Ligado ao automatismo e à entrada de Ca²⁺ na rampa diastólica.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Dromotropismo</div><div class="def" style="display:none">Capacidade de <strong>transmitir potenciais</strong> de estrutura para estrutura. Depende dos discos intercalares. ↓ Dromotropismo = bloqueios de condução.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Batmotropismo</div><div class="def" style="display:none">Capacidade de <strong>responder/gerar estímulos</strong> (excitabilidade). ↑ = célula mais reativa → ectopias e arritmias. Própria das células automáticas.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Lusitropismo</div><div class="def" style="display:none">Capacidade de <strong>relaxar</strong> após contração. ↓ Lusitropismo → disfunção diastólica (IC com FE preservada).</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Meseta (Fase 2)</div><div class="def" style="display:none">Platô do potencial de ação cardíaco — duração ~200ms. Mantida pelo equilíbrio K⁺ saindo ≈ Ca²⁺ entrando. <strong>Exclusiva do coração</strong> — nenhum outro tecido possui meseta!</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Período Refratário Absoluto (PRA)</div><div class="def" style="display:none">Célula completamente incapaz de responder — independente da intensidade. Fases 0+1+2 (toda a meseta). Protege contra tetania cardíaca!</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Lei de Frank-Starling</div><div class="def" style="display:none">Dentro dos limites fisiológicos, quanto maior o volume de sangue na diástole → maior estiramento → maior força de contração → maior volume ejetado.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Reflexo de Bainbridge</div><div class="def" style="display:none">Reflexo aurículo-cardíaco: ↑ retorno venoso na aurícula DIREITA → mecanorreceptores de estiramento → ↑ FC. Complementa Frank-Starling: F-S ajusta força, Bainbridge ajusta frequência.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Débito Cardíaco (DC)</div><div class="def" style="display:none">DC = VS × FC = 70 mL × 80 bpm = ~5,6 L/min. VS = VTD − VTS = 120 − 50 = 70 mL. Fração de ejeção normal ≈ 60%.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Nó Sinoatrial (NSA)</div><div class="def" style="display:none">Marca-passo NATURAL do coração. Localização: junção veia cava superior + aurícula direita. Hierarquia mais alta — sempre tem prioridade. Frequência: 60–100 bpm.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Discos Intercalares</div><div class="def" style="display:none">Estruturas de <strong>BAIXÍSSIMA resistência</strong> que unem células cardíacas adjacentes. Permitem transmissão rápida do potencial. Determinam diretamente a velocidade de condução.</div></div>
+</div>
+</div></div>
+
+<!-- ===== ESTRUTURA ===== -->
+<div id="estrutura" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🏠</span> Módulo 1 — Estrutura e Função Cardíaca</div>
+
+<div class="info-block">
+  <div class="label">Conceito</div>
+  <h4>Bomba muscular fechada</h4>
+  <p>O coração é uma <strong>bomba muscular fechada</strong> que opera em dois circuitos: pulmonar (direito) e sistêmico (esquerdo). Sua estrutura predominantemente muscular — o <strong>miocárdio</strong> — gera força para comprimir o sangue. Divide-se em dois <em>sítios</em>:</p>
+</div>
+
+<div class="t2c">
+  <div class="card-item"><span class="card-ico">🏠</span><div class="card-t">Sítio Atrial (Seio Auricular)</div><div class="card-b">Agrupa as duas aurículas como estrutura funcional <strong>única</strong>. Ambas contraem de forma <strong>sincronizada</strong>, enchendo os ventrículos eficientemente. Nunca independentemente.</div></div>
+  <div class="card-item"><span class="card-ico">💪</span><div class="card-t">Sítio Ventricular (Seio Ventricular)</div><div class="card-b">Agrupa os dois ventrículos como estrutura funcional <strong>única</strong>. Contraem em sincronia para ejetar sangue nos grandes vasos. Paredes mais grossas — maior força de ejeção.</div></div>
+</div>
+
+<div class="sec-divider"><h3>Cardiomiócitos — Células Contráteis</h3></div>
+
+<div class="cg3">
+  <div class="card-item"><span class="card-ico">🌿</span><div class="card-t">Formato Ramificado (em "Y")</div><div class="card-b">Diferente do músculo esquelético (cilíndrico). Facilita a conexão elétrica entre células adjacentes em múltiplas direções.</div></div>
+  <div class="card-item"><span class="card-ico">⚡</span><div class="card-t">Discos Intercalares</div><div class="card-b">Estruturas de <strong>BAIXÍSSIMA resistência</strong>. Permitem transmissão rápida do potencial. Determinam a velocidade de condução cardíaca.</div></div>
+  <div class="card-item"><span class="card-ico">📦</span><div class="card-t">Retículo Sarcoplasmático</div><div class="card-b"><strong>Menos desenvolvido</strong> que em outros músculos → menor armazenamento de Ca²⁺ → <strong>dependência obrigatória de Ca²⁺ extracelular</strong>.</div></div>
+</div>
+
+<div class="info-block danger">
+  <div class="label">❗ Diferença Crítica — Cálcio no Coração</div>
+  <h4>Músculo esquelético vs Coração</h4>
+  <p>Músculo esquelético usa Ca²⁺ quase exclusivamente <strong>intracelular</strong>. O coração <strong>NECESSITA OBRIGATORIAMENTE de Ca²⁺ extracelular</strong> — porque o RS cardíaco é menos desenvolvido. Esta distinção é fundamental para provas!</p>
+</div>
+
+<div class="info-block danger">
+  <div class="label">❗ Verdadeiro ou Falso — Discos Intercalares</div>
+  <p>"Discos intercalares são regiões de <strong>alta resistência</strong> ao fluxo de íons." → <strong>FALSO!</strong> São regiões de <strong>baixa resistência</strong> — facilitam (não dificultam) a transmissão do potencial.</p>
+</div>
+</div></div>
+
+<!-- ===== PROPRIEDADES ===== -->
+<div id="propriedades" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">⚙️</span> Módulo 2 — Propriedades Cardíacas</div>
+
+<div class="info-block">
+  <div class="label">Conceito</div>
+  <h4>As 5 propriedades que governam toda a atividade cardíaca</h4>
+  <p>Memorize o nome e o conceito — frequentes em provas!</p>
+</div>
+
+<div class="pgrid">
+  <div class="pcard"><div class="pico">💪</div><div class="pname">Inotropismo</div><div class="pdef">Capacidade de contrair</div></div>
+  <div class="pcard"><div class="pico">⏱️</div><div class="pname">Cronotropismo</div><div class="pdef">Gerar frequência cardíaca</div></div>
+  <div class="pcard"><div class="pico">📡</div><div class="pname">Dromotropismo</div><div class="pdef">Transmitir potenciais</div></div>
+  <div class="pcard"><div class="pico">🎯</div><div class="pname">Batmotropismo</div><div class="pdef">Responder a estímulos</div></div>
+  <div class="pcard"><div class="pico">🌊</div><div class="pname">Lusitropismo</div><div class="pdef">Relaxar após contração</div></div>
+</div>
+
+<div class="sec-divider"><h3>Detalhes Essenciais</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;margin-bottom:20px;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Propriedade</th><th>Função</th><th>↑ Significa</th><th>↓ Significa</th></tr></thead>
+    <tbody>
+      <tr><td><strong>💪 Inotropismo</strong></td><td>Força de contração</td><td>Ejeção mais potente</td><td>IC sistólica</td></tr>
+      <tr><td><strong>⏱️ Cronotropismo</strong></td><td>Frequência cardíaca</td><td>Taquicardia</td><td>Bradicardia</td></tr>
+      <tr><td><strong>📡 Dromotropismo</strong></td><td>Transmissão de potenciais</td><td>Condução mais rápida</td><td>Bloqueios de condução</td></tr>
+      <tr><td><strong>🎯 Batmotropismo</strong></td><td>Excitabilidade</td><td>Ectopias e arritmias</td><td>Célula não responde</td></tr>
+      <tr><td><strong>🌊 Lusitropismo</strong></td><td>Relaxamento</td><td>Relaxamento eficiente</td><td>Disfunção diastólica</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="info-block danger">
+  <div class="label">❗ Armadilha Clássica de Prova</div>
+  <p>"A propriedade que transmite potencial de estrutura para estrutura denomina-se <strong>cronotropismo</strong>." → <strong>FALSO!</strong> É o <strong>dromotropismo</strong>.<br>Cronotropismo = frequência. Dromotropismo = transmissão/condução.</p>
+</div>
+</div></div>
+
+<!-- ===== AUTOMATISMO ===== -->
+<div id="automatismo" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">⭐</span> Módulo 3 — Automatismo Cardíaco</div>
+
+<div class="info-block blue">
+  <div class="label">💡 Conceito Central</div>
+  <h4>O coração gera seus próprios estímulos</h4>
+  <p>Apenas as <strong>células automáticas (auto-excitáveis)</strong> geram estímulo próprio. As células contráteis NÃO geram estímulo — apenas respondem. O automatismo depende da <strong>entrada gradual de Ca²⁺</strong> — a "rampa diastólica".</p>
+</div>
+
+<div class="sec-divider"><h3>Os 3 Marca-passos Cardíacos</h3></div>
+
+<div class="cg3">
+  <div class="card-item"><span class="card-ico">⭐</span><div class="card-t">Nó Sinoatrial (NSA)</div><div class="card-b"><strong>Marca-passo NATURAL.</strong> "O rei de todos." Localização: junção veia cava superior + aurícula direita. Hierarquia mais alta — sempre tem prioridade. Frequência: <strong>60–100 bpm</strong>.</div></div>
+  <div class="card-item"><span class="card-ico">🔄</span><div class="card-t">Nó AtrioVentricular (NAV)</div><div class="card-b"><strong>Marca-passo de BACKUP.</strong> Assume se NSA falhar. Cria o <strong>retraso fisiológico intencional</strong> para enchimento ventricular completo. Frequência: <strong>40–60 bpm</strong>.</div></div>
+  <div class="card-item"><span class="card-ico">🆘</span><div class="card-t">Fibras de Purkinje</div><div class="card-b"><strong>Marca-passo de EMERGÊNCIA.</strong> Último recurso — assume APENAS quando NSA e NAV falham completamente. Ritmo extremamente lento: <strong>15–40 bpm</strong>.</div></div>
+</div>
+
+<div class="sec-divider"><h3>Automatismo e Cálcio — Relação Inseparável</h3></div>
+
+<div class="formula">
+  ↑ Ca²⁺ entra rápido → rampa diastólica mais íngreme → umbral atingido mais cedo → ↑ FC<br>
+  ↓ Ca²⁺ entra lento → rampa mais suave → umbral atingido mais tarde → ↓ FC<br><br>
+  <strong>Inotropismo + Cronotropismo = ambos dependem de Ca²⁺ → INSEPARÁVEIS no automatismo!</strong>
+</div>
+
+<div class="info-block warn">
+  <div class="label">⚠️ Não Podemos Separar Inotropismo e Cronotropismo</div>
+  <ul>
+    <li>Ambos dependem da entrada de Ca²⁺</li>
+    <li>↑ Ca²⁺ = ↑ força de contração (inotropismo) + ↑ frequência (cronotropismo) — simultâneo!</li>
+    <li>Idoso com hipocalcemia → rampa deitada → FC mais baixa → bradicardia fisiológica</li>
+  </ul>
+</div>
+</div></div>
+
+<!-- ===== POTENCIAIS ===== -->
+<div id="potenciais" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">⚡</span> Módulo 4 — Potenciais de Ação Cardíacos</div>
+
+<div class="info-block blue">
+  <div class="label">💡 Regra de Ouro</div>
+  <h4>Dois tipos radicalmente diferentes</h4>
+  <p><strong>Células automáticas:</strong> tipo "espiga/spike" — SEM linha de repouso horizontal, SEMPRE com rampa ascendente.<br><strong>Células contráteis cardíacas:</strong> tipo "lento" com 5 fases — COM linha de repouso + MESETA característica exclusiva.</p>
+</div>
+
+<div class="t2c">
+  <div class="phase-card">
+    <h4 style="color:var(--accent2);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">CÉLULAS AUTOMÁTICAS (NSA, NAV, Purkinje) — Tipo Spike</h4>
+    <div class="phaselist">
+      <div class="prow"><span class="plabel" style="color:#4f9cf9;">Rampa ↗</span><span class="pions">Ca²⁺ lento entra gradualmente (espontâneo)</span><span class="pdesc">Despolarização espontânea</span></div>
+      <div class="prow"><span class="plabel" style="color:#e74c3c;">Spike ↑</span><span class="pions">Na⁺ rápido (do umbral para cima)</span><span class="pdesc">Pico do potencial</span></div>
+      <div class="prow"><span class="plabel" style="color:var(--green);">Descida ↓</span><span class="pions">K⁺ saindo</span><span class="pdesc">Repolarização</span></div>
     </div>
-    <button class="cta" onclick="document.getElementById('nav').scrollIntoView({behavior:'smooth'})">▶ Iniciar Estudo</button>
+    <div style="margin-top:12px;padding:10px 14px;background:rgba(74,144,217,.07);border-radius:8px;border:1px solid rgba(74,144,217,.2);font-size:.78rem;color:var(--muted);">⚠ NUNCA tem linha horizontal de repouso — a célula está sempre com rampa ascendente.</div>
   </div>
-  <div class="scroll-hint" onclick="document.getElementById('nav').scrollIntoView({behavior:'smooth'})">Rolar</div>
-</section>
-
-<!-- ======================== NAV ======================== -->
-<div class="nav-wrap" id="nav">
-  <div class="nav-inner">
-    <button class="ntab active" onclick="sm(0,this)">01 · Estrutura</button>
-    <button class="ntab" onclick="sm(1,this)">02 · Propriedades</button>
-    <button class="ntab" onclick="sm(2,this)">03 · Automatismo</button>
-    <button class="ntab" onclick="sm(3,this)">04 · Potenciais</button>
-    <button class="ntab" onclick="sm(4,this)">05 · Refratário</button>
-    <button class="ntab" onclick="sm(5,this)">06 · Condução</button>
-    <button class="ntab" onclick="sm(6,this)">07 · Cálcio</button>
-    <button class="ntab" onclick="sm(7,this)">08 · Hemodinâmica</button>
-    <button class="ntab" onclick="sm(8,this)">09 · Frank-Starling</button>
-    <button class="ntab" onclick="sm(9,this)">10 · Bainbridge</button>
-    <button class="ntab" onclick="sm(10,this)">11 · Ruídos</button>
-    <button class="ntab" onclick="sm(11,this)">12 · ECG Ondas</button>
-    <button class="ntab" onclick="sm(12,this)">13 · ECG Eletrodos</button>
-    <button class="ntab" onclick="sm(13,this)">🃏 Flashcards</button>
-    <button class="ntab" onclick="sm(14,this)">⭐ Quiz Final</button>
+  <div class="phase-card">
+    <h4 style="color:var(--accent2);font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:14px;">CÉLULAS CONTRÁTEIS — Tipo Lento (5 Fases)</h4>
+    <div class="phaselist">
+      <div class="prow"><span class="plabel" style="font-family:var(--font-mono);font-size:.75rem;background:rgba(100,149,237,.14);color:#6495ed;border:1px solid rgba(100,149,237,.3);padding:2px 8px;border-radius:4px;">Fase 4</span><span class="pions">Potencial de repouso estável (linha reta)</span><span class="pdesc">−90 mV</span></div>
+      <div class="prow"><span class="plabel" style="font-family:var(--font-mono);font-size:.75rem;background:rgba(231,76,60,.14);color:#e74c3c;border:1px solid rgba(231,76,60,.3);padding:2px 8px;border-radius:4px;">Fase 0</span><span class="pions">Ca²⁺ lento + Na⁺ rápido (do umbral)</span><span class="pdesc">Despolarização rápida</span></div>
+      <div class="prow"><span class="plabel" style="font-family:var(--font-mono);font-size:.75rem;background:rgba(230,126,34,.14);color:#e67e22;border:1px solid rgba(230,126,34,.3);padding:2px 8px;border-radius:4px;">Fase 1</span><span class="pions">K⁺ — saída inicial rápida</span><span class="pdesc">Repol. inicial breve</span></div>
+      <div class="prow mestal"><span class="plabel" style="font-family:var(--font-mono);font-size:.75rem;background:rgba(241,196,15,.14);color:#f1c40f;border:1px solid rgba(241,196,15,.3);padding:2px 8px;border-radius:4px;">Fase 2</span><span class="pions">K⁺ saída ≈ Ca²⁺ entrada (equilíbrio)</span><span class="pdesc"><strong>MESETA ⭐ ~200ms</strong></span></div>
+      <div class="prow"><span class="plabel" style="font-family:var(--font-mono);font-size:.75rem;background:rgba(39,174,96,.14);color:#27ae60;border:1px solid rgba(39,174,96,.3);padding:2px 8px;border-radius:4px;">Fase 3</span><span class="pions">K⁺ saída dominante</span><span class="pdesc">Repol. final</span></div>
+    </div>
   </div>
 </div>
 
-<main class="main" id="mc">
-
-<!-- ======= M0: ESTRUTURA ======= -->
-<div class="mod active" id="m0">
-  <div class="mod-tag">Módulo 01</div>
-  <h2 class="mod-title">Estrutura e Função Cardíaca</h2>
-  <p class="mod-desc">Bases anatômicas e funcionais do coração como bomba muscular dupla em sistema fechado.</p>
-
-  <h3 class="stitle">Características Fundamentais</h3>
-  <p>O coração é uma <strong>bomba muscular fechada</strong> que opera em dois circuitos: pulmonar (direito) e sistêmico (esquerdo). Sua estrutura predominantemente muscular — o <strong>miocárdio</strong> — gera força para comprimir o sangue e ejetá-lo contra a resistência vascular. Funcionalmente, o coração divide-se em dois <em>sítios</em>:</p>
-  <div class="t2c">
-    <div class="card"><span class="card-ico">🏠</span><div class="card-t">Sítio Atrial (Seio Auricular)</div><div class="card-b">Agrupa as duas aurículas como estrutura funcional <strong>única</strong>. Ambas contraem de forma <strong>sincronizada</strong>, enchendo os ventrículos eficientemente. Trabalham em conjunto — nunca independentemente.</div></div>
-    <div class="card"><span class="card-ico">💪</span><div class="card-t">Sítio Ventricular (Seio Ventricular)</div><div class="card-b">Agrupa os dois ventrículos como estrutura funcional <strong>única</strong>. Contraem em sincronia para ejetar sangue nos grandes vasos. Paredes mais grossas — maior força de ejeção.</div></div>
-  </div>
-  <div class="divl"></div>
-  <h3 class="stitle">Cardiomiócitos — Células Contráteis</h3>
-  <div class="cg3">
-    <div class="card"><span class="card-ico">🌿</span><div class="card-t">Formato Ramificado (em "Y")</div><div class="card-b">Diferente do músculo esquelético (cilíndrico/alongado). Facilita a conexão elétrica entre células adjacentes em múltiplas direções.</div></div>
-    <div class="card"><span class="card-ico">⚡</span><div class="card-t">Discos Intercalares</div><div class="card-b">Estruturas de <strong>BAIXÍSSIMA resistência</strong> que unem células adjacentes. Permitem transmissão rápida do potencial. Determinam diretamente a velocidade de condução cardíaca.</div></div>
-    <div class="card"><span class="card-ico">📦</span><div class="card-t">Retículo Sarcoplasmático</div><div class="card-b"><strong>Menos desenvolvido</strong> que em outros músculos → menor armazenamento de Ca²⁺ → <strong>dependência obrigatória de Ca²⁺ extracelular</strong>.</div></div>
-  </div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Diferença Crítica — Cálcio no Coração</div><p>Músculo esquelético usa Ca²⁺ quase exclusivamente <strong>intracelular</strong>. O coração <strong>NECESSITA OBRIGATORIAMENTE de Ca²⁺ extracelular</strong> — porque o RS cardíaco é menos desenvolvido. Esta distinção é fundamental para provas!</p></div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Verdadeiro ou Falso — Discos Intercalares</div><p>"Discos intercalares são regiões de <strong>alta resistência</strong> ao fluxo de íons." → <strong>FALSO!</strong> São regiões de <strong>baixa resistência</strong> — facilitam (não dificultam) a transmissão do potencial.</p></div>
+<div class="info-block warn">
+  <div class="label">⭐ A MESETA — Exclusividade Cardíaca Absoluta</div>
+  <h4>Fase 2 — dura ~200ms</h4>
+  <p>Mantida pelo equilíbrio entre saída de K⁺ e entrada de Ca²⁺. Como um saldo bancário que recebe e paga quase o mesmo valor — o saldo se mantém positivo. <strong>Nenhum outro tecido do corpo tem meseta!</strong></p>
 </div>
-<button class="next-btn" onclick="sm(1,document.querySelectorAll('.ntab')[1])">02 · Propriedades →</button>
 
-
-<!-- ======= M1: PROPRIEDADES ======= -->
-<div class="mod" id="m1">
-  <div class="mod-tag">Módulo 02</div>
-  <h2 class="mod-title">Propriedades Cardíacas</h2>
-  <p class="mod-desc">As 5 propriedades que governam toda a atividade cardíaca. Memorize o nome e o conceito — frequentes em provas!</p>
-  <div class="pgrid">
-    <div class="pcard"><div class="pico">💪</div><div class="pname">Inotropismo</div><div class="pdef">Capacidade de contrair</div></div>
-    <div class="pcard"><div class="pico">⏱️</div><div class="pname">Cronotropismo</div><div class="pdef">Gerar frequência cardíaca</div></div>
-    <div class="pcard"><div class="pico">📡</div><div class="pname">Dromotropismo</div><div class="pdef">Transmitir potenciais</div></div>
-    <div class="pcard"><div class="pico">🎯</div><div class="pname">Batmotropismo</div><div class="pdef">Responder a estímulos</div></div>
-    <div class="pcard"><div class="pico">🌊</div><div class="pname">Lusitropismo</div><div class="pdef">Relaxar após contração</div></div>
-  </div>
-  <div class="divl"></div>
-  <h3 class="stitle">Detalhes Essenciais</h3>
-  <div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="card-t">💪 Inotropismo</div><span style="font-size:.65rem;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--red-b);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;">Contrátil</span></div><div class="card-b">Força de <strong>CONTRAÇÃO</strong>. ↑ Inotropismo = ejeção mais potente. ↓ Inotropismo = IC sistólica. Dependente de Ca²⁺ intracelular e SNS (adrenalina ↑ inotropismo).</div></div>
-  <div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="card-t">⏱️ Cronotropismo</div><span style="font-size:.65rem;background:rgba(240,192,64,.13);border:1px solid rgba(240,192,64,.3);color:var(--gold-l);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;">Frequência</span></div><div class="card-b">Capacidade de gerar <strong>FREQUÊNCIA CARDÍACA</strong>. ↑ Cronotropismo = taquicardia. ↓ Cronotropismo = bradicardia. Diretamente ligado ao automatismo e à entrada de Ca²⁺ na rampa diastólica.</div></div>
-  <div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="card-t">📡 Dromotropismo</div><span style="font-size:.65rem;background:rgba(74,144,217,.13);border:1px solid rgba(74,144,217,.3);color:var(--blue-l);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;">Condução</span></div><div class="card-b">Capacidade de <strong>TRANSMITIR potenciais</strong> de estrutura para estrutura, de célula para célula. Depende dos <strong>discos intercalares</strong>. ↓ Dromotropismo = bloqueios de condução.</div></div>
-  <div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="card-t">🎯 Batmotropismo</div><span style="font-size:.65rem;background:rgba(192,57,43,.15);border:1px solid rgba(192,57,43,.3);color:var(--red-b);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;">Excitabilidade</span></div><div class="card-b">Capacidade de <strong>RESPONDER/GERAR estímulos</strong>. ↑ Batmotropismo = célula mais reativa → ectopias e arritmias. Própria das células automáticas (NSA, NAV, Purkinje).</div></div>
-  <div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><div class="card-t">🌊 Lusitropismo</div><span style="font-size:.65rem;background:rgba(39,174,96,.13);border:1px solid rgba(39,174,96,.3);color:var(--green-l);padding:2px 10px;border-radius:100px;font-family:'JetBrains Mono',monospace;">Relaxamento</span></div><div class="card-b">Capacidade de <strong>RELAXAR</strong> após contração. Todo músculo contraído obrigatoriamente deve relaxar. ↓ Lusitropismo → disfunção diastólica (IC com FE preservada).</div></div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Armadilha Clássica de Prova</div><p>"A propriedade que transmite potencial de estrutura para estrutura denomina-se <strong>cronotropismo</strong>." → <strong>FALSO!</strong> É o <strong>dromotropismo</strong>.<br>Cronotropismo = frequência. Dromotropismo = transmissão/condução.</p></div>
+<div class="info-block danger">
+  <div class="label">❗ Regra Absoluta — Do Umbral para CIMA</div>
+  <p>Em qualquer célula excitável, do umbral para o pico: <strong>Na⁺ rápido é o responsável principal.</strong><br>A diferença está antes do umbral (Ca²⁺ na rampa automática cardíaca) e na MESETA (Ca²⁺ cardíaco).</p>
 </div>
-<button class="next-btn" onclick="sm(2,document.querySelectorAll('.ntab')[2])">03 · Automatismo →</button>
 
+<div class="sec-divider"><h3>Comparação entre Tipos Celulares</h3></div>
 
-<!-- ======= M2: AUTOMATISMO ======= -->
-<div class="mod" id="m2">
-  <div class="mod-tag">Módulo 03</div>
-  <h2 class="mod-title">Automatismo Cardíaco</h2>
-  <p class="mod-desc">A capacidade única do coração de gerar seus próprios estímulos sem estimulação externa — dependente fundamentalmente do cálcio.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 Conceito Central</div><p>Apenas as <strong>células automáticas (auto-excitáveis)</strong> geram estímulo próprio. As células contráteis NÃO geram estímulo — apenas respondem. O automatismo depende da <strong>entrada gradual de Ca²⁺</strong> — a "rampa diastólica".</p></div>
-  <h3 class="stitle">Os 3 Marca-passos Cardíacos</h3>
-  <div class="cg3">
-    <div class="card"><span class="card-ico">⭐</span><div class="card-t">Nó Sinoatrial (NSA)</div><div class="card-b"><strong>Marca-passo NATURAL.</strong> "O rei de todos." Localização: junção veia cava superior + aurícula direita. Hierarquia mais alta — sempre tem prioridade. Suprime os outros pela sua maior frequência.</div><div class="card-freq">⚡ 60–100 bpm (clínico) · ~70–80 bpm (basal fisiológico)</div></div>
-    <div class="card"><span class="card-ico">🔄</span><div class="card-t">Nó AtrioVentricular (NAV)</div><div class="card-b"><strong>Marca-passo de BACKUP.</strong> Localização: base do septo atrial. Assume se NSA falhar. Cria o <strong>retraso fisiológico intencional</strong> para enchimento ventricular completo.</div><div class="card-freq">⚡ 40–60 bpm</div></div>
-    <div class="card"><span class="card-ico">🆘</span><div class="card-t">Fibras de Purkinje</div><div class="card-b"><strong>Marca-passo de EMERGÊNCIA.</strong> Localização: miocárdio ventricular. Último recurso — assume APENAS quando NSA e NAV falham completamente. Ritmo extremamente lento.</div><div class="card-freq">⚡ 15–40 bpm</div></div>
-  </div>
-  <div class="divl"></div>
-  <h3 class="stitle">Automatismo e Cálcio — Relação Inseparável</h3>
-  <div class="formula">
-    ↑ Ca²⁺ entra rápido → rampa diastólica mais íngreme → umbral atingido mais cedo → ↑ FC<br>
-    ↓ Ca²⁺ entra lento → rampa mais suave → umbral atingido mais tarde → ↓ FC<br><br>
-    <strong>Inotropismo + Cronotropismo = ambos dependem de Ca²⁺ → INSEPARÁVEIS no automatismo!</strong>
-  </div>
-  <div class="cl cl-warn"><div class="cl-lbl">⚠️ Não Podemos Separar Inotropismo e Cronotropismo</div><ul><li>Ambos dependem da entrada de Ca²⁺</li><li>↑ Ca²⁺ = ↑ força de contração (inotropismo) + ↑ frequência (cronotropismo) — simultâneo!</li><li>A entrada de Ca²⁺ está vinculada ao <strong>automatismo</strong> cardíaco</li><li>Idoso com hipocalcemia → rampa deitada → FC mais baixa → bradicardia fisiológica</li></ul></div>
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Momento</th><th>Neurônio</th><th>M. Esquelético</th><th>Coração (Contrátil)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Repouso → Umbral</strong></td><td>Na⁺</td><td>Na⁺</td><td><strong style="color:#e74c3c">Ca²⁺ lento (+ pouco Na⁺)</strong></td></tr>
+      <tr><td><strong>Umbral → Pico (fase 0)</strong></td><td>Na⁺ rápido</td><td>Na⁺ rápido</td><td><strong style="color:#e74c3c">Na⁺ rápido</strong></td></tr>
+      <tr><td><strong>Meseta (fase 2)</strong></td><td>—</td><td>—</td><td><strong style="color:#f9c94f">Ca²⁺ entra ≈ K⁺ sai</strong></td></tr>
+      <tr><td><strong>Repolarização</strong></td><td>K⁺ sai</td><td>K⁺ sai</td><td><strong style="color:var(--green)">K⁺ sai dominante</strong></td></tr>
+      <tr><td><strong>Hiperpolarização</strong></td><td>Sim</td><td>Sim</td><td><strong>Não (coração não tem)</strong></td></tr>
+    </tbody>
+  </table>
 </div>
-<button class="next-btn" onclick="sm(3,document.querySelectorAll('.ntab')[3])">04 · Potenciais de Ação →</button>
+</div></div>
 
+<!-- ===== REFRATÁRIO ===== -->
+<div id="refratario" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🔴</span> Módulo 5 — Período Refratário</div>
 
-<!-- ======= M3: POTENCIAIS ======= -->
-<div class="mod" id="m3">
-  <div class="mod-tag">Módulo 04</div>
-  <h2 class="mod-title">Potenciais de Ação Cardíacos</h2>
-  <p class="mod-desc">Dois tipos radicalmente diferentes — saber diferenciá-los é obrigatório para as provas.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 Regra de Ouro</div><p><strong>Células automáticas:</strong> tipo "espiga/spike" — SEM linha de repouso horizontal, SEMPRE com rampa ascendente.<br><strong>Células contráteis cardíacas:</strong> tipo "lento" com 5 fases — COM linha de repouso + MESETA característica exclusiva.</p></div>
-  <div class="t2c">
-    <div class="phase-card">
-      <h4>CÉLULAS AUTOMÁTICAS (NSA, NAV, Purkinje) — Tipo Spike</h4>
-      <div class="phaselist">
-        <div class="prow"><span class="plabel" style="color:var(--blue-l);">Rampa ↗</span><span class="pions">Ca²⁺ lento entra gradualmente (espontâneo)</span><span class="pdesc">Despolarização espontânea</span></div>
-        <div class="prow"><span class="plabel" style="color:var(--red-b);">Spike ↑</span><span class="pions">Na⁺ rápido (do umbral para cima)</span><span class="pdesc">Pico do potencial</span></div>
-        <div class="prow"><span class="plabel" style="color:var(--green-l);">Descida ↓</span><span class="pions">K⁺ saindo</span><span class="pdesc">Repolarização</span></div>
+<div class="info-block blue">
+  <div class="label">💡 Definição</div>
+  <h4>Quando as células não conseguem responder a novos estímulos</h4>
+  <p>PRA = total e independente da intensidade. PRR = exige estímulos de maior intensidade.</p>
+</div>
+
+<div class="sec-divider"><h3>Visualização</h3></div>
+
+<div class="rbar">
+  <div class="rabs">PRA — Absoluto<br><span style="font-size:.62rem;opacity:.7;">Fases 0, 1, 2 (incluindo toda a Meseta)</span></div>
+  <div class="rrel">PRR — Relativo<br><span style="font-size:.62rem;opacity:.7;">Fase 3</span></div>
+  <div class="rnrm">Normal<br><span style="font-size:.62rem;opacity:.7;">Fase 4</span></div>
+</div>
+
+<div class="t2c">
+  <div class="card-item">
+    <div class="card-t" style="color:#e74c3c;">🔴 PRA — Período Refratário Absoluto</div>
+    <div class="card-b" style="margin-top:10px;">Célula <strong>completamente incapaz</strong> — <strong>independente da intensidade</strong>.<br><br><strong>Quando:</strong> Fases 0 + 1 + 2 (toda a meseta) · Duração: ~200ms<br><strong>Causa:</strong> Canais de Na⁺ e Ca²⁺ inativados<br><em style="color:var(--muted)">Nem estímulos máximos conseguem ativar. Protege contra tetania!</em></div>
+  </div>
+  <div class="card-item">
+    <div class="card-t" style="color:#f9c94f;">🟡 PRR — Período Refratário Relativo</div>
+    <div class="card-b" style="margin-top:10px;">Célula responde com estímulos de <strong>MAIOR INTENSIDADE</strong>.<br><br><strong>Quando:</strong> Fase 3<br><strong>Risco:</strong> Fenômeno "R sobre T" → arritmias<br><em style="color:var(--muted)">Estímulo forte consegue ativar.</em></div>
+  </div>
+</div>
+
+<div class="info-block success">
+  <div class="label">✓ Importância Clínica</div>
+  <ul>
+    <li>Protege contra <strong>tetania cardíaca</strong> — seria imediatamente fatal</li>
+    <li>Garante <strong>relaxamento completo</strong> entre batimentos (diástole + enchimento)</li>
+    <li><strong>Antiarrítmicos</strong> atuam modificando a duração do período refratário</li>
+  </ul>
+</div>
+</div></div>
+
+<!-- ===== CONDUÇÃO ===== -->
+<div id="conducao" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">📡</span> Módulo 6 — Sistema de Condução e Velocidades</div>
+
+<div class="info-block blue">
+  <div class="label">💡 Condução é Sempre Unidirecional</div>
+  <p>O estímulo cardíaco é sempre <strong>UNIDIRECIONAL</strong> — de proximal para distal. Não pode retroceder. Por isso se o NAV morrer, o VD não consegue enviar estímulo "de volta" para as aurículas.</p>
+</div>
+
+<div class="sec-divider"><h3>Velocidades por Estrutura</h3></div>
+
+<div style="margin:24px 0;">
+  <div class="sbar"><span class="sname">NSA → Aurículas</span><div class="strack"><div class="sfill" style="width:25%;background:linear-gradient(90deg,#e74c3c,#f9c94f);"></div></div><span class="sval">~1,0 m/s</span></div>
+  <div class="sbar"><span class="sname">Nó AtrioVentricular (NAV)</span><div class="strack"><div class="sfill" style="width:1%;background:rgba(231,76,60,.6);"></div></div><span class="sval" style="color:#e74c3c">0,03 m/s 🐢</span></div>
+  <div class="sbar"><span class="sname">Feixe de His</span><div class="strack"><div class="sfill" style="width:15%;background:linear-gradient(90deg,var(--accent),#7cb9fb);"></div></div><span class="sval" style="color:#7cb9fb">~0,6 m/s</span></div>
+  <div class="sbar"><span class="sname">Fibras de Purkinje</span><div class="strack"><div class="sfill" style="width:100%;background:linear-gradient(90deg,#f9c94f,#fbd97f);"></div></div><span class="sval" style="color:#f9c94f">~4,0 m/s ⚡</span></div>
+  <div class="sbar"><span class="sname">Miocárdio Ventricular</span><div class="strack"><div class="sfill" style="width:9%;background:rgba(255,255,255,.25);"></div></div><span class="sval" style="color:var(--muted)">~0,3–0,4 m/s</span></div>
+</div>
+
+<div class="t2c">
+  <div class="card-item"><span class="card-ico">🐢</span><div class="card-t">NAV — 0,03 m/s: Por quê tão LENTO?</div><div class="card-b">Poucos discos intercalares + poucas fibras especializadas.<br><br><strong>Propósito INTENCIONAL:</strong> Retraso fisiológico — permite que as aurículas terminem de contrair completamente antes que os ventrículos comecem.</div></div>
+  <div class="card-item"><span class="card-ico">⚡</span><div class="card-t">Purkinje — ~4 m/s: Por quê tão RÁPIDO?</div><div class="card-b">Abundância de discos intercalares + células altamente especializadas.<br><br><strong>Propósito:</strong> Contração ventricular <em>simultânea e sincronizada</em> — estímulo chega a TODAS as células ventriculares praticamente ao mesmo tempo.</div></div>
+</div>
+
+<div class="formula">
+  Discos intercalares ↑ = Velocidade de condução ↑<br>
+  Discos intercalares ↓ = Velocidade de condução ↓<br><br>
+  Purkinje (4 m/s) é ~133× mais rápido que NAV (0,03 m/s)<br>
+  → ~133× mais discos intercalares nas fibras de Purkinje!
+</div>
+</div></div>
+
+<!-- ===== CÁLCIO ===== -->
+<div id="calcio" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🧪</span> Módulo 7 — Cálcio — Relevância Mecânica e Elétrica</div>
+
+<div class="info-block warn">
+  <div class="label">⚠️ Ponto Crítico</div>
+  <p>O cálcio tem importância <strong>TANTO ELÉTRICA QUANTO MECÂNICA</strong> no coração. Esta distinção foi enfatizada em aula e pode aparecer em prova!</p>
+</div>
+
+<div class="t2c">
+  <div class="card-item"><span class="card-ico">⚡</span><div class="card-t">Relevância ELÉTRICA</div><div class="card-b"><ul style="margin-top:10px;"><li>Gera a rampa diastólica das células automáticas</li><li>Despolarização lenta (fase 0 das contráteis)</li><li>Mantém a MESETA (fase 2) junto com K⁺</li><li>Determina inotropismo E cronotropismo</li><li>Dependência de Ca²⁺ <strong>extracelular</strong> — diferença crítica!</li></ul></div></div>
+  <div class="card-item"><span class="card-ico">💪</span><div class="card-t">Relevância MECÂNICA</div><div class="card-b"><ul style="margin-top:10px;"><li>Acoplamento excitação-contração</li><li>Ativa troponina C → libera sítios actina-miosina</li><li>Ca²⁺ da meseta amplifica Ca²⁺ do RS (CICR)</li><li>Sem Ca²⁺ adequado → contração ineficiente</li></ul></div></div>
+</div>
+
+<div class="sec-divider"><h3>Impacto Clínico da Calcemia</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Condição</th><th>Efeito Elétrico</th><th>Efeito Mecânico</th><th>Manifestação</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Hipercalcemia</strong></td><td>Rampa íngreme → ↑ FC</td><td>Contrações mais fortes</td><td>Taquicardia, risco arritmias</td></tr>
+      <tr><td><strong>Hipocalcemia</strong></td><td>Rampa suave → ↓ FC</td><td>Contrações mais fracas</td><td>Bradicardia, IC</td></tr>
+      <tr><td><strong>Bloqueadores Ca²⁺</strong></td><td>↓ Cronotropismo</td><td>↓ Inotropismo</td><td>Tx HAS, FA, angina</td></tr>
+    </tbody>
+  </table>
+</div>
+</div></div>
+
+<!-- ===== HEMODINÂMICA ===== -->
+<div id="hemodinamica" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">💉</span> Módulo 8 — Hemodinâmica Cardíaca</div>
+
+<div class="sec-divider"><h3>Volumes Cardíacos</h3></div>
+
+<div style="display:flex;flex-direction:column;gap:12px;margin:20px 0;">
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="font-size:.84rem;color:var(--text);width:220px;flex-shrink:0;">V. Telediastólico (VTD)</span>
+    <div style="flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+      <div style="height:100%;width:100%;background:linear-gradient(90deg,#e74c3c,#c0392b);border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;">
+        <span style="font-family:var(--font-mono);font-size:.76rem;font-weight:700;color:#fff;">120 mL</span>
       </div>
-      <div style="margin-top:14px;padding:11px 14px;background:rgba(74,144,217,.07);border-radius:8px;border:1px solid rgba(74,144,217,.2);font-size:.78rem;color:var(--t2);">⚠ NUNCA tem linha horizontal de repouso — a célula está sempre com rampa ascendente.</div>
     </div>
-    <div class="phase-card">
-      <h4>CÉLULAS CONTRÁTEIS CARDÍACAS — Tipo Lento (5 Fases)</h4>
-      <div class="phaselist">
-        <div class="prow"><span class="plabel"><span class="ph ph4">Fase 4</span></span><span class="pions">Potencial de repouso estável (linha reta)</span><span class="pdesc">−90 mV</span></div>
-        <div class="prow"><span class="plabel"><span class="ph ph0">Fase 0</span></span><span class="pions">Ca²⁺ lento + Na⁺ rápido (do umbral)</span><span class="pdesc">Despolarização rápida</span></div>
-        <div class="prow"><span class="plabel"><span class="ph ph1">Fase 1</span></span><span class="pions">K⁺ — saída inicial rápida</span><span class="pdesc">Repol. inicial breve</span></div>
-        <div class="prow mestal"><span class="plabel"><span class="ph ph2">Fase 2</span></span><span class="pions">K⁺ saída ≈ Ca²⁺ entrada (equilíbrio)</span><span class="pdesc"><strong>MESETA ⭐ ~200ms</strong></span></div>
-        <div class="prow"><span class="plabel"><span class="ph ph3">Fase 3</span></span><span class="pions">K⁺ saída dominante</span><span class="pdesc">Repol. final</span></div>
+    <span style="font-size:.74rem;color:var(--muted);font-family:var(--font-mono);width:130px;">Máximo · Final diástole</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="font-size:.84rem;color:var(--text);width:220px;flex-shrink:0;">Vol. Sistólico (VS)</span>
+    <div style="flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+      <div style="height:100%;width:58%;background:linear-gradient(90deg,#f9c94f,#fbd97f);border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;">
+        <span style="font-family:var(--font-mono);font-size:.76rem;font-weight:700;color:#000;">70 mL</span>
       </div>
     </div>
+    <span style="font-size:.74rem;color:var(--muted);font-family:var(--font-mono);width:130px;">Ejetado por batimento</span>
   </div>
-  <div class="cl cl-warn"><div class="cl-lbl">⭐ A MESETA — Exclusividade Cardíaca Absoluta</div><p>A <strong>Meseta (Fase 2)</strong> dura ~200ms — mantida pelo equilíbrio entre saída de K⁺ e entrada de Ca²⁺. Como um saldo bancário que recebe e paga quase o mesmo valor — o saldo se mantém positivo. <strong>Nenhum outro tecido do corpo tem meseta!</strong></p></div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Regra Absoluta — Do Umbral para CIMA</div><p>Em qualquer célula excitável, do umbral para o pico: <strong>Na⁺ rápido é o responsável principal.</strong><br>A diferença está antes do umbral (Ca²⁺ na rampa automática cardíaca) e na MESETA (Ca²⁺ cardíaco).</p></div>
-  <h3 class="stitle">Comparação entre Tipos Celulares</h3>
-  <div class="tw"><table><thead><tr><th>Momento</th><th>Neurônio</th><th>M. Esquelético</th><th>Coração (Contrátil)</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Repouso → Umbral</strong></td><td>Na⁺</td><td>Na⁺</td><td><strong style="color:var(--red-b)">Ca²⁺ lento (+ pouco Na⁺)</strong></td></tr>
-    <tr><td><strong>Umbral → Pico (fase 0)</strong></td><td>Na⁺ rápido</td><td>Na⁺ rápido</td><td><strong style="color:var(--red-b)">Na⁺ rápido</strong></td></tr>
-    <tr><td><strong>Meseta (fase 2)</strong></td><td>—</td><td>—</td><td><strong style="color:var(--gold-l)">Ca²⁺ entra ≈ K⁺ sai</strong></td></tr>
-    <tr><td><strong>Repolarização</strong></td><td>K⁺ sai</td><td>K⁺ sai</td><td><strong style="color:var(--green-l)">K⁺ sai dominante</strong></td></tr>
-    <tr><td><strong>Hiperpolarização</strong></td><td>Sim</td><td>Sim</td><td><strong>Não (coração não tem)</strong></td></tr>
-  </tbody></table></div>
-</div>
-<button class="next-btn" onclick="sm(4,document.querySelectorAll('.ntab')[4])">05 · Período Refratário →</button>
-
-
-<!-- ======= M4: REFRATÁRIO ======= -->
-<div class="mod" id="m4">
-  <div class="mod-tag">Módulo 05</div>
-  <h2 class="mod-title">Período Refratário</h2>
-  <p class="mod-desc">Quando e por que as células cardíacas não conseguem responder a novos estímulos.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 Definição</div><p>Período durante o qual uma célula já ativada <strong>não consegue responder</strong> a novos estímulos. PRA = total e independente da intensidade. PRR = exige estímulos de maior intensidade.</p></div>
-  <h3 class="stitle">Visualização</h3>
-  <div class="rbar">
-    <div class="rabs">PRA — Absoluto<br><span style="font-size:.62rem;opacity:.7;">Fases 0, 1, 2 (incluindo toda a Meseta)</span></div>
-    <div class="rrel">PRR — Relativo<br><span style="font-size:.62rem;opacity:.7;">Fase 3</span></div>
-    <div class="rnrm">Normal<br><span style="font-size:.62rem;opacity:.7;">Fase 4</span></div>
-  </div>
-  <div class="t2c">
-    <div class="card"><div class="card-t" style="color:var(--red-b);">🔴 PRA — Período Refratário Absoluto</div><div class="card-b" style="margin-top:12px;">Célula <strong>completamente incapaz</strong> — <strong>independente da intensidade</strong>.<br><br><strong>Quando:</strong> Fases 0 + 1 + 2 (toda a meseta)<br><strong>Duração:</strong> ~200ms<br><strong>Causa:</strong> Canais de Na⁺ e Ca²⁺ inativados<br><br><em style="color:var(--t3)">Nem estímulos máximos conseguem ativar. Protege contra tetania!</em></div></div>
-    <div class="card"><div class="card-t" style="color:var(--gold-l);">🟡 PRR — Período Refratário Relativo</div><div class="card-b" style="margin-top:12px;">Célula responde com estímulos de <strong>MAIOR INTENSIDADE</strong>.<br><br><strong>Quando:</strong> Fase 3<br><strong>Risco:</strong> Fenômeno "R sobre T" → arritmias<br><strong>Causa:</strong> Canais começando a se recuperar<br><br><em style="color:var(--t3)">Estímulo forte consegue ativar.</em></div></div>
-  </div>
-  <div class="cl cl-ok"><div class="cl-lbl">✓ Importância Clínica</div><ul><li>Protege contra <strong>tetania cardíaca</strong> — seria imediatamente fatal</li><li>Garante <strong>relaxamento completo</strong> entre batimentos (diástole + enchimento)</li><li><strong>Antiarrítmicos</strong> atuam modificando a duração do período refratário</li></ul></div>
-</div>
-<button class="next-btn" onclick="sm(5,document.querySelectorAll('.ntab')[5])">06 · Sistema de Condução →</button>
-
-
-<!-- ======= M5: CONDUÇÃO ======= -->
-<div class="mod" id="m5">
-  <div class="mod-tag">Módulo 06</div>
-  <h2 class="mod-title">Sistema de Condução e Velocidades</h2>
-  <p class="mod-desc">Como o impulso cardíaco viaja com velocidades radicalmente diferentes — e por quê isso é essencial para a função cardíaca.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 Condução é Sempre Unidirecional</div><p>O estímulo cardíaco é sempre <strong>UNIDIRECIONAL</strong> — de proximal para distal. Não pode retroceder. De um ponto o estímulo pode se distribuir em várias direções, mas <strong>não pode VOLTAR</strong>. Por isso se o NAV morrer, o VD não consegue enviar estímulo "de volta" para as aurículas.</p></div>
-  <h3 class="stitle">Velocidades por Estrutura</h3>
-  <div style="margin:28px 0;">
-    <div class="sbar"><span class="sname">NSA → Aurículas</span><div class="strack"><div class="sfill" style="width:25%;background:linear-gradient(90deg,var(--red),var(--gold));"></div></div><span class="sval">~1,0 m/s</span></div>
-    <div class="sbar"><span class="sname">Nó AtrioVentricular (NAV)</span><div class="strack"><div class="sfill" style="width:1%;background:rgba(192,57,43,.6);"></div></div><span class="sval" style="color:var(--red-b)">0,03 m/s 🐢</span></div>
-    <div class="sbar"><span class="sname">Feixe de His</span><div class="strack"><div class="sfill" style="width:15%;background:linear-gradient(90deg,var(--blue),var(--blue-l));"></div></div><span class="sval" style="color:var(--blue-l)">~0,6 m/s</span></div>
-    <div class="sbar"><span class="sname">Fibras de Purkinje</span><div class="strack"><div class="sfill" style="width:100%;background:linear-gradient(90deg,var(--gold),var(--gold-l));"></div></div><span class="sval" style="color:var(--gold-l)">~4,0 m/s ⚡</span></div>
-    <div class="sbar"><span class="sname">Miocárdio Ventricular</span><div class="strack"><div class="sfill" style="width:9%;background:rgba(255,255,255,.25);"></div></div><span class="sval" style="color:var(--t2)">~0,3–0,4 m/s</span></div>
-  </div>
-  <div class="t2c">
-    <div class="card"><span class="card-ico">🐢</span><div class="card-t">NAV — 0,03 m/s: Por quê tão LENTO?</div><div class="card-b">Poucos discos intercalares + poucas fibras especializadas.<br><br><strong>Propósito INTENCIONAL:</strong> Retraso fisiológico — permite que as aurículas terminem de contrair completamente antes que os ventrículos comecem. Sem isso = bomba ineficiente!</div></div>
-    <div class="card"><span class="card-ico">⚡</span><div class="card-t">Purkinje — ~4 m/s: Por quê tão RÁPIDO?</div><div class="card-b">Abundância de discos intercalares + células altamente especializadas.<br><br><strong>Propósito:</strong> Contração ventricular <em>simultânea e sincronizada</em> — estímulo chega a TODAS as células ventriculares praticamente ao mesmo tempo.</div></div>
-  </div>
-  <div class="formula">
-    Discos intercalares ↑ = Velocidade de condução ↑<br>
-    Discos intercalares ↓ = Velocidade de condução ↓<br><br>
-    Purkinje (4 m/s) é ~133× mais rápido que NAV (0,03 m/s)<br>
-    → ~133× mais discos intercalares nas fibras de Purkinje!
-  </div>
-</div>
-<button class="next-btn" onclick="sm(6,document.querySelectorAll('.ntab')[6])">07 · Cálcio Cardíaco →</button>
-
-
-<!-- ======= M6: CÁLCIO ======= -->
-<div class="mod" id="m6">
-  <div class="mod-tag">Módulo 07</div>
-  <h2 class="mod-title">Cálcio — Relevância Mecânica e Elétrica</h2>
-  <p class="mod-desc">O íon mais importante no coração — atua tanto na eletrofisiologia quanto na mecânica de contração.</p>
-  <div class="cl cl-warn"><div class="cl-lbl">⚠️ Ponto Crítico</div><p>O cálcio tem importância <strong>TANTO ELÉTRICA QUANTO MECÂNICA</strong> no coração. Esta distinção foi enfatizada em aula e pode aparecer em prova!</p></div>
-  <div class="t2c">
-    <div class="card"><span class="card-ico">⚡</span><div class="card-t">Relevância ELÉTRICA</div><div class="card-b"><ul style="margin-top:10px;"><li>Gera a rampa diastólica das células automáticas</li><li>Despolarização lenta (fase 0 das contráteis)</li><li>Mantém a MESETA (fase 2) junto com K⁺</li><li>Determina inotropismo E cronotropismo</li><li>Dependência de Ca²⁺ <strong>extracelular</strong> — diferença crítica!</li></ul></div></div>
-    <div class="card"><span class="card-ico">💪</span><div class="card-t">Relevância MECÂNICA</div><div class="card-b"><ul style="margin-top:10px;"><li>Acoplamento excitação-contração</li><li>Ativa troponina C → libera sítios actina-miosina</li><li>Ca²⁺ da meseta amplifica Ca²⁺ do RS (CICR)</li><li>Sem Ca²⁺ adequado → contração ineficiente</li></ul></div></div>
-  </div>
-  <h3 class="stitle">Impacto Clínico da Calcemia</h3>
-  <div class="tw"><table><thead><tr><th>Condição</th><th>Efeito Elétrico</th><th>Efeito Mecânico</th><th>Manifestação</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Hipercalcemia</strong></td><td>Rampa íngreme → ↑ FC</td><td>Contrações mais fortes</td><td>Taquicardia, risco arritmias</td></tr>
-    <tr><td><strong>Hipocalcemia</strong></td><td>Rampa suave → ↓ FC</td><td>Contrações mais fracas</td><td>Bradicardia, IC</td></tr>
-    <tr><td><strong>Bloqueadores Ca²⁺</strong></td><td>↓ Cronotropismo</td><td>↓ Inotropismo</td><td>Tx HAS, FA, angina</td></tr>
-  </tbody></table></div>
-</div>
-<button class="next-btn" onclick="sm(7,document.querySelectorAll('.ntab')[7])">08 · Hemodinâmica →</button>
-
-
-<!-- ======= M7: HEMODINÂMICA ======= -->
-<div class="mod" id="m7">
-  <div class="mod-tag">Módulo 08</div>
-  <h2 class="mod-title">Hemodinâmica Cardíaca</h2>
-  <p class="mod-desc">Volumes, pressões e débito cardíaco — os números que descrevem a performance da bomba.</p>
-  <h3 class="stitle">Volumes Cardíacos</h3>
-  <div style="display:flex;flex-direction:column;gap:14px;margin:22px 0;">
-    <div style="display:flex;align-items:center;gap:14px;"><span style="font-size:.84rem;color:var(--t1);width:210px;flex-shrink:0;">V. Telediastólico (VTD)</span><div style="flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);"><div style="height:100%;width:100%;background:linear-gradient(90deg,var(--red),var(--red-b));border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;"><span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;color:#fff;">120 mL</span></div></div><span style="font-size:.74rem;color:var(--t3);font-family:'JetBrains Mono',monospace;width:130px;">Máximo · Final diástole</span></div>
-    <div style="display:flex;align-items:center;gap:14px;"><span style="font-size:.84rem;color:var(--t1);width:210px;flex-shrink:0;">Vol. Sistólico (VS)</span><div style="flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);"><div style="height:100%;width:58%;background:linear-gradient(90deg,var(--gold),var(--gold-l));border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;"><span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;color:#fff;">70 mL</span></div></div><span style="font-size:.74rem;color:var(--t3);font-family:'JetBrains Mono',monospace;width:130px;">Ejetado por batimento</span></div>
-    <div style="display:flex;align-items:center;gap:14px;"><span style="font-size:.84rem;color:var(--t1);width:210px;flex-shrink:0;">V. Telesistólico (VTS)</span><div style="flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);"><div style="height:100%;width:42%;background:linear-gradient(90deg,var(--blue),var(--blue-l));border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;"><span style="font-family:'JetBrains Mono',monospace;font-size:.76rem;font-weight:700;color:#fff;">50 mL</span></div></div><span style="font-size:.74rem;color:var(--t3);font-family:'JetBrains Mono',monospace;width:130px;">Residual · Não ejetado</span></div>
-  </div>
-  <div class="formula">
-    VS = VTD − VTS = 120 − 50 = <strong>70 mL</strong><br>
-    DC (Débito Cardíaco) = VS × FC = 70 mL × 70 bpm = <strong>~5 L/min</strong><br>
-    FE (Fração de Ejeção) = VS / VTD = 70 / 120 = <strong>58,3% ≈ 60%</strong>
-  </div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ FE Normal e Patológica</div><p>FE saudável ≈ <strong>60%</strong> (sempre ~60% do VTD sai a cada sístole).<br>FE &lt; 40% → disfunção sistólica grave (IC com FE reduzida).<br>FE ≥ 50% com sintomas → IC com FE preservada (disfunção diastólica).</p></div>
-  <h3 class="stitle">Fases do Ciclo Cardíaco</h3>
-  <div class="tw"><table><thead><tr><th>Fase</th><th>Evento</th><th>Válvulas</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Diástole</strong></td><td>Relaxamento + enchimento passivo</td><td>Mitral/Tricúspide abertas; Aórtica/Pulmonar fechadas</td></tr>
-    <tr><td><strong>Sístole Atrial</strong></td><td>Contração auricular — enchimento ativo (~20%)</td><td>Mitral/Tricúspide abertas</td></tr>
-    <tr><td><strong>Sístole Ventricular</strong></td><td>Contração + ejeção de sangue</td><td>Aórtica/Pulmonar abertas; AV fechadas</td></tr>
-  </tbody></table></div>
-</div>
-<button class="next-btn" onclick="sm(8,document.querySelectorAll('.ntab')[8])">09 · Frank-Starling →</button>
-
-
-<!-- ======= M8: FRANK-STARLING ======= -->
-<div class="mod" id="m8">
-  <div class="mod-tag">Módulo 09</div>
-  <h2 class="mod-title">Lei de Frank-Starling</h2>
-  <p class="mod-desc">A lei de funcionalidade fisiológica cardíaca — como o coração adapta automaticamente sua força ao volume recebido.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 Conceito Central</div><p>Dentro dos <strong>limites fisiológicos</strong>, todo o sangue que entra no coração (retorno venoso) na diástole será bombeado para fora. O coração adapta automaticamente a <strong>força de contração</strong> ao volume recebido — maior estiramento das fibras → maior força.</p></div>
-  <h3 class="stitle">Base — O Estiramento das Fibras</h3>
-  <div class="formula">
-    ↑ Retorno venoso → ↑ Volume Telediastólico → ↑ Estiramento das fibras miocárdicas<br>
-    → ↑ Força de contração (Inotropismo ↑) → ↑ Volume Sistólico ejetado<br><br>
-    <strong>Todo o sangue que entra deve sair</strong> (dentro dos limites fisiológicos)
-  </div>
-  <div class="cl cl-warn"><div class="cl-lbl">⚠️ Limite Fisiológico — Condição Obrigatória</div><p>A lei funciona <strong>SOMENTE dentro dos limites fisiológicos</strong> — enquanto o coração se manter saudável. Em IC descompensada o estiramento excessivo <em>reduz</em> a eficiência (curva descendente). Não se aplica em miocardiopatias ou disfunção sistólica grave.</p></div>
-  <h3 class="stitle">Pré-carga vs Pós-carga — Diferença Crítica</h3>
-  <div class="t2c">
-    <div class="card"><span class="card-ico">📏</span>
-      <div class="card-t">Pré-carga — Sobrecarga de Volume</div>
-      <div class="card-b"><strong>O que é:</strong> Volume no ventrículo ao final da <strong>DIÁSTOLE</strong> (VTD ≈ 120 mL).<br><br><strong>Depende de:</strong> Retorno venoso<br>↑ retorno venoso = ↑ pré-carga<br>↓ retorno venoso = ↓ pré-carga<br><br><strong>Também chamada:</strong> "Sobrecarga de volume"<br><br><span style="color:var(--gold-l);font-weight:700;">Define-se durante a DIÁSTOLE</span></div>
+  <div style="display:flex;align-items:center;gap:14px;">
+    <span style="font-size:.84rem;color:var(--text);width:220px;flex-shrink:0;">V. Telesistólico (VTS)</span>
+    <div style="flex:1;height:28px;background:rgba(255,255,255,.04);border-radius:6px;overflow:hidden;border:1px solid rgba(255,255,255,.06);">
+      <div style="height:100%;width:42%;background:linear-gradient(90deg,var(--accent),#7cb9fb);border-radius:6px;display:flex;align-items:center;justify-content:flex-end;padding-right:10px;">
+        <span style="font-family:var(--font-mono);font-size:.76rem;font-weight:700;color:#fff;">50 mL</span>
+      </div>
     </div>
-    <div class="card"><span class="card-ico">🚧</span>
-      <div class="card-t">Pós-carga — Resistência à Ejeção</div>
-      <div class="card-b"><strong>O que é:</strong> Resistência que o ventrículo vence para ejetar (durante a <strong>SÍSTOLE</strong>).<br><br><strong>Depende de:</strong><br>• RCA — Resistência/elasticidade da aorta<br>• RUA/RVP — Resistência vascular periférica<br><br><strong>Nota:</strong> Pós-carga ↑ quando a aorta perde elasticidade (HAS, idosos)<br><br><span style="color:var(--red-b);font-weight:700;">Varia durante a SÍSTOLE VENTRICULAR</span></div>
-    </div>
-  </div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Timing das Cargas — Nunca Confunda!</div><p><strong>Pré-carga:</strong> definida na <strong>DIÁSTOLE</strong> (enchimento ventricular)<br><strong>Pós-carga:</strong> varia na <strong>SÍSTOLE VENTRICULAR</strong> (ejeção)<br>Esta distinção cai com frequência em provas!</p></div>
-  <h3 class="stitle">Exemplos Numéricos — Débito Cardíaco</h3>
-  <div class="t2c">
-    <div class="card" style="border-color:rgba(39,174,96,.3);background:rgba(39,174,96,.04);">
-      <div class="card-t" style="color:var(--green-l);">✅ Coração Normal</div>
-      <div class="card-b" style="margin-top:12px;">VS = 70 mL · FC = 80 bpm<br><strong>DC = 70 × 80 = 5.600 mL = 5,6 L/min</strong><br><br>Fração de ejeção: 70/120 = <strong>58,3% ≈ 60%</strong></div>
-    </div>
-    <div class="card" style="border-color:rgba(192,57,43,.3);background:rgba(192,57,43,.04);">
-      <div class="card-t" style="color:var(--red-b);">❌ Perda de 20% do NSA</div>
-      <div class="card-b" style="margin-top:12px;">Sem contração auricular eficiente:<br>VS ≈ 56 mL · FC ≈ 53 bpm<br><strong>DC = 56 × 53 = 2.968 mL ≈ 2,97 L/min</strong><br><br>Redução de quase 50% do débito!</div>
-    </div>
-  </div>
-  <h3 class="stitle">Situações Clínicas</h3>
-  <div class="tw"><table><thead><tr><th>Situação</th><th>Retorno Venoso</th><th>Pré-carga</th><th>Força</th><th>DC</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Exercício físico</strong></td><td>↑↑</td><td>↑↑</td><td>↑↑</td><td>↑↑ (até 5×)</td></tr>
-    <tr><td><strong>Repouso normal</strong></td><td>Normal</td><td>Normal</td><td>Normal</td><td>~5 L/min</td></tr>
-    <tr><td><strong>Hipovolemia</strong></td><td>↓↓</td><td>↓↓</td><td>↓↓</td><td>↓↓</td></tr>
-    <tr><td><strong>IC descompensada</strong></td><td>↑ (congestão)</td><td>↑↑↑</td><td>↓ (lei falha)</td><td>↓↓</td></tr>
-  </tbody></table></div>
-  <div class="cl cl-ok"><div class="cl-lbl">✓ Questões Clássicas — Frank-Starling</div><p>"A lei de F-S se aplica principalmente a qual parte?" → <strong>Ventrículos</strong> (plural).<br>"A pré-carga se define em qual momento?" → <strong>Diástole</strong>.<br>"Como também se chama a pré-carga?" → <strong>Sobrecarga de volume</strong>.<br>"De que depende a pós-carga?" → <strong>Resistência aórtica (RCA) + RVP/RUA</strong>.</p></div>
-</div>
-<button class="next-btn" onclick="sm(9,document.querySelectorAll('.ntab')[9])">10 · Bainbridge →</button>
-
-
-<!-- ======= M9: BAINBRIDGE ======= -->
-<div class="mod" id="m9">
-  <div class="mod-tag">Módulo 10</div>
-  <h2 class="mod-title">Reflexo de Bainbridge</h2>
-  <p class="mod-desc">O reflexo de estiramento auricular que ajusta a frequência cardíaca ao retorno venoso.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 O Que é o Reflexo de Bainbridge?</div><p>Reflexo <strong>aurículo-cardíaco</strong> que aumenta ou diminui a FC de acordo com a quantidade/força com que o sangue chega à <strong>aurícula DIREITA</strong>. Complementa Frank-Starling: F-S ajusta a <em>força</em>, Bainbridge ajusta a <em>frequência</em>.</p></div>
-  <h3 class="stitle">Mecanismo Passo a Passo</h3>
-  <div class="cg3">
-    <div class="card"><span class="card-ico">🩸</span><div class="card-t">1. Estímulo</div><div class="card-b">Maior quantidade de sangue chega à aurícula direita — ou chega mais <strong>violentamente/rapidamente</strong> — causando distensão/estiramento da parede auricular.</div></div>
-    <div class="card"><span class="card-ico">📡</span><div class="card-t">2. Receptor</div><div class="card-b"><strong>Mecanorreceptores de estiramento auricular</strong> na parede da aurícula direita detectam a distensão → enviam sinal ao centro cardiovascular bulbar.</div></div>
-    <div class="card"><span class="card-ico">⚡</span><div class="card-t">3. Resposta</div><div class="card-b">↑ Retorno venoso → ↑ FC (cronotropismo ↑)<br>↓ Retorno venoso → ↓ FC (cronotropismo ↓)<br>Ajuste rápido e reflexo.</div></div>
-  </div>
-  <div class="formula">
-    ↑ Sangue → Aurícula Direita → ↑ Distensão → Mecanorreceptores ativados → ↑ FC<br>
-    ↓ Sangue → Aurícula Direita → ↓ Distensão → Mecanorreceptores menos ativos → ↓ FC
-  </div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Aurícula DIREITA — Por quê?</div><p>O reflexo está na <strong>aurícula DIREITA</strong> porque é ela que recebe o retorno venoso sistêmico (pelas veias cavas superior e inferior). A aurícula esquerda recebe retorno pulmonar — outros reflexos.</p></div>
-  <h3 class="stitle">Frank-Starling vs Bainbridge — Comparação</h3>
-  <div class="tw"><table><thead><tr><th>Aspecto</th><th>Frank-Starling</th><th>Bainbridge</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Estrutura</strong></td><td>Ventrículos</td><td>Aurícula Direita</td></tr>
-    <tr><td><strong>Parâmetro ajustado</strong></td><td>Força de contração</td><td>Frequência cardíaca</td></tr>
-    <tr><td><strong>Propriedade cardíaca</strong></td><td>Inotropismo</td><td>Cronotropismo</td></tr>
-    <tr><td><strong>Mecanismo</strong></td><td>Estiramento das fibras ventriculares</td><td>Mecanorreceptores auriculares direitos</td></tr>
-    <tr><td><strong>Resultado</strong></td><td>↑ Volume ejetado</td><td>↑ Frequência cardíaca</td></tr>
-    <tr><td><strong>Juntos no exercício</strong></td><td colspan="2" style="text-align:center;color:var(--gold-l);font-weight:600;">↑ Força + ↑ FC = ↑↑↑ Débito Cardíaco</td></tr>
-  </tbody></table></div>
-  <div class="cl cl-ok"><div class="cl-lbl">✓ Questões Clássicas — Bainbridge</div><p>"Qual reflexo ajusta a FC ao retorno venoso auricular?" → <strong>Reflexo de Bainbridge</strong>.<br>"Qual aurícula?" → <strong>DIREITA</strong>.<br>"↑ retorno venoso → FC?" → <strong>Aumenta</strong>.</p></div>
-</div>
-<button class="next-btn" onclick="sm(10,document.querySelectorAll('.ntab')[10])">11 · Ruídos Cardíacos →</button>
-
-
-<!-- ======= M10: RUÍDOS ======= -->
-<div class="mod" id="m10">
-  <div class="mod-tag">Módulo 11</div>
-  <h2 class="mod-title">Ruídos Cardíacos</h2>
-  <p class="mod-desc">Sons produzidos pelo coração — causas, timing e implicações clínicas.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 Conceito-Chave</div><p>Os ruídos são produzidos pelo <strong>fechamento das válvulas</strong> e pela <strong>turbulência do fluxo</strong>. A contração muscular em si NÃO gera o ruído. As válvulas abrem e fecham pela própria pressão/peso do sangue.</p></div>
-  <div class="scard"><div class="snum">B1</div><div class="sinfo"><h4>Primeiro Ruído — "TUM" (grave, mais longo)</h4><p>Fechamento das válvulas <strong>mitral e tricúspide</strong> (AV) no início da sístole ventricular. Válvulas maiores → som mais grave e prolongado.</p><p><strong>Marca o início da sístole.</strong> Coincide com o complexo QRS no ECG.</p><p class="mono">5° EIC, linha hemiclavicular esquerda</p></div></div>
-  <div class="scard"><div class="snum">B2</div><div class="sinfo"><h4>Segundo Ruído — "TÁ" (agudo, mais curto)</h4><p>Fechamento das válvulas <strong>aórtica e pulmonar</strong> (semilunares) no final da sístole. Válvulas menores → som mais agudo e breve.</p><p><strong>Marca o início da diástole.</strong> Coincide com o final da onda T no ECG.</p><p class="mono">2° EIC direito (aórtico) / 2° EIC esquerdo (pulmonar)</p></div></div>
-  <div class="scard"><div class="snum" style="color:var(--t3);font-size:2.2rem;">B3</div><div class="sinfo"><h4>Terceiro Ruído — Galope Protodiastólico</h4><p>Som do <strong>enchimento ventricular rápido</strong> no início da diástole.</p><p>Normal em crianças/adultos jovens. <strong>Em adultos:</strong> sugere IC sistólica (FE reduzida).</p></div></div>
-  <div class="scard"><div class="snum" style="color:var(--t3);font-size:2.2rem;">B4</div><div class="sinfo"><h4>Quarto Ruído — Galope Presistólico</h4><p>Som da <strong>contração atrial forçada</strong> contra ventrículo com complacência reduzida.</p><p><strong>SEMPRE patológico.</strong> Sugere hipertrofia ventricular ou disfunção diastólica.</p></div></div>
-  <div class="formula">
-    Ciclo normal: B1 (TUM) → Sístole → B2 (TÁ) → Diástole → B1...<br>
-    B3 ou B4 presentes = galope em 3 tempos → investigar cardiopatia<br>
-    B4 = SEMPRE patológico — nunca fisiológico em adultos!
-  </div>
-  <h3 class="stitle">Sopros Cardíacos</h3>
-  <div class="tw"><table><thead><tr><th>Momento</th><th>Causa Comum</th><th>Observação</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Sistólico</strong></td><td>Estenose aórtica ou insuficiência mitral</td><td>Pode ser funcional ou patológico</td></tr>
-    <tr><td><strong>Diastólico</strong></td><td>Insuficiência aórtica ou estenose mitral</td><td><strong>Sempre patológico</strong></td></tr>
-    <tr><td><strong>Contínuo</strong></td><td>PCA (persistência do canal arterial)</td><td>Sopro em "maquinaria"</td></tr>
-  </tbody></table></div>
-</div>
-<button class="next-btn" onclick="sm(11,document.querySelectorAll('.ntab')[11])">12 · ECG — Ondas →</button>
-
-
-<!-- ======= M11: ECG ONDAS ======= -->
-<div class="mod" id="m11">
-  <div class="mod-tag">Módulo 12</div>
-  <h2 class="mod-title">ECG — Ondas e Significados</h2>
-  <p class="mod-desc">O ECG registra apenas atividade elétrica. Entender cada onda é dominar o instrumento diagnóstico mais usado na cardiologia.</p>
-  <div class="cl cl-info"><div class="cl-lbl">💡 O que o ECG pode e NÃO pode detectar</div><p><strong>Pode:</strong> despolarização, repolarização, ritmo, frequência, eixo elétrico, bloqueios, isquemia elétrica.<br><strong>NÃO pode:</strong> ouvir sopros, avaliar mecânica com 100% de certeza. É estudo complementar — sempre comparar com quadro clínico!</p></div>
-  <h3 class="stitle">Papel do ECG — Medidas Fundamentais</h3>
-  <div class="tw"><table><thead><tr><th>Quadrado</th><th>Dimensão</th><th>Tempo (horizontal)</th><th>Amplitude (vertical)</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Pequeno</strong></td><td>1 mm × 1 mm</td><td>0,04 segundos</td><td>0,1 mV</td></tr>
-    <tr><td><strong>Grande</strong></td><td>5 mm × 5 mm</td><td>0,20 segundos</td><td>0,5 mV</td></tr>
-  </tbody></table></div>
-  <p style="font-size:.82rem;color:var(--t3);">Velocidade de papel padrão: <strong>25 mm/s</strong>. Calibração: <strong>10 mm = 1 mV</strong>.</p>
-  <h3 class="stitle">As Ondas — Cada Uma em Detalhe</h3>
-  <div class="wcard"><div class="wlabel">P</div><div class="winfo">
-    <p><strong>Despolarização atrial</strong> — ativação das duas aurículas</p>
-    <p style="color:var(--t2);font-size:.86rem;">A onda P tem <strong>dois componentes</strong>:<br>
-    • Componente <strong>inicial (ascendente)</strong> = despolarização da <strong>Aurícula Direita</strong><br>
-    • Componente <strong>final (descendente)</strong> = despolarização da <strong>Aurícula Esquerda</strong><br>
-    → Falta da 2ª metade da P = problema na Aurícula Esquerda<br>
-    → Falta da 1ª metade = problema na Aurícula Direita<br>
-    → Condução interatrial via <strong>Fascículo de Bachmann</strong></p>
-    <p class="mono">Duração &lt;120ms | Amplitude &lt;2,5mm | Ausência ≠ necessariamente parada do NSA</p>
-  </div></div>
-  <div class="wcard"><div class="wlabel" style="font-size:1.8rem;">PR</div><div class="winfo">
-    <p><strong>Segmento PR / Intervalo PR</strong> — retraso fisiológico no NAV</p>
-    <p style="color:var(--t2);font-size:.86rem;">Linha isoelétrica após onda P = potencial "preso" no NAV. O NAV segura o estímulo para que as aurículas terminem de contrair ANTES do ventrículo ativar. Significado fisiológico!</p>
-    <p class="mono">Normal: 120–200ms | &gt;200ms = Bloqueio AV 1° grau</p>
-  </div></div>
-  <div class="wcard"><div class="wlabel">QRS</div><div class="winfo">
-    <p><strong>Despolarização ventricular</strong> — complexo de 3 ondas, cada uma com significado específico</p>
-    <p style="color:var(--t2);font-size:.86rem;">
-      <strong>Onda Q:</strong> Despolarização da base do coração / septo (predominantemente VD)<br>
-      <strong>Onda R:</strong> Despolarização do <strong>Ventrículo Esquerdo</strong> (parede livre, ponta do coração)<br>
-      <strong>Onda S:</strong> Despolarização da base / <strong>Ventrículo Direito</strong><br><br>
-      → Alteração da onda R = problema no <strong>VE</strong><br>
-      → Alteração da onda S = problema no <strong>VD</strong><br>
-      → Em <strong>AVR</strong>: TODAS as ondas do QRS estão invertidas (negativas)<br>
-      → Em <strong>V1</strong>: QRS parcialmente invertido (normal!)<br>
-      → Em <strong>V2</strong>: também parcialmente invertido<br>
-      → Repolarização auricular NÃO aparece — encoberta pelo QRS (mais intenso)
-    </p>
-    <p class="mono">Normal: &lt;120ms | &gt;120ms = Bloqueio de ramo (BRDE/BRFE)</p>
-  </div></div>
-  <div class="wcard"><div class="wlabel">ST</div><div class="winfo">
-    <p><strong>Segmento ST</strong> — platô da sístole ventricular = <strong>Meseta (Fase 2)!</strong></p>
-    <p style="color:var(--t2);font-size:.86rem;">Linha isoelétrica = ventrículos em sístole elétrica plena. Corresponde diretamente à <strong>Fase 2 (Meseta) do potencial de ação cardíaco</strong>.</p>
-    <p class="mono">Normal: isoelétrico | Supra-ST → IAM (corrente de lesão) | Infra-ST → isquemia</p>
-  </div></div>
-  <div class="wcard"><div class="wlabel">T</div><div class="winfo">
-    <p><strong>Onda T</strong> — ÚNICA onda de repolarização visível no ECG</p>
-    <p style="color:var(--t2);font-size:.86rem;">Representa a <strong>repolarização ventricular</strong> (fase 3 do PA). A repolarização auricular existe mas NÃO aparece — encoberta pelo QRS muito mais intenso.</p>
-    <p class="mono">T invertida → isquemia/HVE | T apiculada → hipercalemia</p>
-  </div></div>
-  <div class="cl cl-warn"><div class="cl-lbl">⚠️ Relação ECG ↔ Potencial de Ação</div><ul><li><strong>Onda P</strong> = despolarização atrial</li><li><strong>Segmento PR</strong> = NAV segurando o estímulo (retraso fisiológico)</li><li><strong>Complexo QRS</strong> = despolarização ventricular (Q=septo/VD, R=VE, S=base/VD)</li><li><strong>Segmento ST</strong> = Meseta (fase 2) — sístole elétrica</li><li><strong>Onda T</strong> = repolarização ventricular (fase 3)</li><li><strong>Repolarização atrial</strong> = existe, mas NUNCA aparece no ECG (encoberta pelo QRS)</li></ul></div>
-  <h3 class="stitle">Segmentos vs Intervalos</h3>
-  <div class="t2c">
-    <div class="card"><div class="card-t" style="color:var(--blue-l);">📊 Segmento</div><div class="card-b">Linha isoelétrica entre duas ondas. <strong>SEM ondas.</strong><br>Exemplos: segmento PR, segmento ST.</div></div>
-    <div class="card"><div class="card-t" style="color:var(--gold-l);">📏 Intervalo</div><div class="card-b">Inclui ondas + linha isoelétrica. <strong>COM ondas.</strong><br>Exemplos: intervalo PR (inclui a onda P), intervalo QT.</div></div>
-  </div>
-  <h3 class="stitle">Alterações Importantes</h3>
-  <div class="tw"><table><thead><tr><th>Alteração</th><th>Achado ECG</th><th>Mecanismo</th></tr></thead>
-  <tbody>
-    <tr><td><strong>Ritmo Sinusal Normal</strong></td><td>P→QRS→T regular, FC 60–100</td><td>NSA como marca-passo normal</td></tr>
-    <tr><td><strong>Fibrilação Atrial</strong></td><td>Ausência de onda P, RR irregular</td><td>Atividade atrial caótica</td></tr>
-    <tr><td><strong>Bloqueio AV 1°</strong></td><td>PR &gt; 200ms</td><td>Condução lentificada no NAV</td></tr>
-    <tr><td><strong>Bloqueio AV 3°</strong></td><td>P e QRS dissociados</td><td>NAV bloqueado → Purkinje ativa</td></tr>
-    <tr><td><strong>IAM com supra ST</strong></td><td>ST elevado &gt;1mm em ≥2 derivações</td><td>Oclusão total → corrente de lesão</td></tr>
-    <tr><td><strong>BRDE</strong></td><td>QRS &gt;120ms, rSR' em V1</td><td>Bloqueio ramo direito feixe de His</td></tr>
-  </tbody></table></div>
-</div>
-<button class="next-btn" onclick="sm(12,document.querySelectorAll('.ntab')[12])">13 · ECG — Eletrodos →</button>
-
-
-<!-- ======= M12: ECG ELETRODOS ======= -->
-<div class="mod" id="m12">
-  <div class="mod-tag">Módulo 13</div>
-  <h2 class="mod-title">ECG — Eletrodos, Derivações e Eixo</h2>
-  <p class="mod-desc">Os 10 eletrodos que geram 12 derivações — como funcionam, onde ficam, e como calcular o eixo elétrico.</p>
-  <h3 class="stitle">Os Eletrodos — 10 ao Total</h3>
-  <div class="cg3">
-    <div class="card"><span class="card-ico">🦾</span><div class="card-t">4 Eletrodos de Membros</div><div class="card-b">BD (braço direito), BE (braço esquerdo), PE (perna esquerda), PD (perna direita).<br><br><strong>PD = Eletrodo NEUTRO/INDIFERENTE</strong> → serve de referência, não gera derivação própria. Total: 9 ativos + 1 neutro = 10 eletrodos.</div></div>
-    <div class="card"><span class="card-ico">🫀</span><div class="card-t">6 Eletrodos Precordiais</div><div class="card-b">V1, V2, V3, V4, V5, V6 — na parede torácica anterior.<br><br>Cada um tem posição anatômica específica — <strong>deve ser memorizada para a prova!</strong></div></div>
-    <div class="card"><span class="card-ico">📊</span><div class="card-t">10 eletrodos → 12 derivações</div><div class="card-b"><strong>9 eletrodos ativos</strong> geram 12 derivações, cada uma "enxergando" o coração de um ângulo diferente — como fotos do mesmo objeto em perspectivas diferentes.</div></div>
-  </div>
-  <h3 class="stitle">Posição dos Eletrodos Precordiais</h3>
-  <div class="tw"><table><thead><tr><th>Eletrodo</th><th>Posição Anatômica</th><th>Região Cardíaca</th></tr></thead>
-  <tbody>
-    <tr><td><strong>V1</strong></td><td>4° EIC, borda esternal <strong>direita</strong></td><td>Ventrículo Direito (base)</td></tr>
-    <tr><td><strong>V2</strong></td><td>4° EIC, borda esternal <strong>esquerda</strong></td><td>Septo interventricular</td></tr>
-    <tr><td><strong>V3</strong></td><td>Entre V2 e V4</td><td>Região anterosseptal</td></tr>
-    <tr><td><strong>V4</strong></td><td>5° EIC, linha hemiclavicular <strong>esquerda</strong></td><td>Ponta do coração (VE)</td></tr>
-    <tr><td><strong>V5</strong></td><td>5° EIC, linha axilar <strong>anterior</strong> esquerda</td><td>Face lateral do VE</td></tr>
-    <tr><td><strong>V6</strong></td><td>5° EIC, linha axilar <strong>média</strong> esquerda</td><td>Face lateral do VE</td></tr>
-  </tbody></table></div>
-  <h3 class="stitle">Tipos de Derivações — Os 3 Grupos</h3>
-  <div class="cg3">
-    <div class="card" style="border-color:rgba(192,57,43,.35);"><div class="card-t" style="color:var(--red-b);">🔴 Bipolares (D1, D2, D3)</div><div class="card-b" style="margin-top:10px;">Precisam de <strong>2 eletrodos simultâneos</strong>. Formam o Triângulo de Einthoven.<br><br>• <strong>D1:</strong> BD (−) + BE (+)<br>• <strong>D2:</strong> BD (−) + PE (+)<br>• <strong>D3:</strong> BE (−) + PE (+)<br><br><em style="color:var(--t3)">A polaridade dos eletrodos MUDA de acordo com a derivação!</em></div></div>
-    <div class="card" style="border-color:rgba(201,148,26,.35);"><div class="card-t" style="color:var(--gold-l);">🟡 Ampliadas — aVR, aVL, aVF</div><div class="card-b" style="margin-top:10px;">Unipolares ampliadas. Depende de <strong>um eletrodo específico</strong>.<br><br>• <strong>aVR:</strong> Braço Direito (A=ampliada, V=voltage, R=right)<br>• <strong>aVL:</strong> Braço Esquerdo (L=left)<br>• <strong>aVF:</strong> Perna Esquerda (F=foot)<br><br><em style="color:var(--t3)">Em unipolares: o eletrodo específico SEMPRE tem polaridade positiva.</em></div></div>
-    <div class="card" style="border-color:rgba(74,144,217,.35);"><div class="card-t" style="color:var(--blue-l);">🔵 Precordiais (V1–V6)</div><div class="card-b" style="margin-top:10px;">Unipolares torácicas.<br><br>V1, V2 → VD (QRS parcialmente invertido = NORMAL)<br>V3, V4 → região anterior/septo<br>V5, V6 → VE lateral<br><br><em style="color:var(--t3)">3 bipolares + 3 ampliadas + 6 precordiais = 12 derivações.</em></div></div>
-  </div>
-  <div class="cl cl-red"><div class="cl-lbl">❗ Verdadeiro ou Falso — Clássico!</div><p>"V1, V2 e V3 são derivações bipolares." → <strong>FALSO</strong> — são unipolares precordiais.<br>"As bipolares são D1, D2 e D3." → <strong>VERDADEIRO</strong>.<br>"Em derivações unipolares o eletrodo específico tem polaridade negativa." → <strong>FALSO</strong> — POSITIVA.<br>"As derivações ampliadas precisam de 2 eletrodos." → <strong>FALSO</strong> — são unipolares (1 eletrodo).</p></div>
-  <h3 class="stitle">Passos para Interpretar um ECG</h3>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">1</div><div><div class="card-t">Calibração</div><div class="card-b">Verificar sinal (10mm=1mV) e velocidade (25mm/s). Sem calibração correta = todas as medidas inválidas.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">2</div><div><div class="card-t">12 Derivações Presentes?</div><div class="card-b">Em <strong>aVR</strong>: todas as ondas devem estar invertidas (negativas). Em <strong>V1</strong>: QRS deve estar parcialmente invertido. Esses são os check-ins de normalidade.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">3</div><div><div class="card-t">Ritmo</div><div class="card-b">Intervalos R-R iguais = ritmo <strong>regular</strong>. Variáveis = irregular. Percepção visual do espaçamento — não precisa medir cada quadradinho.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">4</div><div><div class="card-t">Origem da Atividade Elétrica</div><div class="card-b">Onda P presente E antes do QRS em ≥6 derivações → origem sinusal. Onda P ausente = FA ou outra arritmia. Verificar preferencialmente em D2.</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">5</div><div><div class="card-t">Frequência Cardíaca — 3 Métodos</div><div class="card-b">• <strong>1500 ÷ n° de quadradinhos entre R-R</strong> (mais preciso)<br>• <strong>300 → 150 → 100 → 75 → 60 → 50</strong> (contar quadrados grandes)<br>• <strong>Contar QRS em 10s × 6</strong> (para ritmos irregulares)</div></div></div>
-  <div class="card" style="margin-bottom:12px;display:flex;gap:18px;align-items:flex-start;"><div style="font-family:var(--font-display);font-size:2.2rem;font-weight:900;color:var(--red-b);line-height:1;flex-shrink:0;min-width:40px;">6</div><div><div class="card-t">Eixo Elétrico Cardíaco</div><div class="card-b">Normal: <strong>−30° a +90°</strong>. Técnica rápida D1+aVF: ambos(+)=normal; D1(+) aVF(−)=desvio esquerdo; D1(−) aVF(+)=desvio direito; ambos(−)=extremo. Para grau exato: isodifásicas → eixo a 90° + verificar D2.</div></div></div>
-  <h3 class="stitle">Eixo Elétrico — Tabela de Referência</h3>
-  <div class="tw"><table><thead><tr><th>Eixo</th><th>Graus</th><th>D1</th><th>aVF</th></tr></thead>
-  <tbody>
-    <tr><td><strong style="color:var(--green-l);">Normal</strong></td><td>−30° a +90°</td><td>Positivo</td><td>Positivo</td></tr>
-    <tr><td><strong style="color:var(--gold-l);">Desvio Esquerdo</strong></td><td>−30° a −90°</td><td>Positivo</td><td>Negativo (+ ver D2)</td></tr>
-    <tr><td><strong style="color:var(--red-b);">Desvio Direito</strong></td><td>+90° a +180°</td><td>Negativo</td><td>Positivo</td></tr>
-    <tr><td><strong style="color:#9b59b6;">Extremo</strong></td><td>−90° a ±180°</td><td>Negativo</td><td>Negativo</td></tr>
-  </tbody></table></div>
-  <div class="cl cl-warn"><div class="cl-lbl">⚠️ Técnica das Isodifásicas</div><p>Encontrar derivação com ondas <strong>isodifásicas</strong> (metade acima, metade abaixo): o eixo está a <strong>90° desta derivação</strong>. Para definir qual dos dois lados: se D2 estiver com ondas normais (positivas) → sentido horário. Se invertidas → sentido anti-horário.</p></div>
-</div>
-<button class="next-btn" onclick="sm(13,document.querySelectorAll('.ntab')[13])">🃏 Ir para Flashcards →</button>
-
-
-<!-- ======= M13: FLASHCARDS ======= -->
-<div class="mod" id="m13">
-  <div class="mod-tag">Módulo 14</div>
-  <h2 class="mod-title">🃏 Flashcards Interativos</h2>
-  <p class="mod-desc">Clique nos cards para revelar a resposta. Estude de forma ativa — virar os cards consolida a memória!</p>
-  <div class="fc-counter" id="fc-counter">Carregando flashcards...</div>
-  <div id="flashcard-grid"></div>
-  <div style="text-align:center;margin-top:28px;display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
-    <button class="cta" onclick="shuffleCards()" style="font-size:.85rem;padding:12px 28px;">🔀 Embaralhar</button>
-    <button class="cta" onclick="resetCards()" style="font-size:.85rem;padding:12px 28px;background:rgba(255,255,255,.06);box-shadow:none;border:1px solid var(--bdr-b);">↩ Virar Todos</button>
+    <span style="font-size:.74rem;color:var(--muted);font-family:var(--font-mono);width:130px;">Residual · Não ejetado</span>
   </div>
 </div>
 
-<!-- ======= M14: QUIZ ======= -->
-<div class="mod" id="m14">
-  <div class="mod-tag">Quiz Final · 20 Questões</div>
-  <h2 class="mod-title">Quiz — Biofísica Cardíaca P2</h2>
-  <p class="mod-desc">Cobrindo todos os módulos. Teste seus conhecimentos!</p>
-  <div id="quiz-container"></div>
+<div class="formula">
+  VS = VTD − VTS = 120 − 50 = <strong>70 mL</strong><br>
+  DC (Débito Cardíaco) = VS × FC = 70 mL × 80 bpm = <strong>~5,6 L/min</strong><br>
+  FE (Fração de Ejeção) = VS / VTD = 70 / 120 = <strong>58,3% ≈ 60%</strong>
 </div>
 
-</main>
+<div class="info-block danger">
+  <div class="label">❗ FE Normal e Patológica</div>
+  <p>FE saudável ≈ <strong>60%</strong> (sempre ~60% do VTD sai a cada sístole).<br>FE &lt; 40% → disfunção sistólica grave (IC com FE reduzida).<br>FE ≥ 50% com sintomas → IC com FE preservada (disfunção diastólica).</p>
+</div>
 
-<footer>
-  <p><strong>Resumo de Biofísica Cardíaca para P2</strong> · por Enzo Salmazo · UCP — Pedro Juan Caballero</p>
-  <p style="margin-top:8px;">Referências: <strong>Guyton &amp; Hall</strong> · <strong>Biofísica Médica e Biológica</strong> — Guilherme A. Micó</p>
-</footer>
+<div class="sec-divider"><h3>Fases do Ciclo Cardíaco</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Fase</th><th>Evento</th><th>Válvulas</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Diástole</strong></td><td>Relaxamento + enchimento passivo</td><td>Mitral/Tricúspide abertas; Aórtica/Pulmonar fechadas</td></tr>
+      <tr><td><strong>Sístole Atrial</strong></td><td>Contração auricular — enchimento ativo (~20%)</td><td>Mitral/Tricúspide abertas</td></tr>
+      <tr><td><strong>Sístole Ventricular</strong></td><td>Contração + ejeção de sangue</td><td>Aórtica/Pulmonar abertas; AV fechadas</td></tr>
+    </tbody>
+  </table>
+</div>
+</div></div>
+
+<!-- ===== FRANK-STARLING ===== -->
+<div id="frankstarling" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">📏</span> Módulo 9 — Lei de Frank-Starling</div>
+
+<div class="info-block blue">
+  <div class="label">💡 Conceito Central</div>
+  <p>Dentro dos <strong>limites fisiológicos</strong>, todo o sangue que entra no coração (retorno venoso) na diástole será bombeado para fora. O coração adapta automaticamente a <strong>força de contração</strong> ao volume recebido — maior estiramento das fibras → maior força.</p>
+</div>
+
+<div class="formula">
+  ↑ Retorno venoso → ↑ Volume Telediastólico → ↑ Estiramento das fibras miocárdicas<br>
+  → ↑ Força de contração (Inotropismo ↑) → ↑ Volume Sistólico ejetado<br><br>
+  <strong>Todo o sangue que entra deve sair</strong> (dentro dos limites fisiológicos)
+</div>
+
+<div class="info-block warn">
+  <div class="label">⚠️ Limite Fisiológico — Condição Obrigatória</div>
+  <p>A lei funciona <strong>SOMENTE dentro dos limites fisiológicos</strong>. Em IC descompensada o estiramento excessivo <em>reduz</em> a eficiência (curva descendente). Não se aplica em miocardiopatias ou disfunção sistólica grave.</p>
+</div>
+
+<div class="sec-divider"><h3>Pré-carga vs Pós-carga — Diferença Crítica</h3></div>
+
+<div class="t2c">
+  <div class="card-item"><span class="card-ico">📏</span>
+    <div class="card-t">Pré-carga — Sobrecarga de Volume</div>
+    <div class="card-b"><strong>O que é:</strong> Volume no ventrículo ao final da <strong>DIÁSTOLE</strong> (VTD ≈ 120 mL).<br><br><strong>Depende de:</strong> Retorno venoso<br>↑ retorno venoso = ↑ pré-carga<br><br><strong>Também chamada:</strong> "Sobrecarga de volume"<br><br><span style="color:#f9c94f;font-weight:700;">Define-se durante a DIÁSTOLE</span></div>
+  </div>
+  <div class="card-item"><span class="card-ico">🚧</span>
+    <div class="card-t">Pós-carga — Resistência à Ejeção</div>
+    <div class="card-b"><strong>O que é:</strong> Resistência que o ventrículo vence para ejetar (durante a <strong>SÍSTOLE</strong>).<br><br><strong>Depende de:</strong><br>• RCA — Resistência/elasticidade da aorta<br>• RUA/RVP — Resistência vascular periférica<br><br><span style="color:#e74c3c;font-weight:700;">Varia durante a SÍSTOLE VENTRICULAR</span></div>
+  </div>
+</div>
+
+<div class="info-block danger">
+  <div class="label">❗ Timing das Cargas — Nunca Confunda!</div>
+  <p><strong>Pré-carga:</strong> definida na <strong>DIÁSTOLE</strong> (enchimento ventricular)<br><strong>Pós-carga:</strong> varia na <strong>SÍSTOLE VENTRICULAR</strong> (ejeção)</p>
+</div>
+
+<div class="sec-divider"><h3>Exemplos Numéricos</h3></div>
+
+<div class="t2c">
+  <div class="card-item" style="border-color:rgba(79,249,132,.3);">
+    <div class="card-t" style="color:var(--green);">✅ Coração Normal</div>
+    <div class="card-b" style="margin-top:10px;">VS = 70 mL · FC = 80 bpm<br><strong>DC = 70 × 80 = 5.600 mL = 5,6 L/min</strong><br><br>Fração de ejeção: 70/120 = <strong>58,3% ≈ 60%</strong></div>
+  </div>
+  <div class="card-item" style="border-color:rgba(231,76,60,.3);">
+    <div class="card-t" style="color:#e74c3c;">❌ Perda de 20% do NSA</div>
+    <div class="card-b" style="margin-top:10px;">Sem contração auricular eficiente:<br>VS ≈ 56 mL · FC ≈ 53 bpm<br><strong>DC = 56 × 53 = 2.968 mL ≈ 2,97 L/min</strong><br><br>Redução de quase 50% do débito!</div>
+  </div>
+</div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;margin-top:20px;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Situação</th><th>Retorno Venoso</th><th>Pré-carga</th><th>Força</th><th>DC</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Exercício físico</strong></td><td>↑↑</td><td>↑↑</td><td>↑↑</td><td>↑↑ (até 5×)</td></tr>
+      <tr><td><strong>Repouso normal</strong></td><td>Normal</td><td>Normal</td><td>Normal</td><td>~5 L/min</td></tr>
+      <tr><td><strong>Hipovolemia</strong></td><td>↓↓</td><td>↓↓</td><td>↓↓</td><td>↓↓</td></tr>
+      <tr><td><strong>IC descompensada</strong></td><td>↑ (congestão)</td><td>↑↑↑</td><td>↓ (lei falha)</td><td>↓↓</td></tr>
+    </tbody>
+  </table>
+</div>
+</div></div>
+
+<!-- ===== BAINBRIDGE ===== -->
+<div id="bainbridge" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🔄</span> Módulo 10 — Reflexo de Bainbridge</div>
+
+<div class="info-block blue">
+  <div class="label">💡 O Que é o Reflexo de Bainbridge?</div>
+  <p>Reflexo <strong>aurículo-cardíaco</strong> que aumenta ou diminui a FC de acordo com a quantidade/força com que o sangue chega à <strong>aurícula DIREITA</strong>. Complementa Frank-Starling: F-S ajusta a <em>força</em>, Bainbridge ajusta a <em>frequência</em>.</p>
+</div>
+
+<div class="sec-divider"><h3>Mecanismo Passo a Passo</h3></div>
+
+<div class="cg3">
+  <div class="card-item"><span class="card-ico">🩸</span><div class="card-t">1. Estímulo</div><div class="card-b">Maior quantidade de sangue chega à aurícula direita — ou chega mais <strong>violentamente/rapidamente</strong> — causando distensão/estiramento da parede auricular.</div></div>
+  <div class="card-item"><span class="card-ico">📡</span><div class="card-t">2. Receptor</div><div class="card-b"><strong>Mecanorreceptores de estiramento auricular</strong> na parede da aurícula direita detectam a distensão → enviam sinal ao centro cardiovascular bulbar.</div></div>
+  <div class="card-item"><span class="card-ico">⚡</span><div class="card-t">3. Resposta</div><div class="card-b">↑ Retorno venoso → ↑ FC (cronotropismo ↑)<br>↓ Retorno venoso → ↓ FC (cronotropismo ↓)<br>Ajuste rápido e reflexo.</div></div>
+</div>
+
+<div class="formula">
+  ↑ Sangue → Aurícula Direita → ↑ Distensão → Mecanorreceptores ativados → ↑ FC<br>
+  ↓ Sangue → Aurícula Direita → ↓ Distensão → Mecanorreceptores menos ativos → ↓ FC
+</div>
+
+<div class="info-block danger">
+  <div class="label">❗ Aurícula DIREITA — Por quê?</div>
+  <p>O reflexo está na <strong>aurícula DIREITA</strong> porque é ela que recebe o retorno venoso sistêmico (pelas veias cavas superior e inferior). A aurícula esquerda recebe retorno pulmonar — outros reflexos.</p>
+</div>
+
+<div class="sec-divider"><h3>Frank-Starling vs Bainbridge — Comparação</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Aspecto</th><th>Frank-Starling</th><th>Bainbridge</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Estrutura</strong></td><td>Ventrículos</td><td>Aurícula Direita</td></tr>
+      <tr><td><strong>Parâmetro ajustado</strong></td><td>Força de contração</td><td>Frequência cardíaca</td></tr>
+      <tr><td><strong>Propriedade cardíaca</strong></td><td>Inotropismo</td><td>Cronotropismo</td></tr>
+      <tr><td><strong>Mecanismo</strong></td><td>Estiramento das fibras ventriculares</td><td>Mecanorreceptores auriculares direitos</td></tr>
+      <tr><td><strong>Resultado</strong></td><td>↑ Volume ejetado</td><td>↑ Frequência cardíaca</td></tr>
+      <tr><td><strong>Juntos no exercício</strong></td><td colspan="2" style="text-align:center;color:#f9c94f;font-weight:600;">↑ Força + ↑ FC = ↑↑↑ Débito Cardíaco</td></tr>
+    </tbody>
+  </table>
+</div>
+</div></div>
+
+<!-- ===== RUÍDOS ===== -->
+<div id="ruidos" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🔊</span> Módulo 11 — Ruídos Cardíacos</div>
+
+<div class="info-block blue">
+  <div class="label">💡 Conceito-Chave</div>
+  <p>Os ruídos são produzidos pelo <strong>fechamento das válvulas</strong> e pela <strong>turbulência do fluxo</strong>. A contração muscular em si NÃO gera o ruído. As válvulas abrem e fecham pela própria pressão/peso do sangue.</p>
+</div>
+
+<div class="scard"><div class="snum">B1</div><div class="sinfo"><h4>Primeiro Ruído — "TUM" (grave, mais longo)</h4><p>Fechamento das válvulas <strong>mitral e tricúspide</strong> (AV) no início da sístole ventricular. Válvulas maiores → som mais grave e prolongado.</p><p><strong>Marca o início da sístole.</strong> Coincide com o complexo QRS no ECG.</p></div></div>
+<div class="scard"><div class="snum">B2</div><div class="sinfo"><h4>Segundo Ruído — "TÁ" (agudo, mais curto)</h4><p>Fechamento das válvulas <strong>aórtica e pulmonar</strong> (semilunares) no final da sístole. Válvulas menores → som mais agudo e breve.</p><p><strong>Marca o início da diástole.</strong> Coincide com o final da onda T no ECG.</p></div></div>
+<div class="scard"><div class="snum" style="color:var(--muted);font-size:2.2rem;">B3</div><div class="sinfo"><h4>Terceiro Ruído — Galope Protodiastólico</h4><p>Som do <strong>enchimento ventricular rápido</strong> no início da diástole.</p><p>Normal em crianças/adultos jovens. <strong>Em adultos:</strong> sugere IC sistólica (FE reduzida).</p></div></div>
+<div class="scard"><div class="snum" style="color:var(--muted);font-size:2.2rem;">B4</div><div class="sinfo"><h4>Quarto Ruído — Galope Presistólico</h4><p>Som da <strong>contração atrial forçada</strong> contra ventrículo com complacência reduzida.</p><p><strong>SEMPRE patológico.</strong> Sugere hipertrofia ventricular ou disfunção diastólica.</p></div></div>
+
+<div class="formula">
+  Ciclo normal: B1 (TUM) → Sístole → B2 (TÁ) → Diástole → B1...<br>
+  B3 ou B4 presentes = galope em 3 tempos → investigar cardiopatia<br>
+  B4 = SEMPRE patológico — nunca fisiológico em adultos!
+</div>
+
+<div class="sec-divider"><h3>Sopros Cardíacos</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Momento</th><th>Causa Comum</th><th>Observação</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Sistólico</strong></td><td>Estenose aórtica ou insuficiência mitral</td><td>Pode ser funcional ou patológico</td></tr>
+      <tr><td><strong>Diastólico</strong></td><td>Insuficiência aórtica ou estenose mitral</td><td><strong>Sempre patológico</strong></td></tr>
+      <tr><td><strong>Contínuo</strong></td><td>PCA (persistência do canal arterial)</td><td>Sopro em "maquinaria"</td></tr>
+    </tbody>
+  </table>
+</div>
+</div></div>
+
+<!-- ===== ECG ONDAS ===== -->
+<div id="ecgondas" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">📈</span> Módulo 12 — ECG — Ondas e Significados</div>
+
+<div class="info-block blue">
+  <div class="label">💡 O que o ECG pode e NÃO pode detectar</div>
+  <p><strong>Pode:</strong> despolarização, repolarização, ritmo, frequência, eixo elétrico, bloqueios, isquemia elétrica.<br><strong>NÃO pode:</strong> ouvir sopros, avaliar mecânica com 100% de certeza. É estudo complementar!</p>
+</div>
+
+<div class="sec-divider"><h3>Papel do ECG — Medidas Fundamentais</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Quadrado</th><th>Dimensão</th><th>Tempo (horizontal)</th><th>Amplitude (vertical)</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Pequeno</strong></td><td>1 mm × 1 mm</td><td>0,04 segundos</td><td>0,1 mV</td></tr>
+      <tr><td><strong>Grande</strong></td><td>5 mm × 5 mm</td><td>0,20 segundos</td><td>0,5 mV</td></tr>
+    </tbody>
+  </table>
+</div>
+<p style="font-size:.82rem;color:var(--muted);">Velocidade de papel padrão: <strong>25 mm/s</strong>. Calibração: <strong>10 mm = 1 mV</strong>.</p>
+
+<div class="sec-divider"><h3>As Ondas — Cada Uma em Detalhe</h3></div>
+
+<div class="wcard"><div class="wlabel">P</div><div class="winfo">
+  <p><strong>Despolarização atrial</strong> — ativação das duas aurículas</p>
+  <p style="color:var(--muted);font-size:.86rem;">A onda P tem <strong>dois componentes</strong>:<br>• Componente <strong>inicial</strong> = despolarização da <strong>Aurícula Direita</strong><br>• Componente <strong>final</strong> = despolarização da <strong>Aurícula Esquerda</strong><br>→ Falta da 2ª metade = problema na AE · Condução interatrial via <strong>Fascículo de Bachmann</strong></p>
+  <p style="font-family:var(--font-mono);font-size:.76rem;color:var(--muted);">Duração &lt;120ms | Amplitude &lt;2,5mm</p>
+</div></div>
+
+<div class="wcard"><div class="wlabel" style="font-size:1.8rem;">PR</div><div class="winfo">
+  <p><strong>Segmento PR / Intervalo PR</strong> — retraso fisiológico no NAV</p>
+  <p style="color:var(--muted);font-size:.86rem;">Linha isoelétrica após onda P = potencial "preso" no NAV. O NAV segura o estímulo para que as aurículas terminem de contrair ANTES do ventrículo ativar. Significado fisiológico!</p>
+  <p style="font-family:var(--font-mono);font-size:.76rem;color:var(--muted);">Normal: 120–200ms | &gt;200ms = Bloqueio AV 1° grau</p>
+</div></div>
+
+<div class="wcard"><div class="wlabel">QRS</div><div class="winfo">
+  <p><strong>Despolarização ventricular</strong> — complexo de 3 ondas</p>
+  <p style="color:var(--muted);font-size:.86rem;">
+    <strong>Onda Q:</strong> Despolarização da base do coração / septo (predominantemente VD)<br>
+    <strong>Onda R:</strong> Despolarização do <strong>Ventrículo Esquerdo</strong> (parede livre, ponta)<br>
+    <strong>Onda S:</strong> Despolarização da base / <strong>Ventrículo Direito</strong><br><br>
+    → Em <strong>AVR</strong>: TODAS as ondas do QRS estão invertidas (negativas)<br>
+    → Repolarização auricular NÃO aparece — encoberta pelo QRS (mais intenso)
+  </p>
+  <p style="font-family:var(--font-mono);font-size:.76rem;color:var(--muted);">Normal: &lt;120ms | &gt;120ms = Bloqueio de ramo (BRDE/BRFE)</p>
+</div></div>
+
+<div class="wcard"><div class="wlabel">ST</div><div class="winfo">
+  <p><strong>Segmento ST</strong> — platô da sístole ventricular = <strong>Meseta (Fase 2)!</strong></p>
+  <p style="color:var(--muted);font-size:.86rem;">Linha isoelétrica = ventrículos em sístole elétrica plena. Corresponde diretamente à <strong>Fase 2 (Meseta) do potencial de ação cardíaco</strong>.</p>
+  <p style="font-family:var(--font-mono);font-size:.76rem;color:var(--muted);">Normal: isoelétrico | Supra-ST → IAM | Infra-ST → isquemia</p>
+</div></div>
+
+<div class="wcard"><div class="wlabel">T</div><div class="winfo">
+  <p><strong>Onda T</strong> — ÚNICA onda de repolarização visível no ECG</p>
+  <p style="color:var(--muted);font-size:.86rem;">Representa a <strong>repolarização ventricular</strong> (fase 3 do PA). A repolarização auricular existe mas NÃO aparece — encoberta pelo QRS muito mais intenso.</p>
+  <p style="font-family:var(--font-mono);font-size:.76rem;color:var(--muted);">T invertida → isquemia/HVE | T apiculada → hipercalemia</p>
+</div></div>
+
+<div class="info-block warn">
+  <div class="label">⚠️ Relação ECG ↔ Potencial de Ação</div>
+  <ul>
+    <li><strong>Onda P</strong> = despolarização atrial</li>
+    <li><strong>Segmento PR</strong> = NAV segurando o estímulo (retraso fisiológico)</li>
+    <li><strong>Complexo QRS</strong> = despolarização ventricular (Q=septo/VD, R=VE, S=base/VD)</li>
+    <li><strong>Segmento ST</strong> = Meseta (fase 2) — sístole elétrica</li>
+    <li><strong>Onda T</strong> = repolarização ventricular (fase 3)</li>
+    <li><strong>Repolarização atrial</strong> = existe, mas NUNCA aparece no ECG (encoberta pelo QRS)</li>
+  </ul>
+</div>
+</div></div>
+
+<!-- ===== ECG ELETRODOS ===== -->
+<div id="ecgeleto" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🔌</span> Módulo 13 — ECG — Eletrodos e Derivações</div>
+
+<div class="info-block">
+  <div class="label">Configuração</div>
+  <h4>ECG padrão: 10 eletrodos → 12 derivações</h4>
+  <p>9 eletrodos ativos + 1 neutro (perna direita) → 12 derivações: <strong>3 bipolares</strong> (D1, D2, D3) + <strong>3 ampliadas</strong> (aVR, aVL, aVF) + <strong>6 precordiais</strong> (V1–V6).</p>
+</div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Tipo</th><th>Derivações</th><th>Característica</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Bipolares</strong></td><td>D1, D2, D3</td><td>Triângulo de Einthoven — usam 2 eletrodos cada</td></tr>
+      <tr><td><strong>Unipolares Ampliadas</strong></td><td>aVR, aVL, aVF</td><td>O eletrodo específico SEMPRE tem polaridade positiva</td></tr>
+      <tr><td><strong>Unipolares Precordiais</strong></td><td>V1–V6</td><td>Medem atividade elétrica diretamente sobre o coração</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="info-block danger">
+  <div class="label">❗ Armadilha — V1, V2, V3</div>
+  <p>"V1, V2 e V3 são derivações bipolares." → <strong>FALSO!</strong> São UNIPOLARES PRECORDIAIS. As bipolares são D1, D2 e D3 (Triângulo de Einthoven).</p>
+</div>
+
+<div class="sec-divider"><h3>Eixo Elétrico Cardíaco</h3></div>
+
+<div class="compare-table" style="border-radius:14px;overflow:hidden;">
+  <table style="width:100%;border-collapse:collapse;">
+    <thead><tr><th>Eixo</th><th>Faixa</th><th>Interpretação</th></tr></thead>
+    <tbody>
+      <tr><td><strong style="color:var(--green);">Normal</strong></td><td>−30° a +90°</td><td>D1 e aVF ambos positivos = normal!</td></tr>
+      <tr><td><strong style="color:#f9c94f;">Desvio esquerdo</strong></td><td>−30° a −90°</td><td>Sugere HVE, bloqueio de ramo esquerdo</td></tr>
+      <tr><td><strong style="color:#e74c3c;">Desvio direito</strong></td><td>+90° a +180°</td><td>Sugere HVD, TEP, bloqueio de ramo direito</td></tr>
+      <tr><td><strong style="color:var(--muted);">Extremo</strong></td><td>−90° a ±180°</td><td>Padrão raro, patológico</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="info-block success">
+  <div class="label">✓ Técnica das Isodifásicas</div>
+  <p>Encontrar derivação com ondas isodifásicas → o eixo está a <strong>90°</strong> dessa derivação. Para saber qual dos dois lados: verificar D2. Se D2 positivo → sentido horário. Se negativo → anti-horário.</p>
+</div>
+
+<div class="info-block blue">
+  <div class="label">Checks de Normalidade</div>
+  <p>Em <strong>aVR</strong>: TODAS as ondas do QRS devem estar invertidas (negativas) — a máquina registra como negativo. Em <strong>V1</strong>: QRS parcialmente invertido (normal!). Esses são os checks de normalidade do ECG.</p>
+</div>
+</div></div>
+
+<!-- ===== FLASHCARDS ===== -->
+<div id="flashcards" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">🃏</span> Flashcards — Revisão Ativa</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px;">Clique em cada cartão para girá-lo e revelar a resposta. 30 cartões cobrindo todos os módulos.</p>
+<div class="flashcard-grid" id="flashcard-grid"></div>
+</div></div>
+
+<!-- ===== COMPLETAR ===== -->
+<div id="fillin" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">✏️</span> Questões de Completar</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px;">Selecione a letra que completa corretamente cada enunciado.</p>
+<div class="fillin-container" id="fillin-container"></div>
+</div></div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quiz" class="section">
+<div class="container">
+<div class="chapter-title"><span class="chap-icon">❓</span> Simulado P2 — 20 Questões</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px;">Múltipla escolha com correção e explicação imediata.</p>
+<div class="quiz-container" id="quiz-container"></div>
+</div></div>
+
+<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- BOTÃO VOLTAR -->
+<a href="dashboard.html" style="position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;align-items:center;gap:9px;padding:12px 26px;background:rgba(2,10,22,0.93);border:1.5px solid rgba(34,211,238,0.42);border-radius:50px;color:#e2f8fc;font-size:13px;font-weight:600;letter-spacing:0.03em;text-decoration:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 24px rgba(34,211,238,0.16);transition:all .25s ease;" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)'">← Voltar</a>
 
 <script>
-function sm(idx, btn) {
-  document.querySelectorAll('.mod').forEach(m => m.classList.remove('active'));
-  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
-  document.getElementById('m' + idx).classList.add('active');
+// PARTICLES
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+for(let i=0;i<60;i++) {
+  particles.push({
+    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+    r: Math.random()*2+0.5,
+    dx: (Math.random()-0.5)*0.3, dy: (Math.random()-0.5)*0.3,
+    alpha: Math.random()*0.4+0.1
+  });
+}
+function animParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(231,76,60,${p.alpha})`; ctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('mc').scrollIntoView({ behavior: 'smooth' });
-  if (idx === 14) initQuiz();
-  if (idx === 13) initFlashcards();
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='flashcards') initFlashcards();
+  if(id==='fillin') initFillin();
+  if(id==='quiz') initQuiz();
 }
 
-window.addEventListener('scroll', () => {
-  const doc = document.documentElement;
-  const scrollTop = doc.scrollTop || document.body.scrollTop;
-  const scrollHeight = doc.scrollHeight - doc.clientHeight;
-  const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
-  document.getElementById('pgbar').style.width = pct + '%';
+function toggleGloss(el) {
+  const def = el.querySelector('.def');
+  def.style.display = def.style.display==='none'?'block':'none';
+  el.style.borderColor = def.style.display==='none'?'var(--border)':'var(--accent2)';
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrolltop').style.display = window.scrollY>300?'block':'none';
 });
 
-const flashcardData = [
-  { tag:'Estrutura', q:'Qual a característica do formato celular dos cardiomiócitos?', a:'Formato ramificado (em "Y") — diferente do músculo esquelético (cilíndrico). Facilita conexão elétrica entre células adjacentes.' },
-  { tag:'Estrutura', q:'O que são os discos intercalares e qual sua função?', a:'Estruturas de BAIXÍSSIMA resistência entre células cardíacas. Permitem transmissão rápida do potencial elétrico — determinam a velocidade de condução.' },
-  { tag:'Estrutura', q:'Por que o coração depende de cálcio extracelular?', a:'RS cardíaco é menos desenvolvido → menor armazenamento de Ca²⁺ → o coração NECESSITA OBRIGATORIAMENTE de Ca²⁺ extracelular para complementar o armazenado.' },
-  { tag:'Propriedades', q:'Qual propriedade está relacionada à TRANSMISSÃO do potencial entre estruturas?', a:'Dromotropismo! (Não cronotropismo.) Transmite potencial de célula para célula, estrutura para estrutura. Depende dos discos intercalares.' },
-  { tag:'Propriedades', q:'Batmotropismo refere-se a qual propriedade?', a:'Capacidade de RESPONDER/GERAR estímulos (excitabilidade / auto-excitabilidade). Própria das células automáticas (NSA, NAV, Purkinje).' },
-  { tag:'Propriedades', q:'Lusitropismo é a propriedade de...', a:'RELAXAR após a contração. Disfunção = IC diastólica (FE preservada).' },
-  { tag:'Automatismo', q:'Quais os 3 marca-passos e suas frequências intrínsecas?', a:'NSA: 60–100 bpm (natural). NAV: 40–60 bpm (backup). Fibras de Purkinje: 15–40 bpm (emergência). O mais rápido suprime os demais!' },
-  { tag:'Automatismo', q:'Como a entrada de cálcio afeta o cronotropismo?', a:'↑ Ca²⁺ entra rápido → rampa diastólica mais íngreme → umbral mais cedo → ↑ FC. ↓ Ca²⁺ → rampa suave → ↓ FC. Inotropismo e Cronotropismo são INSEPARÁVEIS!' },
-  { tag:'Potenciais', q:'O que é a MESETA (Fase 2) e por que é exclusiva do coração?', a:'Dura ~200ms. Mantida pelo equilíbrio K⁺ saindo ≈ Ca²⁺ entrando. Característica EXCLUSIVA do PA cardíaco — nenhum outro tecido possui meseta!' },
-  { tag:'Potenciais', q:'Do umbral para o pico (fase 0), qual íon predomina em qualquer célula excitável?', a:'Na⁺ rápido em QUALQUER célula excitável. A diferença está ANTES do umbral (Ca²⁺ na rampa automática cardíaca) e na MESETA (Ca²⁺ cardíaco).' },
-  { tag:'Refratário', q:'O que é o Período Refratário Absoluto (PRA)?', a:'Célula completamente incapaz de responder — INDEPENDENTE da intensidade. Ocorre nas fases 0+1+2 (incluindo toda a meseta). Protege contra tetania cardíaca!' },
-  { tag:'Refratário', q:'Em qual fase do PA inicia o Período Refratário Relativo?', a:'Início da Fase 3. Estímulos de MAIOR intensidade conseguem ativar a célula. Risco de fenômeno R sobre T → arritmias.' },
-  { tag:'Condução', q:'Qual estrutura tem a MENOR velocidade de condução e por quê?', a:'NAV — 0,03 m/s. Poucos discos intercalares. Propósito: retraso INTENCIONAL para aurículas terminarem de contrair antes dos ventrículos.' },
-  { tag:'Condução', q:'Por que as Fibras de Purkinje conduzem tão rápido (~4 m/s)?', a:'Abundância de discos intercalares. Purkinje é ~133× mais rápido que o NAV. Garante contração ventricular SINCRONIZADA — estímulo chega a todas as células simultaneamente.' },
-  { tag:'Frank-Starling', q:'Enuncie a Lei de Frank-Starling.', a:'Dentro dos LIMITES FISIOLÓGICOS, quanto maior o volume de sangue que chega na diástole → maior o estiramento → maior a força de contração → maior o volume ejetado.' },
-  { tag:'Frank-Starling', q:'A pré-carga se define em qual momento? E como também se chama?', a:'Define-se na DIÁSTOLE. Também chamada "Sobrecarga de Volume". Depende diretamente do retorno venoso.' },
-  { tag:'Frank-Starling', q:'De que depende a pós-carga?', a:'Da resistência aórtica (RCA) e da resistência vascular periférica (RVP/RUA). Varia durante a SÍSTOLE VENTRICULAR. Aumenta quando a aorta perde elasticidade.' },
-  { tag:'Frank-Starling', q:'Qual a fração de ejeção normal?', a:'~60% (exato: 70/120 = 58,3%). ~60% do VTD é ejetado a cada sístole em coração saudável. FE < 40% = disfunção sistólica grave.' },
-  { tag:'Bainbridge', q:'O Reflexo de Bainbridge envolve qual estrutura e ajusta qual parâmetro?', a:'AURÍCULA DIREITA. Mecanorreceptores de estiramento detectam distensão → ↑ FREQUÊNCIA CARDÍACA. Complementa F-S: F-S ajusta força, Bainbridge ajusta frequência.' },
-  { tag:'Bainbridge', q:'Por que o reflexo de Bainbridge está na aurícula DIREITA?', a:'Porque é a aurícula direita que recebe o retorno venoso sistêmico pelas veias cavas superior e inferior.' },
-  { tag:'Ruídos', q:'O que causa o B1 e o B2?', a:'B1: fechamento das válvulas MITRAL e TRICÚSPIDE (AV) — início da sístole. B2: fechamento das válvulas AÓRTICA e PULMONAR (semilunares) — início da diástole.' },
-  { tag:'Ruídos', q:'Qual ruído cardíaco é SEMPRE patológico?', a:'B4 (galope presistólico) — SEMPRE patológico. Contração atrial forçada contra ventrículo com complacência reduzida (HVE, disfunção diastólica).' },
-  { tag:'ECG Ondas', q:'A onda P tem dois componentes. O que representa cada um?', a:'Componente inicial: despolarização da AURÍCULA DIREITA. Componente final: despolarização da AURÍCULA ESQUERDA. Condução interatrial via Fascículo de Bachmann.' },
-  { tag:'ECG Ondas', q:'O que representa cada onda do complexo QRS?', a:'Q = base/septo (VD). R = despolarização do VENTRÍCULO ESQUERDO (ponta). S = base/VENTRÍCULO DIREITO. Alteração de R = problema no VE; de S = VD.' },
-  { tag:'ECG Ondas', q:'Por que a repolarização auricular NÃO aparece no ECG?', a:'A repolarização auricular existe, mas é encoberta pelo Complexo QRS — que ocorre simultaneamente e é muito mais intenso eletricamente.' },
-  { tag:'ECG Ondas', q:'O Segmento ST corresponde a qual fase do PA?', a:'Fase 2 (MESETA) — ventrículos em sístole elétrica plena. Supra-ST → IAM. Infra-ST → isquemia.' },
-  { tag:'ECG Eletrodos', q:'Quantos eletrodos e derivações tem o ECG padrão?', a:'10 eletrodos (9 ativos + 1 neutro = perna direita) → 12 derivações: 3 bipolares (D1,D2,D3) + 3 ampliadas (aVR,aVL,aVF) + 6 precordiais (V1-V6).' },
-  { tag:'ECG Eletrodos', q:'Quais derivações são bipolares e quais são unipolares?', a:'BIPOLARES: D1, D2, D3 (Triângulo de Einthoven, 2 eletrodos cada). UNIPOLARES: aVR, aVL, aVF (ampliadas) + V1-V6 (precordiais). Em unipolares o eletrodo específico = SEMPRE positivo.' },
-  { tag:'ECG Eletrodos', q:'Em que derivação TODAS as ondas devem estar invertidas?', a:'Em aVR — a máquina registra como negativo. Também em V1 o QRS deve estar parcialmente invertido. Esses são os checks de normalidade do ECG.' },
-  { tag:'ECG Eletrodos', q:'Como calcular o eixo elétrico pelas isodifásicas?', a:'Encontrar derivação com ondas isodifásicas → o eixo está a 90° dela. Para saber qual dos dois lados: verificar D2. Se D2 positivo → sentido horário. Se negativo → anti-horário.' }
+// FLASHCARDS DATA
+const flashcards = [
+  ["Estrutura","Formato dos cardiomiócitos","Ramificado (em Y) — diferente do músculo esquelético (cilíndrico). Facilita conexão elétrica em múltiplas direções. Discos intercalares de BAIXÍSSIMA resistência."],
+  ["Estrutura","Por que o coração depende de Ca²⁺ extracelular?","O retículo sarcoplasmático cardíaco é menos desenvolvido → menor armazenamento de Ca²⁺ → NECESSITA OBRIGATORIAMENTE de Ca²⁺ extracelular. O músculo esquelético usa principalmente Ca²⁺ intracelular."],
+  ["Propriedades","Quais são as 5 propriedades cardíacas?","Inotropismo (contração), Cronotropismo (frequência), Dromotropismo (transmissão de potenciais), Batmotropismo (excitabilidade/resposta a estímulos), Lusitropismo (relaxamento)."],
+  ["Propriedades","Qual propriedade transmite potencial de estrutura para estrutura?","DROMOTROPISMO — não cronotropismo! Depende dos discos intercalares. ↓ Dromotropismo = bloqueios de condução."],
+  ["Automatismo","Quais são os 3 marca-passos e suas frequências?","NSA: 60–100 bpm (natural). NAV: 40–60 bpm (backup). Purkinje: 15–40 bpm (emergência — assume APENAS quando NSA e NAV falham)."],
+  ["Automatismo","Por que inotropismo e cronotropismo são inseparáveis?","Ambos dependem da entrada de Ca²⁺. ↑ Ca²⁺ = ↑ força (inotropismo) + ↑ frequência (cronotropismo) — simultâneo e inseparável!"],
+  ["Automatismo","O que é a rampa diastólica?","Entrada gradual de Ca²⁺ nas células automáticas durante a diástole → potencial sobe lentamente → ao atingir o umbral → dispara o potencial de ação. Determina a FC."],
+  ["Potenciais","A MESETA (Fase 2) — O que é e qual equilíbrio a mantém?","Dura ~200ms. Mantida pelo equilíbrio K⁺ saindo ≈ Ca²⁺ entrando. Característica EXCLUSIVA do PA cardíaco — nenhum outro tecido possui meseta!"],
+  ["Potenciais","Do umbral para o pico (fase 0), qual íon predomina?","Na⁺ rápido em QUALQUER célula excitável. A diferença está ANTES do umbral (Ca²⁺ na rampa automática cardíaca) e na MESETA (Ca²⁺ cardíaco)."],
+  ["Potenciais","Qual célula NUNCA tem linha horizontal de repouso?","Células automáticas (NSA, NAV, Purkinje) — estão sempre com rampa diastólica ascendente. Células contráteis têm linha de repouso estável na Fase 4 (−90 mV)."],
+  ["Refratário","O que é o Período Refratário Absoluto (PRA)?","Célula completamente incapaz de responder — INDEPENDENTE da intensidade. Ocorre nas fases 0+1+2 (incluindo toda a meseta). Protege contra tetania cardíaca!"],
+  ["Refratário","Em qual fase do PA inicia o Período Refratário Relativo?","Início da Fase 3. Estímulos de MAIOR intensidade conseguem ativar a célula. Risco de fenômeno R sobre T → arritmias."],
+  ["Condução","Qual estrutura tem a MENOR velocidade de condução e por quê?","NAV — 0,03 m/s. Poucos discos intercalares. Propósito: retraso INTENCIONAL para aurículas terminarem de contrair antes dos ventrículos."],
+  ["Condução","Por que as Fibras de Purkinje conduzem tão rápido (~4 m/s)?","Abundância de discos intercalares. Purkinje é ~133× mais rápido que o NAV. Garante contração ventricular SINCRONIZADA — estímulo chega a todas as células simultaneamente."],
+  ["Cálcio","Relevância elétrica vs mecânica do Ca²⁺ no coração","Elétrica: gera rampa diastólica, mantém a meseta, determina cronotropismo. Mecânica: ativa troponina C → libera sítios actina-miosina → contração. AMBAS dependem de Ca²⁺!"],
+  ["Hemodinâmica","VS, VTD, VTS e DC — fórmulas e valores normais","VTD=120mL, VTS=50mL, VS=70mL. DC=VS×FC=70×80=5.600mL≈5,6L/min. FE=VS/VTD=70/120=58,3%≈60%."],
+  ["Hemodinâmica","FE < 40% significa o quê?","Disfunção sistólica grave — IC com FE reduzida. FE ≥ 50% com sintomas → IC com FE preservada (disfunção diastólica)."],
+  ["Frank-Starling","Enuncie a Lei de Frank-Starling.","Dentro dos LIMITES FISIOLÓGICOS, quanto maior o volume de sangue que chega na diástole → maior o estiramento → maior a força de contração → maior o volume ejetado."],
+  ["Frank-Starling","Pré-carga: quando se define e como se chama?","Define-se na DIÁSTOLE. Também chamada 'Sobrecarga de Volume'. Depende do retorno venoso. VTD ≈ 120 mL."],
+  ["Frank-Starling","De que depende a pós-carga?","Da resistência aórtica (RCA) e da resistência vascular periférica (RVP/RUA). Varia durante a SÍSTOLE VENTRICULAR."],
+  ["Bainbridge","O Reflexo de Bainbridge envolve qual estrutura e ajusta qual parâmetro?","AURÍCULA DIREITA. Mecanorreceptores de estiramento detectam distensão → ↑ FREQUÊNCIA CARDÍACA (cronotropismo). Complementa F-S: F-S ajusta força, Bainbridge ajusta frequência."],
+  ["Bainbridge","Por que o reflexo de Bainbridge está na aurícula DIREITA?","Porque é a aurícula direita que recebe o retorno venoso sistêmico pelas veias cavas superior e inferior."],
+  ["Ruídos","O que causa o B1 e o B2?","B1: fechamento das válvulas MITRAL e TRICÚSPIDE (AV) — início da sístole. B2: fechamento das válvulas AÓRTICA e PULMONAR (semilunares) — início da diástole."],
+  ["Ruídos","Qual ruído cardíaco é SEMPRE patológico?","B4 (galope presistólico) — SEMPRE patológico. Contração atrial forçada contra ventrículo com complacência reduzida (HVE, disfunção diastólica)."],
+  ["ECG Ondas","A onda P tem dois componentes. O que representa cada um?","Componente inicial: despolarização da AURÍCULA DIREITA. Componente final: despolarização da AURÍCULA ESQUERDA. Condução interatrial via Fascículo de Bachmann."],
+  ["ECG Ondas","O que representa cada onda do complexo QRS?","Q = base/septo (VD). R = despolarização do VENTRÍCULO ESQUERDO (ponta). S = base/VENTRÍCULO DIREITO. Alteração de R = problema no VE."],
+  ["ECG Ondas","Por que a repolarização auricular NÃO aparece no ECG?","A repolarização auricular existe, mas é encoberta pelo Complexo QRS — que ocorre simultaneamente e é muito mais intenso eletricamente."],
+  ["ECG Ondas","O Segmento ST corresponde a qual fase do PA?","Fase 2 (MESETA) — ventrículos em sístole elétrica plena. Supra-ST → IAM. Infra-ST → isquemia."],
+  ["ECG Eletrodos","Quantos eletrodos e derivações tem o ECG padrão?","10 eletrodos (9 ativos + 1 neutro = perna direita) → 12 derivações: 3 bipolares (D1,D2,D3) + 3 ampliadas (aVR,aVL,aVF) + 6 precordiais (V1-V6)."],
+  ["ECG Eletrodos","Como calcular o eixo elétrico pelas isodifásicas?","Encontrar derivação com ondas isodifásicas → o eixo está a 90° dela. Para saber qual dos dois lados: verificar D2. Se D2 positivo → sentido horário. Se negativo → anti-horário."],
 ];
 
 let fcInited = false;
 function initFlashcards() {
-  if (fcInited) return;
-  fcInited = true;
-  renderCards();
-}
-
-function renderCards() {
+  if(fcInited) return; fcInited = true;
   const grid = document.getElementById('flashcard-grid');
-  const counter = document.getElementById('fc-counter');
-  counter.textContent = flashcardData.length + ' cards · Clique para virar';
-  grid.innerHTML = flashcardData.map((fc, i) => `
-    <div class="fc-scene" onclick="flipCard(this)">
-      <div class="fc-card" id="fc${i}">
-        <div class="fc-front">
-          <div class="fc-tag">${fc.tag}</div>
-          <div class="fc-ico">❓</div>
-          <div class="fc-q">${fc.q}</div>
-          <div class="fc-hint">▶ Clique para revelar</div>
+  grid.innerHTML = flashcards.map(([tag,q,a]) => `
+    <div class="flashcard" onclick="this.classList.toggle('flipped')">
+      <div class="flashcard-inner">
+        <div class="flashcard-front">
+          <div class="fc-tag">${tag}</div>
+          <div class="fc-q">${q}</div>
+          <div class="fc-hint">clique para girar ↻</div>
         </div>
-        <div class="fc-back">
-          <div class="fc-tag" style="color:var(--gold-l);">${fc.tag} · Resposta</div>
-          <div class="fc-ico">✅</div>
-          <div class="fc-a">${fc.a}</div>
+        <div class="flashcard-back">
+          <div class="fc-tag" style="color:#f9c94f;">${tag} · Resposta</div>
+          <div style="margin-top:12px;font-size:13px;color:var(--text);line-height:1.7;">${a}</div>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
-function flipCard(scene) { scene.querySelector('.fc-card').classList.toggle('flipped'); }
-function shuffleCards() {
-  for (let i = flashcardData.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [flashcardData[i], flashcardData[j]] = [flashcardData[j], flashcardData[i]];
-  }
-  fcInited = false; initFlashcards();
-}
-function resetCards() { document.querySelectorAll('.fc-card').forEach(c => c.classList.remove('flipped')); }
+// FILL-IN DATA
+const fillinData = [
+  { q:"O período refratário absoluto (PRA) ocorre nas fases _______ do potencial de ação e a célula é completamente incapaz de responder _______ da intensidade do estímulo.",
+    opts:["A) Fase 3 apenas · dependendo", "B) Fases 0+1+2 (incluindo a meseta) · independente", "C) Fase 4 · dependendo", "D) Fases 1+2 · parcialmente"],
+    correct:1, explain:"O PRA ocorre nas <strong>fases 0+1+2</strong> (incluindo toda a meseta). A célula é incapaz — <strong>independente</strong> da intensidade. Protege contra tetania cardíaca." },
+  { q:"A Lei de Frank-Starling aplica-se principalmente aos _______, ajustando a _______ de contração, enquanto o Reflexo de Bainbridge atua na aurícula direita ajustando a _______.",
+    opts:["A) atrios · força · velocidade de condução", "B) ventrículos · força · frequência cardíaca", "C) nó sinoatrial · frequência · força", "D) fibras de Purkinje · velocidade · força"],
+    correct:1, explain:"Frank-Starling: <strong>ventrículos</strong> → ajusta <strong>força</strong> (inotropismo). Bainbridge: aurícula direita → ajusta <strong>frequência cardíaca</strong> (cronotropismo)." },
+  { q:"O Segmento ST isoelétrico no ECG corresponde à _______ do potencial de ação cardíaco, e sua elevação indica _______.",
+    opts:["A) Fase 0 (despolarização rápida) · bradicardia", "B) Fase 3 (repolarização final) · hipercalemia", "C) Fase 2 (meseta) · IAM por oclusão total", "D) Fase 4 (repouso) · bloqueio de ramo"],
+    correct:2, explain:"Segmento ST = <strong>Fase 2 (MESETA)</strong> — sístole elétrica plena. Elevação do ST → <strong>IAM</strong> (corrente de lesão por oclusão total)." },
+  { q:"A propriedade cardíaca que transmite o potencial de ação de estrutura para estrutura, dependendo diretamente dos discos intercalares, denomina-se _______.",
+    opts:["A) Cronotropismo", "B) Inotropismo", "C) Batmotropismo", "D) Dromotropismo"],
+    correct:3, explain:"<strong>Dromotropismo</strong> = transmissão de potenciais. Depende dos discos intercalares. ↓ Dromotropismo = bloqueios. Não confundir com cronotropismo (frequência)." },
+  { q:"A pré-carga cardíaca define-se durante a _______ e corresponde ao volume _______, também chamada 'sobrecarga de _______'.",
+    opts:["A) sístole ventricular · telesistólico · pressão", "B) diástole · telediastólico · volume", "C) sístole atrial · telediastólico · pressão", "D) diástole · telesistólico · volume"],
+    correct:1, explain:"Pré-carga: define-se na <strong>DIÁSTOLE</strong>. VTD ≈ 120 mL. Também chamada <strong>'Sobrecarga de Volume'</strong>. Depende do retorno venoso." },
+];
 
+let fillinInited = false;
+function initFillin() {
+  if(fillinInited) return; fillinInited = true;
+  const container = document.getElementById('fillin-container');
+  fillinData.forEach((item, idx) => {
+    const card = document.createElement('div');
+    card.className = 'fillin-card';
+    card.innerHTML = `
+      <div class="fi-num">QUESTÃO ${idx+1} DE ${fillinData.length}</div>
+      <div class="fi-q">${item.q}</div>
+      <div class="fi-opts">${item.opts.map((o,i)=>`<button class="fi-opt-btn" onclick="selectFI(this,${i},${item.correct},${idx})">${o}</button>`).join('')}</div>
+      <div class="fi-explain" id="fi-explain-${idx}">${item.explain}</div>`;
+    container.appendChild(card);
+  });
+}
+function selectFI(btn, chosen, correct, idx) {
+  const card = btn.closest('.fillin-card');
+  const btns = card.querySelectorAll('.fi-opt-btn');
+  if(btn.classList.contains('fi-correct')||btn.classList.contains('fi-wrong')) return;
+  btns.forEach(b=>b.classList.add('fi-answered'));
+  btns[correct].classList.add('fi-correct');
+  if(chosen !== correct) btn.classList.add('fi-wrong');
+  const ex = document.getElementById('fi-explain-'+idx);
+  ex.innerHTML = (chosen===correct?'✅ <strong>Correto.</strong> ':'❌ <strong>Incorreto.</strong> ')+ex.innerHTML;
+  ex.classList.add('show');
+}
+
+// QUIZ DATA
 const quizData = [
   { q:'Qual propriedade cardíaca está diretamente relacionada à capacidade de TRANSMITIR o potencial de estrutura para estrutura?', opts:['Inotropismo','Batmotropismo','Dromotropismo','Cronotropismo'], cor:2, exp:'Dromotropismo = capacidade de TRANSMITIR o potencial de célula para célula. Depende diretamente dos discos intercalares. Cronotropismo = frequência; Inotropismo = força; Batmotropismo = excitabilidade.' },
   { q:'O retículo sarcoplasmático cardíaco é menos desenvolvido. Qual é a consequência fisiológica direta?', opts:['O coração não utiliza cálcio','O coração contrai exclusivamente com potássio','O coração necessita obrigatoriamente de cálcio extracelular além do armazenado','O coração depende exclusivamente de sódio'], cor:2, exp:'RS cardíaco menos desenvolvido → menor armazenamento de Ca²⁺ → coração NECESSITA OBRIGATORIAMENTE de Ca²⁺ extracelular. Diferença crítica em relação ao músculo esquelético.' },
   { q:'Qual é a velocidade de condução do NAV e qual o propósito desta lentidão?', opts:['~4,0 m/s — distribuição rápida','~1,0 m/s — não tem propósito','0,03 m/s — retraso intencional para enchimento ventricular completo','~0,6 m/s — filtro de estímulos'], cor:2, exp:'NAV conduz a 0,03 m/s — o mais lento. Propósito INTENCIONAL: permite que aurículas terminem de contrair completamente antes dos ventrículos. Sem isso a bomba cardíaca seria ineficiente.' },
   { q:'A MESETA (Fase 2) do PA cardíaco é mantida por qual equilíbrio iônico?', opts:['Entrada rápida de Na⁺ = saída de Ca²⁺','Saída de K⁺ ≈ entrada de Ca²⁺ (equilíbrio)','Entrada simultânea de Na⁺ e K⁺','Saída simultânea de Ca²⁺ e Na⁺'], cor:1, exp:'A Meseta é mantida pelo equilíbrio entre SAÍDA de K⁺ e ENTRADA de Ca²⁺ — ambos quase se igualam, mantendo o potencial positivo por ~200ms. Exclusiva do coração!' },
-  { q:'Durante o Período Refratário Absoluto (PRA), o que acontece?', opts:['Respondendm apenas a estímulos de alta intensidade','São completamente incapazes de responder a QUALQUER estímulo','Estão em hiperpolarização','Os canais de Na⁺ estão abertos'], cor:1, exp:'No PRA, a célula é completamente incapaz de responder — independente da intensidade. Canais de Na⁺ e Ca²⁺ inativados. Ocorre nas fases 0+1+2 (toda a meseta). Protege contra tetania!' },
+  { q:'Durante o Período Refratário Absoluto (PRA), o que acontece?', opts:['Respondem apenas a estímulos de alta intensidade','São completamente incapazes de responder a QUALQUER estímulo','Estão em hiperpolarização','Os canais de Na⁺ estão abertos'], cor:1, exp:'No PRA, a célula é completamente incapaz de responder — independente da intensidade. Canais de Na⁺ e Ca²⁺ inativados. Ocorre nas fases 0+1+2 (toda a meseta). Protege contra tetania!' },
   { q:'Qual estrutura automática tem a MENOR frequência intrínseca e quando assume o comando?', opts:['NSA — em repouso','NAV — em bloqueio sinoatrial','Fibras de Purkinje — apenas quando NSA E NAV falham','Feixe de His — em bloqueio de ramo'], cor:2, exp:'Fibras de Purkinje: 15–40 bpm — frequência mais baixa. Marca-passo de EMERGÊNCIA. Assumem APENAS quando NSA e NAV falham completamente.' },
   { q:'Em qual situação a Lei de Frank-Starling DEIXA de funcionar?', opts:['Durante exercício físico intenso','Em coração com FC > 100 bpm','Em IC descompensada com estiramento excessivo','Quando a pré-carga está reduzida'], cor:2, exp:'Frank-Starling funciona SOMENTE dentro dos limites fisiológicos. Em IC descompensada, estiramento excessivo REDUZ a eficiência. A lei não se aplica em miocardiopatias ou disfunção sistólica grave.' },
   { q:'A pré-carga é definida em qual momento e como também pode ser chamada?', opts:['Sístole ventricular — sobrecarga de pressão','Diástole — sobrecarga de volume','Sístole atrial — sobrecarga de volume','Diástole — pós-resistência'], cor:1, exp:'Pré-carga: definida na DIÁSTOLE (enchimento ventricular). Representa o VTD ≈ 120mL. Também chamada "Sobrecarga de Volume". ↑ Retorno venoso = ↑ Pré-carga.' },
@@ -918,78 +1305,70 @@ const quizData = [
   { q:'Qual ruído cardíaco é SEMPRE patológico, mesmo em jovens?', opts:['B1 — primeiro ruído','B2 — segundo ruído','B3 — galope protodiastólico','B4 — galope presistólico'], cor:3, exp:'B4 (galope presistólico) é SEMPRE patológico. Contração atrial forçada contra ventrículo com complacência reduzida (HVE, disfunção diastólica). B3 pode ser fisiológico em crianças/jovens.' },
   { q:'A onda P tem dois componentes. O que representa cada um?', opts:['1° = NSA; 2° = NAV','1° = Aurícula Direita; 2° = Aurícula Esquerda','1° = VD; 2° = VE','1° = Purkinje; 2° = miocárdio'], cor:1, exp:'Onda P = despolarização ATRIAL. Componente inicial = AURÍCULA DIREITA. Componente final = AURÍCULA ESQUERDA. Falta da 2ª metade = problema na AE.' },
   { q:'No complexo QRS, qual onda representa a despolarização do Ventrículo Esquerdo?', opts:['Onda Q','Onda R','Onda S','Segmento ST'], cor:1, exp:'Onda R = despolarização do VENTRÍCULO ESQUERDO (parede livre, ponta). Onda Q = base/septo (VD). Onda S = base/VD. Alteração de R = problema no VE!' },
-  { q:'Por que a repolarização auricular NÃO aparece no ECG normal?', opts:['Aurícula não se repolariza','Ocorre fora do tempo registrado','É encoberta pelo Complexo QRS — muito mais intenso eletricamente','Os eletrodos de membros não captam'], cor:2, exp:'A repolarização auricular EXISTS mas é encoberta pelo QRS — que ocorre simultaneamente e é muito mais intenso. A máquina detecta a atividade de maior intensidade.' },
+  { q:'Por que a repolarização auricular NÃO aparece no ECG normal?', opts:['Aurícula não se repolariza','Ocorre fora do tempo registrado','É encoberta pelo Complexo QRS — muito mais intenso eletricamente','Os eletrodos de membros não captam'], cor:2, exp:'A repolarização auricular EXISTE mas é encoberta pelo QRS — que ocorre simultaneamente e é muito mais intenso. A máquina detecta a atividade de maior intensidade.' },
   { q:'O Segmento ST isoelétrico corresponde a qual fase do PA?', opts:['Fase 0 — despolarização rápida','Fase 1 — repolarização inicial','Fase 2 — MESETA (sístole elétrica plena)','Fase 3 — repolarização final'], cor:2, exp:'Segmento ST = Fase 2 (MESETA) — ventrículos em sístole elétrica plena. Elevação do ST → IAM (oclusão total). Infra-ST → isquemia.' },
   { q:'"V1, V2 e V3 são derivações bipolares." Esta afirmação é:', opts:['Verdadeira — usam 2 eletrodos cada','Verdadeira — formam o Triângulo de Einthoven','Falsa — são derivações unipolares precordiais','Falsa — são derivações ampliadas'], cor:2, exp:'FALSA. V1, V2 e V3 são UNIPOLARES PRECORDIAIS. As bipolares são D1, D2 e D3 (Triângulo de Einthoven). Em unipolares o eletrodo específico SEMPRE tem polaridade positiva.' },
-  { q:'Qual o Débito Cardíaco normal e como é calculado?', opts:['~2,5 L/min — VS × FC','~5 L/min — VS × FC = 70 mL × 70–80 bpm','~8 L/min — FC × pressão','~3 L/min — VTD − VTS'], cor:1, exp:'DC = VS × FC = 70 mL × 80 bpm = 5.600 mL/min ≈ 5,6 L/min. VS = VTD − VTS = 120 − 50 = 70 mL. Em doença (perda NSA 20%): 56 × 53 ≈ 3L/min.' },
+  { q:'Qual o Débito Cardíaco normal e como é calculado?', opts:['~2,5 L/min — VS × FC','~5,6 L/min — VS × FC = 70 mL × 80 bpm','~8 L/min — FC × pressão','~3 L/min — VTD − VTS'], cor:1, exp:'DC = VS × FC = 70 mL × 80 bpm = 5.600 mL/min ≈ 5,6 L/min. VS = VTD − VTS = 120 − 50 = 70 mL.' },
   { q:'Inotropismo e Cronotropismo são inseparáveis porque ambos dependem de:', opts:['Potássio intracelular','Sódio extracelular','Cálcio (intra e extracelular)','Cloro nos discos intercalares'], cor:2, exp:'CÁLCIO! Ca²⁺ determina força de contração (inotropismo via troponina C) E frequência (cronotropismo via rampa diastólica). ↑ Ca²⁺ = ↑ inotropismo + ↑ cronotropismo simultaneamente.' },
-  { q:'Qual é o eixo elétrico cardíaco NORMAL?', opts:['-90° a 0°','0° a +90° somente','-30° a +90°','+90° a +180°'], cor:2, exp:'Eixo elétrico NORMAL: −30° a +90°. Desvio esquerdo: −30° a −90°. Desvio direito: +90° a +180°. Extremo: −90° a ±180°. Técnica rápida: D1 e aVF ambos positivos = normal!' },
+  { q:'Qual é o eixo elétrico cardíaco NORMAL?', opts:['-90° a 0°','0° a +90° somente','-30° a +90°','+90° a +180°'], cor:2, exp:'Eixo elétrico NORMAL: −30° a +90°. Desvio esquerdo: −30° a −90°. Desvio direito: +90° a +180°. Técnica rápida: D1 e aVF ambos positivos = normal!' },
   { q:'Para calcular o eixo pelas isodifásicas: após encontrar essa derivação, o que fazer?', opts:['O eixo é exatamente nessa derivação','O eixo está a 45°','O eixo está a 90° dessa derivação (verificar D2)','Dividir o ângulo por 2'], cor:2, exp:'O eixo elétrico está a 90° da derivação com ondas isodifásicas. Para saber qual dos dois lados: verificar D2. Se D2 positivo → sentido horário. Se negativo → anti-horário.' },
-  { q:'Qual reflexo ajusta a FREQUÊNCIA (Bainbridge) e qual ajusta a FORÇA (Frank-Starling)?', opts:['Bainbridge ajusta FC · Frank-Starling ajusta força','Frank-Starling ajusta FC · Bainbridge ajusta força','Ambos ajustam FC e força igualmente','Nenhum — ajuste é pelo SNS exclusivamente'], cor:0, exp:'Reflexo de BAINBRIDGE (Aurícula Direita): ajusta FREQUÊNCIA CARDÍACA (cronotropismo). Lei de FRANK-STARLING (Ventrículos): ajusta FORÇA DE CONTRAÇÃO (inotropismo). Juntos: ↑FC + ↑Força = ↑↑↑ Débito!' }
+  { q:'Qual reflexo ajusta a FREQUÊNCIA (Bainbridge) e qual ajusta a FORÇA (Frank-Starling)?', opts:['Bainbridge ajusta FC · Frank-Starling ajusta força','Frank-Starling ajusta FC · Bainbridge ajusta força','Ambos ajustam FC e força igualmente','Nenhum — ajuste é pelo SNS exclusivamente'], cor:0, exp:'Reflexo de BAINBRIDGE (Aurícula Direita): ajusta FREQUÊNCIA CARDÍACA (cronotropismo). Lei de FRANK-STARLING (Ventrículos): ajusta FORÇA DE CONTRAÇÃO (inotropismo). Juntos: ↑FC + ↑Força = ↑↑↑ Débito!' },
 ];
 
 let qIdx = 0, score = 0, quizInited = false;
 function initQuiz() {
-  if (quizInited) return;
-  quizInited = true; qIdx = 0; score = 0;
+  if(quizInited) return; quizInited = true; qIdx = 0; score = 0;
   renderQuestion();
 }
 function renderQuestion() {
   const container = document.getElementById('quiz-container');
-  if (qIdx >= quizData.length) { renderScore(container); return; }
+  if(qIdx >= quizData.length) { renderScore(container); return; }
   const q = quizData[qIdx];
-  const pct = Math.round((qIdx / quizData.length) * 100);
+  const pct = Math.round((qIdx/quizData.length)*100);
   container.innerHTML = `
-    <div style="margin-bottom:30px;">
+    <div style="margin-bottom:28px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <span style="font-size:.72rem;color:var(--t3);font-family:'JetBrains Mono',monospace;">Questão ${qIdx + 1} / ${quizData.length}</span>
-        <span style="font-size:.72rem;color:var(--red-b);font-family:'JetBrains Mono',monospace;">Score: ${score}/${qIdx}</span>
+        <span class="quiz-num">Questão ${qIdx+1} / ${quizData.length}</span>
+        <span style="font-family:var(--font-mono);font-size:.72rem;color:#e74c3c;">Score: ${score}/${qIdx}</span>
       </div>
-      <div style="height:5px;background:rgba(255,255,255,.05);border-radius:3px;overflow:hidden;">
-        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--red),var(--gold-l));border-radius:3px;transition:width .4s;"></div>
-      </div>
+      <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
     </div>
-    <div class="card" style="padding:32px;">
-      <p class="quiz-q">${q.q}</p>
-      <div class="qopts" id="qopts">${q.opts.map((o,i) => `<button class="qopt" onclick="answer(${i})">${o}</button>`).join('')}</div>
-      <div class="qexp" id="qexp">💡 ${q.exp}</div>
-      <button class="qnxt" id="qnxt" onclick="nextQ()">Próxima questão →</button>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answer(${i})"><span class="opt-letter">${String.fromCharCode(65+i)})</span><span>${o}</span></button>`).join('')}</div>
+    <div class="quiz-explain" id="qexp"></div>
+    <div class="quiz-nav" id="qnav" style="display:none;">
+      <span style="color:var(--muted);font-size:12px">${score} acertos até agora</span>
+      <button class="btn" onclick="nextQ()">Próxima →</button>
     </div>`;
 }
 function answer(chosen) {
   const q = quizData[qIdx];
-  const opts = document.querySelectorAll('.qopt');
-  opts.forEach(o => o.disabled = true);
-  if (chosen === q.cor) { opts[chosen].classList.add('cor'); score++; }
-  else { opts[chosen].classList.add('incor'); opts[q.cor].classList.add('cor'); }
-  document.getElementById('qexp').classList.add('show');
-  document.getElementById('qnxt').classList.add('show');
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>{ o.classList.add('answered'); o.style.pointerEvents='none'; });
+  if(chosen===q.cor){ opts[chosen].classList.add('correct'); score++; }
+  else { opts[chosen].classList.add('wrong'); opts[q.cor].classList.add('correct'); }
+  const ex = document.getElementById('qexp');
+  ex.innerHTML = `<strong>${chosen===q.cor?'✅ Correto!':'❌ Incorreto.'}</strong><br><br>${q.exp}`;
+  ex.classList.add('show');
+  document.getElementById('qnav').style.display='flex';
 }
 function nextQ() { qIdx++; renderQuestion(); }
 function renderScore(container) {
-  const pct = Math.round((score / quizData.length) * 100);
+  const pct = Math.round((score/quizData.length)*100);
   let msg, color;
-  if (pct >= 90) { msg = '🏆 Excelente! Domínio completo da Biofísica Cardíaca!'; color = '#27ae60'; }
-  else if (pct >= 70) { msg = '✅ Muito bom! Revise os pontos onde errou.'; color = 'var(--gold-l)'; }
-  else if (pct >= 50) { msg = '📚 Regular — refaça os módulos com dificuldade!'; color = 'var(--blue-l)'; }
-  else { msg = '💪 Continue estudando — você vai chegar lá!'; color = 'var(--red-b)'; }
-  container.innerHTML = `
-    <div class="card" style="padding:56px 24px;text-align:center;">
-      <div style="font-size:.7rem;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:18px;">Resultado Final · Biofísica P2</div>
-      <div class="qsnum" style="color:${color};">${score}<span style="font-size:2.5rem;color:var(--t3)">/${quizData.length}</span></div>
-      <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:700;margin:10px 0;color:${color};">${pct}%</div>
-      <p style="color:var(--t2);margin:18px 0 34px;">${msg}</p>
-      <button class="cta" onclick="restartQuiz()">🔄 Refazer Quiz</button>
-    </div>`;
+  if(pct>=90){ msg='🏆 Excelente! Domínio completo da Biofísica Cardíaca!'; color='var(--green)'; }
+  else if(pct>=70){ msg='✅ Muito bom! Revise os pontos onde errou.'; color='#f9c94f'; }
+  else if(pct>=50){ msg='📚 Regular — refaça os módulos com dificuldade!'; color='var(--accent)'; }
+  else { msg='💪 Continue estudando — você vai chegar lá!'; color='#e74c3c'; }
+  container.innerHTML = `<div class="score-card">
+    <div class="score-big">${score}<span style="font-size:2.5rem;color:var(--muted)">/${quizData.length}</span></div>
+    <div style="font-family:var(--font-display);font-size:2.2rem;font-weight:700;margin:10px 0;color:${color};">${pct}%</div>
+    <div class="score-msg">${msg}</div>
+    <button class="btn" style="margin-top:28px" onclick="restartQuiz()">🔄 Refazer Quiz</button>
+  </div>`;
 }
-function restartQuiz() { qIdx = 0; score = 0; renderQuestion(); }
+function restartQuiz() { qIdx=0; score=0; quizInited=false; initQuiz(); }
 </script>
 
-
-
-
-
-<!-- Botão Voltar -->
-<a href="dashboard.html" style="position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;align-items:center;gap:9px;padding:12px 26px;background:rgba(2,10,22,0.93);border:1.5px solid rgba(34,211,238,0.42);border-radius:50px;color:#e2f8fc;font-size:13px;font-weight:600;letter-spacing:0.03em;text-decoration:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 24px rgba(34,211,238,0.16);transition:all .25s ease;" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)'">← Voltar</a>
 </body>
 </html>
