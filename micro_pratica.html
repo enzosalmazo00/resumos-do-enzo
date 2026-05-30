@@ -233,7 +233,6 @@
     max-width: 960px;
     margin: 0 auto 4rem;
     padding: 0 1.5rem;
-    width: 100%;
   }
   .card-header {
     border-radius: 1.2rem 1.2rem 0 0;
@@ -618,114 +617,11 @@
   ::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.4); border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: rgba(34,211,238,0.75); }
 
-  /* ═══ RESPONSIVE — MOBILE ═══ */
-
-  /* Nav: scroll horizontal em vez de quebrar em múltiplas linhas */
-  @media (max-width: 768px) {
-    #nav {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      overflow-y: hidden;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      padding: 0.4rem 0.8rem;
-      gap: 0.4rem;
-    }
-    #nav::-webkit-scrollbar { display: none; }
-    .nav-btn {
-      flex-shrink: 0;
-      font-size: 0.65rem;
-      padding: 0.28rem 0.6rem;
-      white-space: nowrap;
-    }
-  }
-
-  /* Celulares (≤ 600px) */
+  /* RESPONSIVE */
   @media (max-width: 600px) {
-
-    /* Cover */
-    #cover { padding: 2rem 1.2rem 2.5rem; }
-    .cover-title { font-size: clamp(2rem, 10vw, 2.8rem); margin-bottom: 0.6rem; }
-    .cover-sub { font-size: 0.88rem; }
-    .cover-author { font-size: 1.1rem; }
-    .cover-ref { font-size: 0.68rem; }
-    .cover-divider { margin: 1.2rem auto; }
-    .cover-pills { margin-top: 1.5rem; gap: 0.4rem; }
-    .start-btn { margin-top: 1.8rem; padding: 0.75rem 1.8rem; font-size: 0.85rem; }
-
-    /* Seção principal */
-    .group-header { padding: 2rem 1rem 1rem; }
-    .group-title { font-size: clamp(1.4rem, 7vw, 2rem); }
-
-    /* Cards de bactéria */
-    .card-header { padding: 1.2rem 1rem 0.9rem; }
-    .card-header h2 { font-size: 1.4rem; }
-    .card-body { padding: 1rem 0.9rem; }
-    .card-tabs { padding: 0 0.9rem; }
-
-    /* Info grid — coluna única */
-    .info-grid { grid-template-columns: 1fr; gap: 0.6rem; }
-    .info-item { padding: 0.85rem; }
-
-    /* Tabelas — scroll horizontal */
-    .table-wrap, table { 
-      display: block;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      max-width: 100%;
-    }
-    .ctable, table { font-size: 0.75rem; min-width: 480px; }
-    .ctable th, table th { padding: 0.5rem 0.7rem; font-size: 0.6rem; }
-    .ctable td, table td { padding: 0.45rem 0.7rem; }
-
-    /* Trick e ref boxes */
-    .trick-box { padding: 0.85rem 0.9rem; }
-    .ref-box { padding: 0.85rem 0.9rem; }
-
-    /* Casos clínicos */
-    .case-header { padding: 1rem 1rem; gap: 0.7rem; }
-    .case-icon { font-size: 1.2rem; }
-    .case-title-wrap h3 { font-size: 0.88rem; }
-    .case-body.open { padding: 1rem 1rem 1.2rem; max-height: 3000px; }
-    .case-scenario { padding: 0.9rem; font-size: 0.85rem; }
-    .case-reveal-btn { font-size: 0.75rem; padding: 0.5rem 1rem; }
-
-    /* Quiz */
-    #quiz-section { padding: 1.5rem 0.9rem 3rem; }
-    .quiz-wrap { padding: 0; }
-    .quiz-card { padding: 1.2rem 1rem; }
-    .quiz-q { font-size: 0.9rem; }
-    .quiz-opt { padding: 0.65rem 0.85rem; font-size: 0.82rem; }
-    .quiz-feedback { font-size: 0.82rem; }
-
-    /* Score board */
-    .score-board { padding: 1.2rem 1rem; }
-    .score-num { font-size: 2.2rem; }
-
-    /* Back button — ajusta posição */
-    #backBtn {
-      bottom: 16px !important;
-      left: 16px !important;
-      padding: 10px 16px !important;
-      font-size: 13px !important;
-      gap: 7px !important;
-    }
-
-    /* Tags */
-    .tags { gap: 0.35rem; }
-    .tag { font-size: 0.62rem; padding: 0.2rem 0.55rem; }
-  }
-
-  /* Telas muito pequenas (≤ 380px) */
-  @media (max-width: 380px) {
-    #cover { padding: 1.5rem 1rem 2rem; }
-    .cover-title { font-size: 1.8rem; }
-    .card-header { padding: 1rem 0.8rem 0.7rem; }
-    .card-body { padding: 0.8rem 0.75rem; }
-    .case-header { padding: 0.8rem 0.8rem; }
-    .case-body.open { padding: 0.8rem 0.8rem 1rem; }
-    .quiz-card { padding: 1rem 0.8rem; }
-    .group-header { padding: 1.5rem 0.8rem 0.8rem; }
+    .card-body { padding: 1.2rem 1rem; }
+    .card-header { padding: 1.5rem 1.2rem 1rem; }
+    .info-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -2181,25 +2077,30 @@
 </script>
 
 
-
-
-<!-- ── Botão Voltar ── -->
-<a href="dashboard.html" style="
-  position:fixed; bottom:24px; left:24px; z-index:9999;
-  display:flex; align-items:center; gap:9px;
-  padding:12px 26px;
-  background:rgba(2,10,22,0.93);
-  border:1.5px solid rgba(34,211,238,0.42);
+<!-- ── Botão flutuante: voltar ao dashboard ── -->
+<a href="dashboard.html" id="backBtn" title="Voltar ao Dashboard" style="
+  position:fixed;
+  bottom:28px;
+  left:28px;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:13px 22px;
+  background:rgba(10,12,16,0.85);
+  border:1px solid rgba(34,211,238,0.35);
   border-radius:50px;
   color:#e2f8fc;
-  font-size:13px; font-weight:600; letter-spacing:0.03em;
+  font-size:14px;
+  font-weight:500;
   text-decoration:none;
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-  box-shadow:0 4px 24px rgba(34,211,238,0.16), inset 0 1px 0 rgba(255,255,255,0.04);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 4px 24px rgba(34,211,238,0.12);
   transition:all .25s ease;
-" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 32px rgba(34,211,238,0.26)'"
-   onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 24px rgba(34,211,238,0.16)'">
-  ← Voltar
+" onmouseover="this.style.borderColor='rgba(34,211,238,0.9)';this.style.background='rgba(34,211,238,0.12)';this.style.transform='translateY(-2px)'"
+  onmouseout="this.style.borderColor='rgba(34,211,238,0.35)';this.style.background='rgba(10,12,16,0.85)';this.style.transform='translateY(0)'">
+  ← Dashboard
 </a>
 
 </body>
