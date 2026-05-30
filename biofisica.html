@@ -878,31 +878,25 @@ function renderScore(container) {
 function restartQuiz() { qIdx = 0; score = 0; renderQuestion(); }
 </script>
 
-<!-- ── Botão flutuante: voltar ao dashboard ── -->
-<a href="dashboard.html" id="backBtn" title="Voltar ao Dashboard" style="
-  position:fixed;
-  bottom:28px;
-  left:28px;
-  z-index:9999;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:13px 22px;
-  background:rgba(10,10,18,0.85);
-  border:1px solid rgba(192,57,43,0.45);
+
+
+<!-- ── Botão Voltar ── -->
+<a href="dashboard.html" style="
+  position:fixed; bottom:24px; left:24px; z-index:9999;
+  display:flex; align-items:center; gap:9px;
+  padding:12px 26px;
+  background:rgba(2,10,22,0.93);
+  border:1.5px solid rgba(34,211,238,0.42);
   border-radius:50px;
-  color:#f2edfb;
-  font-family:'DM Sans',sans-serif;
-  font-size:14px;
-  font-weight:500;
+  color:#e2f8fc;
+  font-size:13px; font-weight:600; letter-spacing:0.03em;
   text-decoration:none;
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
-  box-shadow:0 4px 24px rgba(192,57,43,0.18);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  box-shadow:0 4px 24px rgba(34,211,238,0.16), inset 0 1px 0 rgba(255,255,255,0.04);
   transition:all .25s ease;
-" onmouseover="this.style.borderColor='rgba(231,76,60,0.9)';this.style.background='rgba(192,57,43,0.2)';this.style.transform='translateY(-2px)'"
-  onmouseout="this.style.borderColor='rgba(192,57,43,0.45)';this.style.background='rgba(10,10,18,0.85)';this.style.transform='translateY(0)'">
-  ← Dashboard
+" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 32px rgba(34,211,238,0.26)'"
+   onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 24px rgba(34,211,238,0.16)'">
+  ← Voltar
 </a>
 
 </body>

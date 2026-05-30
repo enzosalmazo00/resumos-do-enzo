@@ -413,6 +413,17 @@
     <div class="status-msg">Verificando acesso…</div>
   </div>
 
+  <!-- BANNER TOPO — info de pagamento -->
+  <div id="topBanner" style="display:none;margin-bottom:32px;padding:16px 20px;border-radius:14px;background:rgba(34,211,238,0.06);border:1px solid rgba(34,211,238,0.18);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span style="font-size:20px">💳</span>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:#e2f8fc">Libere seus Resumos</div>
+        <div style="font-size:12px;color:rgba(125,211,232,0.6)">R$ 15,00 por resumo • PIX: <strong style="color:#7dd3e8">17997220348</strong> (mesmo nº do WhatsApp)</div>
+      </div>
+    </div>
+    <button onclick="document.getElementById('pricingPanel').scrollIntoView({behavior:'smooth'})" style="padding:8px 18px;border-radius:10px;border:1px solid rgba(34,211,238,0.3);background:transparent;color:#7dd3e8;font-size:12px;font-family:'Poppins',sans-serif;cursor:pointer;white-space:nowrap;transition:all .2s" onmouseover="this.style.background='rgba(34,211,238,0.08)'" onmouseout="this.style.background='transparent'">Ver detalhes ↓</button>
+  </div>
   <!-- Grid de cards — revelado via classe .visible após authReady -->
   <div id="content" class="content">
 
@@ -507,6 +518,7 @@
 
   </div>
 
+
   <!-- PAINEL DE PREÇOS -->
   <div id="pricingPanel" class="pricing-panel">
 
@@ -578,6 +590,7 @@
     userEmailEl.textContent = session.user.email || "";
     contentGrid.classList.add("visible");
     document.getElementById("pricingPanel").classList.add("visible");
+    var tb = document.getElementById("topBanner"); if(tb) tb.style.display = "flex";
   }
 
   // ── Logout ────────────────────────────────────────────────────────────────
