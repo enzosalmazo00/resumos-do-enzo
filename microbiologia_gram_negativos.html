@@ -21,26 +21,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0a0d14;
-  --bg2: #111520;
-  --bg3: #161c2e;
-  --card: #1a2138;
-  --card2: #1f2845;
-  --accent: #4f9cf9;
-  --accent2: #38e8c0;
-  --accent3: #f9784f;
-  --accent4: #b84ff9;
-  --gold: #f9c94f;
-  --red: #f95f5f;
-  --green: #4ff984;
-  --text: #e8eaf6;
-  --muted: #8892b0;
+  --bg: #0a0d14; --bg2: #111520; --bg3: #161c2e;
+  --card: #1a2138; --card2: #1f2845;
+  --accent: #4f9cf9; --accent2: #38e8c0; --accent3: #f9784f; --accent4: #b84ff9;
+  --gold: #f9c94f; --red: #f95f5f; --green: #4ff984;
+  --text: #e8eaf6; --muted: #8892b0;
   --border: rgba(79,156,249,0.15);
   --shadow: 0 8px 40px rgba(0,0,0,0.5);
   --radius: 16px;
   --font-body: 'DM Sans', sans-serif;
   --font-display: 'Syne', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+/* aliases */
+--t1:var(--text); --t2:#a8b4cc; --t3:var(--muted);
+--bdr:var(--border); --bdr-b:rgba(79,156,249,0.35); --card-h:var(--card2);
+--red-b:#e74c3c; --blue:#4f9cf9; --blue-l:#7cb9fb;
+--green-l:var(--green); --gold-l:#fbd97f;
+--ac:var(--accent); --ac2:var(--accent2);
+--tx:var(--text); --tx2:var(--muted);
 }
 
 *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
@@ -278,46 +276,58 @@ nav.tabs button.active {
 }
 
 
-/* ── HEADER + NAV (padrão Bioquímica) ── */
-#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
-header{position:relative;z-index:10;text-align:center;padding:48px 24px 32px;background:linear-gradient(180deg,rgba(79,156,249,0.08) 0%,transparent 100%);border-bottom:1px solid var(--border);}
-header .badge{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px;}
-header h1{font-family:var(--font-display);font-size:clamp(24px,4vw,44px);font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
-header .sub{color:var(--muted);font-size:13px;}
-header .by{margin-top:12px;color:var(--accent);font-family:var(--font-mono);font-size:12px;}
-nav.tabs{position:sticky;top:0;z-index:100;display:flex;gap:4px;flex-wrap:wrap;background:rgba(10,13,20,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 16px;justify-content:center;}
-nav.tabs button{background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
-nav.tabs button:hover{color:var(--accent);border-color:var(--accent);}
-nav.tabs button.active{background:var(--accent);color:var(--bg);border-color:var(--accent);box-shadow:0 0 20px rgba(79,156,249,0.4);}
-@media(max-width:768px){nav.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;}nav.tabs::-webkit-scrollbar{display:none;}nav.tabs button{flex-shrink:0;white-space:nowrap;}}
-
+/* ── Nav override: Bioquímica pill style ── */
+.ntab,.nav-btn,.tab-btn,.btn-home{
+  background:var(--card)!important;
+  border:1px solid var(--border)!important;
+  border-bottom:1px solid var(--border)!important;
+  border-radius:8px!important;
+  color:var(--muted)!important;
+  font-family:var(--font-body)!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  padding:6px 14px!important;
+  cursor:pointer!important;
+  transition:all 0.2s!important;
+  white-space:nowrap!important;
+  letter-spacing:0.3px!important;
+  text-transform:none!important;
+  flex-shrink:0!important;
+  flex:none!important;
+  min-width:auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+}
+.ntab:hover,.nav-btn:hover,.tab-btn:hover{color:var(--accent)!important;border-color:var(--accent)!important;background:var(--card2)!important;}
+.ntab.active,.nav-btn.active,.tab-btn.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important;box-shadow:0 0 20px rgba(79,156,249,0.4)!important;}
+.nav-wrap,.nav-inner,.tab-nav-wrapper,.tab-nav{background:rgba(10,13,20,0.97)!important;backdrop-filter:blur(20px)!important;border-bottom:1px solid var(--border)!important;}
+body{background:var(--bg)!important;color:var(--text)!important;font-family:var(--font-body)!important;}
+h1,h2,.hero-t,.mod-title,.chapter-title,.cov-h1,.dash-h1,.sec-nm{font-family:var(--font-display)!important;}
+code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
 </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
-
-<header>
-  <div class="badge">🦠 Microbiologia Teórica · Gram-Negativos · P2</div>
-  <h1>Microbiologia Teórica P2</h1>
-  <p class="sub">Enterobactérias · Não-fermentadores · Neisseria · Espiroquetas</p>
-  <p class="by">⚡ Feito por Enzo Salmazo · Jawetz 28ª ed.</p>
-</header>
-
-<nav class="tabs">
-  <button class="active" onclick="showPage('page-dashboard',this)">🏠 Início</button>
-  <button onclick="showPage('page-enterobac',this)">🦠 Enterobactérias</button>
-  <button onclick="showPage('page-nonferment',this)">🧫 Não-ferment.</button>
-  <button onclick="showPage('page-haemoph',this)">🔬 Haemophilus</button>
-  <button onclick="showPage('page-neisseria',this)">⚕️ Neisseria</button>
-  <button onclick="showPage('page-others',this)">🌿 Outras</button>
-  <button onclick="showPage('page-spirochetes',this)">🌀 Espiroquetas</button>
-  <button onclick="initQuiz();showPage('page-quiz',this)">📝 Quiz</button>
-  <button onclick="showPage('page-cases',this)">🏥 Casos Clínicos</button>
-</nav>
+<!-- COVER -->
+<div id="page-cover" class="page active">
+<div class="cov-in">
+<div class="cov-badge">🔬 Microbiologia Médica · Gram-Negativos</div>
+<h1 class="cov-h1">Resumo de <em>Microbiologia</em><br>Teórica</h1>
+<p class="cov-h2">Bacteriologia Clínica — Bacilos e Cocos Gram-Negativos</p>
+<p class="cov-author">✦ Feito por Enzo Salmazo ✦</p>
+<div class="cov-stats">
+<div><div class="cov-sn">24</div><div class="cov-sl">Microrganismos</div></div>
+<div><div class="cov-sn">6</div><div class="cov-sl">Seções</div></div>
+<div><div class="cov-sn">50</div><div class="cov-sl">Questões</div></div>
+<div><div class="cov-sn">4</div><div class="cov-sl">Casos Clínicos</div></div>
+</div>
+<button class="btn-start" onclick="showPage('page-dashboard')">▶ Iniciar Estudos</button>
+</div>
+</div>
 
 <!-- DASHBOARD -->
-<div id="page-dashboard" class="page active">
+<div id="page-dashboard" class="page">
 <div class="dash-top">
 <h1 class="dash-h1">Painel de Estudos</h1>
 <p class="dash-sub">Selecione uma seção para iniciar os flashcards ou vá direto para o quiz e casos clínicos</p>
@@ -325,8 +335,8 @@ nav.tabs button.active{background:var(--accent);color:var(--bg);border-color:var
 <div class="sec-grid" id="dash-secs"></div>
 <div style="max-width:1200px;margin:0 auto;padding:0 20px 16px"><p style="font-size:.72rem;color:var(--tx2);text-transform:uppercase;letter-spacing:2px;font-weight:700">Avaliação &amp; Prática</p></div>
 <div class="dash-extra">
-<div class="dec" onclick="initQuiz();showPage('page-quiz',null)"><div class="dec-ic">📝</div><div class="dec-nm">Quiz — 50 Questões</div><div class="dec-sub">Estilo prova com gabarito comentado</div></div>
-<div class="dec" onclick="showPage('page-cases',null)"><div class="dec-ic">🏥</div><div class="dec-nm">Casos Clínicos</div><div class="dec-sub">4 casos completos — diagnóstico e tratamento</div></div>
+<div class="dec" onclick="initQuiz();showPage('page-quiz')"><div class="dec-ic">📝</div><div class="dec-nm">Quiz — 50 Questões</div><div class="dec-sub">Estilo prova com gabarito comentado</div></div>
+<div class="dec" onclick="showPage('page-cases')"><div class="dec-ic">🏥</div><div class="dec-nm">Casos Clínicos</div><div class="dec-sub">4 casos completos — diagnóstico e tratamento</div></div>
 </div>
 </div>
 
@@ -341,7 +351,7 @@ nav.tabs button.active{background:var(--accent);color:var(--bg);border-color:var
 <!-- QUIZ -->
 <div id="page-quiz" class="page">
 <div class="top-nav">
-<button class="btn-home" onclick="showPage('page-dashboard',null)">🏠 Início</button>
+<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
 <span class="nav-lbl">Quiz de Microbiologia</span>
 </div>
 <div class="q-top">
@@ -355,7 +365,7 @@ nav.tabs button.active{background:var(--accent);color:var(--bg);border-color:var
 <!-- CASES -->
 <div id="page-cases" class="page">
 <div class="top-nav">
-<button class="btn-home" onclick="showPage('page-dashboard',null)">🏠 Início</button>
+<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
 <span class="nav-lbl">Casos Clínicos</span>
 </div>
 <div class="cas-top">
@@ -751,25 +761,10 @@ qs:[
 // ================================================================
 // RENDER ENGINE
 // ================================================================
-// PARTICLES
-const canvas=document.getElementById('particles');
-const ctx=canvas.getContext('2d');
-let particles=[];
-function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
-resize();window.addEventListener('resize',resize);
-for(let i=0;i<60;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.4+0.1});}
-function animParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(79,156,249,${p.alpha})`;ctx.fill();});requestAnimationFrame(animParticles);}
-animParticles();
-
-function showPage(id, btn){
+function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const p=document.getElementById(id);
   if(p){p.classList.add('active');window.scrollTo(0,0);}
-  // Sync nav tabs
-  if(btn){
-    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-  }
 }
 
 function getSecColor(secId){
@@ -795,7 +790,7 @@ function renderSections(){
     const bacts=bacteria.filter(b=>b.sec===sec.id);
     p.innerHTML=`
 <div class="top-nav">
-<button class="btn-home" onclick="showPage('page-dashboard',null)">🏠 Início</button>
+<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
 <span class="nav-lbl">${sec.nm}</span>
 </div>
 <div class="sec-hero" style="--sc:${sec.c}">
@@ -879,7 +874,7 @@ ${q.opts.map((o,i)=>`<button class="q-opt" id="qopt-${i}" onclick="selectOpt(${i
 <p class="q-fb-p" id="q-fb-p"></p>
 </div>
 <div class="q-nav">
-<button class="btn-qs" onclick="showPage('page-dashboard',null)">🏠 Sair</button>
+<button class="btn-qs" onclick="showPage('page-dashboard')">🏠 Sair</button>
 <button class="btn-q" id="q-btn" onclick="nextOrCheck()" disabled>Verificar</button>
 </div>`;
   qState.sel=null;qState.answered=false;
@@ -947,7 +942,7 @@ function showResults(){
 <div><div class="qr-n">${pct}%</div><div class="qr-l">Aproveitamento</div></div>
 </div>
 <button class="btn-q" onclick="initQuiz()" style="margin:8px">🔄 Refazer Quiz</button>
-<button class="btn-qs" onclick="showPage('page-dashboard',null)" style="margin:8px">🏠 Voltar ao Início</button>
+<button class="btn-qs" onclick="showPage('page-dashboard')" style="margin:8px">🏠 Voltar ao Início</button>
 </div>`;
   const prog=document.getElementById('q-prog');
   if(prog)prog.style.width='100%';
@@ -1012,23 +1007,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 
-<!-- ── Botão Voltar ── -->
-<a href="dashboard.html" style="
-  position:fixed; bottom:24px; left:24px; z-index:9999;
-  display:flex; align-items:center; gap:9px;
-  padding:12px 26px;
-  background:rgba(2,10,22,0.93);
-  border:1.5px solid rgba(34,211,238,0.42);
-  border-radius:50px; color:#e2f8fc;
-  font-size:13px; font-weight:600; letter-spacing:0.03em;
-  text-decoration:none;
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-  box-shadow:0 4px 24px rgba(34,211,238,0.16), inset 0 1px 0 rgba(255,255,255,0.04);
-  transition:all .25s ease;
-" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 32px rgba(34,211,238,0.26)'"
-   onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 24px rgba(34,211,238,0.16)'">
-  ← Voltar
-</a>
 
+<!-- Botão Voltar -->
+<a href="dashboard.html" style="position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;align-items:center;gap:9px;padding:12px 26px;background:rgba(2,10,22,0.93);border:1.5px solid rgba(34,211,238,0.42);border-radius:50px;color:#e2f8fc;font-size:13px;font-weight:600;letter-spacing:0.03em;text-decoration:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 24px rgba(34,211,238,0.16);transition:all .25s ease;" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)'">← Voltar</a>
 </body>
 </html>

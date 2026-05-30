@@ -24,41 +24,24 @@
 
 <style>
 :root {
-  --bg: #0a0d14;
-  --bg2: #111520;
-  --bg3: #161c2e;
-  --card: #1a2138;
-  --card2: #1f2845;
-  --accent: #4f9cf9;
-  --accent2: #38e8c0;
-  --accent3: #f9784f;
-  --accent4: #b84ff9;
-  --gold: #f9c94f;
-  --red: #f95f5f;
-  --green: #4ff984;
-  --text: #e8eaf6;
-  --muted: #8892b0;
+  --bg: #0a0d14; --bg2: #111520; --bg3: #161c2e;
+  --card: #1a2138; --card2: #1f2845;
+  --accent: #4f9cf9; --accent2: #38e8c0; --accent3: #f9784f; --accent4: #b84ff9;
+  --gold: #f9c94f; --red: #f95f5f; --green: #4ff984;
+  --text: #e8eaf6; --muted: #8892b0;
   --border: rgba(79,156,249,0.15);
   --shadow: 0 8px 40px rgba(0,0,0,0.5);
   --radius: 16px;
   --font-body: 'DM Sans', sans-serif;
   --font-display: 'Syne', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
-
-  /* ── Aliases de variáveis legadas biofísica ── */
-  --t1: var(--text);
-  --t2: #a8b4cc;
-  --t3: var(--muted);
-  --bdr: var(--border);
-  --bdr-b: rgba(79,156,249,0.35);
-  --card-h: #1f2845;
-  --red-b: #e74c3c;
-  --red: var(--red);
-  --blue: #4f9cf9;
-  --blue-l: #7cb9fb;
-  --green-l: #4ff984;
-  --gold: var(--gold);
-  --gold-l: #fbd97f;
+/* aliases */
+--t1:var(--text); --t2:#a8b4cc; --t3:var(--muted);
+--bdr:var(--border); --bdr-b:rgba(79,156,249,0.35); --card-h:var(--card2);
+--red-b:#e74c3c; --blue:#4f9cf9; --blue-l:#7cb9fb;
+--green-l:var(--green); --gold-l:#fbd97f;
+--ac:var(--accent); --ac2:var(--accent2);
+--tx:var(--text); --tx2:var(--muted);
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -100,7 +83,9 @@ h1.hero-t{font-family:var(--font-display);font-size:clamp(2.4rem,8vw,6.5rem);fon
 .nav-wrap{position:sticky;top:0;z-index:100;background:rgba(5,5,10,.92);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-bottom:1px solid var(--bdr);}
 .nav-inner{max-width:1180px;margin:0 auto;padding:0 20px;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;}
 .nav-inner::-webkit-scrollbar{display:none;}
-
+.ntab{flex-shrink:0;padding:16px 13px;font-size:.7rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t3);cursor:pointer;transition:all .22s;border:none;background:none;border-bottom:2px solid transparent;white-space:nowrap;font-family:var(--font-body);}
+.ntab:hover{color:var(--t2);}
+.ntab.active{color:var(--red-b);border-bottom-color:var(--red-b);}
 
 .main{max-width:1120px;margin:0 auto;padding:60px 28px 100px;}
 .mod{display:none;animation:fadeUp .4s ease forwards;}
@@ -266,45 +251,92 @@ nav.tabs button.active {
 }
 
 
-/* ── Section show/hide (Bioquímica padrão) ── */
-.section { display:none; animation:fadeIn 0.4s ease; }
-.section.active { display:block; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+/* ── Nav override: Bioquímica pill style ── */
+.ntab,.nav-btn,.tab-btn,.btn-home{
+  background:var(--card)!important;
+  border:1px solid var(--border)!important;
+  border-bottom:1px solid var(--border)!important;
+  border-radius:8px!important;
+  color:var(--muted)!important;
+  font-family:var(--font-body)!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  padding:6px 14px!important;
+  cursor:pointer!important;
+  transition:all 0.2s!important;
+  white-space:nowrap!important;
+  letter-spacing:0.3px!important;
+  text-transform:none!important;
+  flex-shrink:0!important;
+  flex:none!important;
+  min-width:auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  gap:4px!important;
+}
+.ntab:hover,.nav-btn:hover,.tab-btn:hover{color:var(--accent)!important;border-color:var(--accent)!important;background:var(--card2)!important;}
+.ntab.active,.nav-btn.active,.tab-btn.active{background:var(--accent)!important;color:var(--bg)!important;border-color:var(--accent)!important;box-shadow:0 0 20px rgba(79,156,249,0.4)!important;}
+.nav-wrap,.nav-inner,.tab-nav-wrapper,.tab-nav{background:rgba(10,13,20,0.97)!important;backdrop-filter:blur(20px)!important;border-bottom:1px solid var(--border)!important;}
+body{background:var(--bg)!important;color:var(--text)!important;font-family:var(--font-body)!important;}
+h1,h2,.hero-t,.mod-title,.chapter-title,.cov-h1,.dash-h1,.sec-nm{font-family:var(--font-display)!important;}
+code,.fc-tag,.formula,.mono{font-family:var(--font-mono)!important;}
 </style>
 </head>
 <body>
-<canvas id="particles"></canvas>
+<div id="pgbar"></div>
 
-<header>
-  <div class="badge">🫀 Biofísica Cardíaca · UCP · P2</div>
-  <h1>Biofísica Cardíaca P2</h1>
-  <p class="sub">Estrutura · Potenciais · Hemodinâmica · ECG</p>
-  <p class="by">⚡ Feito por Enzo Salmazo · Guyton &amp; Hall</p>
-</header>
+<!-- ======================== HERO ======================== -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="ecg-wrap">
+    <svg class="ecg-svg" viewBox="0 0 1000 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,70 L55,70 L62,70 L68,42 L74,102 L78,8 L83,115 L88,70 L108,70 L158,70 L165,70 L170,42 L176,102 L180,8 L185,115 L190,70 L210,70 L258,70 L264,70 L270,42 L276,102 L280,8 L285,115 L290,70 L308,70 L358,70 L364,70 L370,42 L376,102 L380,8 L385,115 L390,70 L408,70 L458,70 L464,70 L470,42 L476,102 L480,8 L485,115 L490,70 L508,70 L558,70 L564,70 L570,42 L576,102 L580,8 L585,115 L590,70 L608,70 L658,70 L664,70 L670,42 L676,102 L680,8 L685,115 L690,70 L708,70 L758,70 L764,70 L770,42 L776,102 L780,8 L785,115 L790,70 L808,70 L858,70 L864,70 L870,42 L876,102 L880,8 L885,115 L890,70 L908,70 L958,70 L964,70 L970,42 L976,102 L980,8 L985,115 L990,70 L1000,70"
+        stroke="rgba(231,76,60,.75)" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="hero-content">
+    <div class="badge">Biofísica Cardíaca · UCP · P2</div>
+    <div class="heart">🫀</div>
+    <p class="hero-author">Resumo por Enzo Salmazo</p>
+    <h1 class="hero-t">Biofísica<br>Cardíaca</h1>
+    <p class="hero-ref">Guyton &amp; Hall · Biofísica Médica e Biológica — Guilherme A. Micó</p>
+    <p class="hero-sub">Guia interativo completo sobre fundamentos elétricos, mecânicos e hemodinâmicos do coração humano.</p>
+    <div class="stats">
+      <div><span class="stat-n">14</span><span class="stat-l">Módulos</span></div>
+      <div><span class="stat-n">5</span><span class="stat-l">Propriedades</span></div>
+      <div><span class="stat-n">30</span><span class="stat-l">Flashcards</span></div>
+      <div><span class="stat-n">20</span><span class="stat-l">Questões</span></div>
+    </div>
+    <button class="cta" onclick="document.getElementById('nav').scrollIntoView({behavior:'smooth'})">▶ Iniciar Estudo</button>
+  </div>
+  <div class="scroll-hint" onclick="document.getElementById('nav').scrollIntoView({behavior:'smooth'})">Rolar</div>
+</section>
 
-<nav class="tabs">
-  <button class="active" onclick="showSection('m0',this)">01 · Estrutura</button>
-  <button onclick="showSection('m1',this)">02 · Propriedades</button>
-  <button onclick="showSection('m2',this)">03 · Automatismo</button>
-  <button onclick="showSection('m3',this)">04 · Potenciais</button>
-  <button onclick="showSection('m4',this)">05 · Refratário</button>
-  <button onclick="showSection('m5',this)">06 · Condução</button>
-  <button onclick="showSection('m6',this)">07 · Cálcio</button>
-  <button onclick="showSection('m7',this)">08 · Hemodinâmica</button>
-  <button onclick="showSection('m8',this)">09 · Frank-Starling</button>
-  <button onclick="showSection('m9',this)">10 · Bainbridge</button>
-  <button onclick="showSection('m10',this)">11 · Ruídos</button>
-  <button onclick="showSection('m11',this)">12 · ECG Ondas</button>
-  <button onclick="showSection('m12',this)">13 · ECG Eletrodos</button>
-  <button onclick="showSection('m13',this)">🃏 Flashcards</button>
-  <button onclick="showSection('m14',this)">⭐ Quiz Final</button>
-</nav>
-
-<div class="content-wrap" style="max-width:1100px;margin:0 auto;padding:32px 20px;">
-
+<!-- ======================== NAV ======================== -->
+<div class="nav-wrap" id="nav">
+  <div class="nav-inner">
+    <button class="ntab active" onclick="sm(0,this)">01 · Estrutura</button>
+    <button class="ntab" onclick="sm(1,this)">02 · Propriedades</button>
+    <button class="ntab" onclick="sm(2,this)">03 · Automatismo</button>
+    <button class="ntab" onclick="sm(3,this)">04 · Potenciais</button>
+    <button class="ntab" onclick="sm(4,this)">05 · Refratário</button>
+    <button class="ntab" onclick="sm(5,this)">06 · Condução</button>
+    <button class="ntab" onclick="sm(6,this)">07 · Cálcio</button>
+    <button class="ntab" onclick="sm(7,this)">08 · Hemodinâmica</button>
+    <button class="ntab" onclick="sm(8,this)">09 · Frank-Starling</button>
+    <button class="ntab" onclick="sm(9,this)">10 · Bainbridge</button>
+    <button class="ntab" onclick="sm(10,this)">11 · Ruídos</button>
+    <button class="ntab" onclick="sm(11,this)">12 · ECG Ondas</button>
+    <button class="ntab" onclick="sm(12,this)">13 · ECG Eletrodos</button>
+    <button class="ntab" onclick="sm(13,this)">🃏 Flashcards</button>
+    <button class="ntab" onclick="sm(14,this)">⭐ Quiz Final</button>
+  </div>
 </div>
+
+<main class="main" id="mc">
+
 <!-- ======= M0: ESTRUTURA ======= -->
-<div class="section active" id="m0"><div class="container">
+<div class="mod active" id="m0">
   <div class="mod-tag">Módulo 01</div>
   <h2 class="mod-title">Estrutura e Função Cardíaca</h2>
   <p class="mod-desc">Bases anatômicas e funcionais do coração como bomba muscular dupla em sistema fechado.</p>
@@ -326,9 +358,8 @@ nav.tabs button.active {
   <div class="cl cl-red"><div class="cl-lbl">❗ Verdadeiro ou Falso — Discos Intercalares</div><p>"Discos intercalares são regiões de <strong>alta resistência</strong> ao fluxo de íons." → <strong>FALSO!</strong> São regiões de <strong>baixa resistência</strong> — facilitam (não dificultam) a transmissão do potencial.</p></div>
 </div>
 
-</div>
 <!-- ======= M1: PROPRIEDADES ======= -->
-<div class="section" id="m1"><div class="container">
+<div class="mod" id="m1">
   <div class="mod-tag">Módulo 02</div>
   <h2 class="mod-title">Propriedades Cardíacas</h2>
   <p class="mod-desc">As 5 propriedades que governam toda a atividade cardíaca. Memorize o nome e o conceito — frequentes em provas!</p>
@@ -349,9 +380,8 @@ nav.tabs button.active {
   <div class="cl cl-red"><div class="cl-lbl">❗ Armadilha Clássica de Prova</div><p>"A propriedade que transmite potencial de estrutura para estrutura denomina-se <strong>cronotropismo</strong>." → <strong>FALSO!</strong> É o <strong>dromotropismo</strong>.<br>Cronotropismo = frequência. Dromotropismo = transmissão/condução.</p></div>
 </div>
 
-</div>
 <!-- ======= M2: AUTOMATISMO ======= -->
-<div class="section" id="m2"><div class="container">
+<div class="mod" id="m2">
   <div class="mod-tag">Módulo 03</div>
   <h2 class="mod-title">Automatismo Cardíaco</h2>
   <p class="mod-desc">A capacidade única do coração de gerar seus próprios estímulos sem estimulação externa — dependente fundamentalmente do cálcio.</p>
@@ -372,9 +402,8 @@ nav.tabs button.active {
   <div class="cl cl-warn"><div class="cl-lbl">⚠️ Não Podemos Separar Inotropismo e Cronotropismo</div><ul><li>Ambos dependem da entrada de Ca²⁺</li><li>↑ Ca²⁺ = ↑ força de contração (inotropismo) + ↑ frequência (cronotropismo) — simultâneo!</li><li>A entrada de Ca²⁺ está vinculada ao <strong>automatismo</strong> cardíaco</li><li>Idoso com hipocalcemia → rampa deitada → FC mais baixa → bradicardia fisiológica</li></ul></div>
 </div>
 
-</div>
 <!-- ======= M3: POTENCIAIS ======= -->
-<div class="section" id="m3"><div class="container">
+<div class="mod" id="m3">
   <div class="mod-tag">Módulo 04</div>
   <h2 class="mod-title">Potenciais de Ação Cardíacos</h2>
   <p class="mod-desc">Dois tipos radicalmente diferentes — saber diferenciá-los é obrigatório para as provas.</p>
@@ -413,9 +442,8 @@ nav.tabs button.active {
   </tbody></table></div>
 </div>
 
-</div>
 <!-- ======= M4: REFRATÁRIO ======= -->
-<div class="section" id="m4"><div class="container">
+<div class="mod" id="m4">
   <div class="mod-tag">Módulo 05</div>
   <h2 class="mod-title">Período Refratário</h2>
   <p class="mod-desc">Quando e por que as células cardíacas não conseguem responder a novos estímulos.</p>
@@ -433,9 +461,8 @@ nav.tabs button.active {
   <div class="cl cl-ok"><div class="cl-lbl">✓ Importância Clínica</div><ul><li>Protege contra <strong>tetania cardíaca</strong> — seria imediatamente fatal</li><li>Garante <strong>relaxamento completo</strong> entre batimentos (diástole + enchimento)</li><li><strong>Antiarrítmicos</strong> atuam modificando a duração do período refratário</li></ul></div>
 </div>
 
-</div>
 <!-- ======= M5: CONDUÇÃO ======= -->
-<div class="section" id="m5"><div class="container">
+<div class="mod" id="m5">
   <div class="mod-tag">Módulo 06</div>
   <h2 class="mod-title">Sistema de Condução e Velocidades</h2>
   <p class="mod-desc">Como o impulso cardíaco viaja com velocidades radicalmente diferentes — e por quê isso é essencial para a função cardíaca.</p>
@@ -460,9 +487,8 @@ nav.tabs button.active {
   </div>
 </div>
 
-</div>
 <!-- ======= M6: CÁLCIO ======= -->
-<div class="section" id="m6"><div class="container">
+<div class="mod" id="m6">
   <div class="mod-tag">Módulo 07</div>
   <h2 class="mod-title">Cálcio — Relevância Mecânica e Elétrica</h2>
   <p class="mod-desc">O íon mais importante no coração — atua tanto na eletrofisiologia quanto na mecânica de contração.</p>
@@ -480,9 +506,8 @@ nav.tabs button.active {
   </tbody></table></div>
 </div>
 
-</div>
 <!-- ======= M7: HEMODINÂMICA ======= -->
-<div class="section" id="m7"><div class="container">
+<div class="mod" id="m7">
   <div class="mod-tag">Módulo 08</div>
   <h2 class="mod-title">Hemodinâmica Cardíaca</h2>
   <p class="mod-desc">Volumes, pressões e débito cardíaco — os números que descrevem a performance da bomba.</p>
@@ -507,9 +532,8 @@ nav.tabs button.active {
   </tbody></table></div>
 </div>
 
-</div>
 <!-- ======= M8: FRANK-STARLING ======= -->
-<div class="section" id="m8"><div class="container">
+<div class="mod" id="m8">
   <div class="mod-tag">Módulo 09</div>
   <h2 class="mod-title">Lei de Frank-Starling</h2>
   <p class="mod-desc">A lei de funcionalidade fisiológica cardíaca — como o coração adapta automaticamente sua força ao volume recebido.</p>
@@ -555,9 +579,8 @@ nav.tabs button.active {
   <div class="cl cl-ok"><div class="cl-lbl">✓ Questões Clássicas — Frank-Starling</div><p>"A lei de F-S se aplica principalmente a qual parte?" → <strong>Ventrículos</strong> (plural).<br>"A pré-carga se define em qual momento?" → <strong>Diástole</strong>.<br>"Como também se chama a pré-carga?" → <strong>Sobrecarga de volume</strong>.<br>"De que depende a pós-carga?" → <strong>Resistência aórtica (RCA) + RVP/RUA</strong>.</p></div>
 </div>
 
-</div>
 <!-- ======= M9: BAINBRIDGE ======= -->
-<div class="section" id="m9"><div class="container">
+<div class="mod" id="m9">
   <div class="mod-tag">Módulo 10</div>
   <h2 class="mod-title">Reflexo de Bainbridge</h2>
   <p class="mod-desc">O reflexo de estiramento auricular que ajusta a frequência cardíaca ao retorno venoso.</p>
@@ -586,9 +609,8 @@ nav.tabs button.active {
   <div class="cl cl-ok"><div class="cl-lbl">✓ Questões Clássicas — Bainbridge</div><p>"Qual reflexo ajusta a FC ao retorno venoso auricular?" → <strong>Reflexo de Bainbridge</strong>.<br>"Qual aurícula?" → <strong>DIREITA</strong>.<br>"↑ retorno venoso → FC?" → <strong>Aumenta</strong>.</p></div>
 </div>
 
-</div>
 <!-- ======= M10: RUÍDOS ======= -->
-<div class="section" id="m10"><div class="container">
+<div class="mod" id="m10">
   <div class="mod-tag">Módulo 11</div>
   <h2 class="mod-title">Ruídos Cardíacos</h2>
   <p class="mod-desc">Sons produzidos pelo coração — causas, timing e implicações clínicas.</p>
@@ -611,9 +633,8 @@ nav.tabs button.active {
   </tbody></table></div>
 </div>
 
-</div>
 <!-- ======= M11: ECG ONDAS ======= -->
-<div class="section" id="m11"><div class="container">
+<div class="mod" id="m11">
   <div class="mod-tag">Módulo 12</div>
   <h2 class="mod-title">ECG — Ondas e Significados</h2>
   <p class="mod-desc">O ECG registra apenas atividade elétrica. Entender cada onda é dominar o instrumento diagnóstico mais usado na cardiologia.</p>
@@ -684,9 +705,8 @@ nav.tabs button.active {
   </tbody></table></div>
 </div>
 
-</div>
 <!-- ======= M12: ECG ELETRODOS ======= -->
-<div class="section" id="m12"><div class="container">
+<div class="mod" id="m12">
   <div class="mod-tag">Módulo 13</div>
   <h2 class="mod-title">ECG — Eletrodos, Derivações e Eixo</h2>
   <p class="mod-desc">Os 10 eletrodos que geram 12 derivações — como funcionam, onde ficam, e como calcular o eixo elétrico.</p>
@@ -731,9 +751,8 @@ nav.tabs button.active {
   <div class="cl cl-warn"><div class="cl-lbl">⚠️ Técnica das Isodifásicas</div><p>Encontrar derivação com ondas <strong>isodifásicas</strong> (metade acima, metade abaixo): o eixo está a <strong>90° desta derivação</strong>. Para definir qual dos dois lados: se D2 estiver com ondas normais (positivas) → sentido horário. Se invertidas → sentido anti-horário.</p></div>
 </div>
 
-</div>
 <!-- ======= M13: FLASHCARDS ======= -->
-<div class="section" id="m13"><div class="container">
+<div class="mod" id="m13">
   <div class="mod-tag">Módulo 14</div>
   <h2 class="mod-title">🃏 Flashcards Interativos</h2>
   <p class="mod-desc">Clique nos cards para revelar a resposta. Estude de forma ativa — virar os cards consolida a memória!</p>
@@ -745,49 +764,39 @@ nav.tabs button.active {
   </div>
 </div>
 
-</div>
 <!-- ======= M14: QUIZ ======= -->
-<div class="section" id="m14"><div class="container">
+<div class="mod" id="m14">
   <div class="mod-tag">Quiz Final · 20 Questões</div>
   <h2 class="mod-title">Quiz — Biofísica Cardíaca P2</h2>
   <p class="mod-desc">Cobrindo todos os módulos. Teste seus conhecimentos!</p>
   <div id="quiz-container"></div>
 </div>
 
-</div>
+</main>
+
+<footer>
+  <p><strong>Resumo de Biofísica Cardíaca para P2</strong> · por Enzo Salmazo · UCP — Pedro Juan Caballero</p>
+  <p style="margin-top:8px;">Referências: <strong>Guyton &amp; Hall</strong> · <strong>Biofísica Médica e Biológica</strong> — Guilherme A. Micó</p>
+</footer>
 
 <script>
-// PARTICLES
-const canvas = document.getElementById('particles');
-const ctx = canvas.getContext('2d');
-let particles = [];
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-resize(); window.addEventListener('resize', resize);
-for(let i=0;i<60;i++){
-  particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.4+0.1});
-}
-function animParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
-    p.x+=p.dx;p.y+=p.dy;
-    if(p.x<0||p.x>canvas.width)p.dx*=-1;
-    if(p.y<0||p.y>canvas.height)p.dy*=-1;
-    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fillStyle=`rgba(79,156,249,${p.alpha})`;ctx.fill();
-  });
-  requestAnimationFrame(animParticles);
-}
-animParticles();
-
-function showSection(id, btn) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('nav.tabs button').forEach(b => b.classList.remove('active'));
+function sm(idx, btn) {
+  document.querySelectorAll('.mod').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+  document.getElementById('m' + idx).classList.add('active');
   btn.classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-  if (id === 'm14') initQuiz();
-  if (id === 'm13') initFlashcards();
+  document.getElementById('mc').scrollIntoView({ behavior: 'smooth' });
+  if (idx === 14) initQuiz();
+  if (idx === 13) initFlashcards();
 }
+
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrollTop = doc.scrollTop || document.body.scrollTop;
+  const scrollHeight = doc.scrollHeight - doc.clientHeight;
+  const pct = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
+  document.getElementById('pgbar').style.width = pct + '%';
+});
 
 const flashcardData = [
   { tag:'Estrutura', q:'Qual a característica do formato celular dos cardiomiócitos?', a:'Formato ramificado (em "Y") — diferente do músculo esquelético (cilíndrico). Facilita conexão elétrica entre células adjacentes.' },
@@ -945,23 +954,8 @@ function restartQuiz() { qIdx = 0; score = 0; renderQuestion(); }
 
 
 
-<!-- ── Botão Voltar ── -->
-<a href="dashboard.html" style="
-  position:fixed; bottom:24px; left:24px; z-index:9999;
-  display:flex; align-items:center; gap:9px;
-  padding:12px 26px;
-  background:rgba(2,10,22,0.93);
-  border:1.5px solid rgba(34,211,238,0.42);
-  border-radius:50px; color:#e2f8fc;
-  font-size:13px; font-weight:600; letter-spacing:0.03em;
-  text-decoration:none;
-  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-  box-shadow:0 4px 24px rgba(34,211,238,0.16), inset 0 1px 0 rgba(255,255,255,0.04);
-  transition:all .25s ease;
-" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)';this.style.boxShadow='0 8px 32px rgba(34,211,238,0.26)'"
-   onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)';this.style.boxShadow='0 4px 24px rgba(34,211,238,0.16)'">
-  ← Voltar
-</a>
 
+<!-- Botão Voltar -->
+<a href="dashboard.html" style="position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;align-items:center;gap:9px;padding:12px 26px;background:rgba(2,10,22,0.93);border:1.5px solid rgba(34,211,238,0.42);border-radius:50px;color:#e2f8fc;font-size:13px;font-weight:600;letter-spacing:0.03em;text-decoration:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 24px rgba(34,211,238,0.16);transition:all .25s ease;" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)'">← Voltar</a>
 </body>
 </html>
