@@ -43,8 +43,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-si
 .header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:.1rem}
 .header-meta span{font-size:12px;color:var(--text2);font-weight:600}
 .header-meta .student-name{color:var(--gold);font-size:14px;font-weight:800}
-.tab-nav-wrapper{background:var(--bg2);border-bottom:2px solid var(--border);position:sticky;top:68px;z-index:99;overflow-x:auto;scrollbar-width:thin}
-.tab-nav{display:flex;max-width:1200px;margin:0 auto;padding:0 1rem;white-space:nowrap}
+
 .tab-btn{background:none;border:none;border-bottom:3px solid transparent;color:var(--text2);padding:.85rem 1.1rem;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:700;transition:all .2s;white-space:nowrap;flex-shrink:0}
 .tab-btn:hover{color:var(--text);background:rgba(255,255,255,.03)}
 .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(0,180,216,.05)}
@@ -193,6 +192,23 @@ nav.tabs button.active {
   nav.tabs::-webkit-scrollbar{ display:none; }
   nav.tabs button{ flex-shrink:0; white-space:nowrap; }
 }
+
+/* ── ESTRUTURA BIOQUÍMICA ── */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+header{position:relative;z-index:10;text-align:center;padding:48px 24px 32px;background:linear-gradient(180deg,rgba(79,156,249,0.08) 0%,transparent 100%);border-bottom:1px solid var(--border);}
+header .badge{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px;}
+header h1{font-family:var(--font-display);font-size:clamp(24px,4vw,44px);font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+header .sub{color:var(--muted);font-size:13px;}
+header .by{margin-top:12px;color:var(--accent);font-family:var(--font-mono);font-size:12px;}
+nav.tabs{position:sticky;top:0;z-index:100;display:flex;gap:4px;flex-wrap:wrap;background:rgba(10,13,20,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 16px;justify-content:center;}
+nav.tabs button{background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
+nav.tabs button:hover{color:var(--accent);border-color:var(--accent);}
+nav.tabs button.active{background:var(--accent);color:var(--bg);border-color:var(--accent);box-shadow:0 0 20px rgba(79,156,249,0.4);}
+@media(max-width:768px){nav.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;}nav.tabs::-webkit-scrollbar{display:none;}nav.tabs button{flex-shrink:0;white-space:nowrap;}}
+.section{display:none;animation:fadeIn 0.4s ease;}
+.section.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
 </style>
 </head>
 <body>
@@ -210,41 +226,32 @@ nav.tabs button.active {
   });
 </script>
 
-<header class="site-header">
-  <div class="header-inner">
-    <div class="header-left">
-      
-      <div>
-        <div class="header-title">Fisiologia Cardiovascular · P2</div>
-      </div>
-    </div>
-    <div class="header-meta">
-      <span class="student-name">Enzo</span>
-      <span>Guyton &amp; Hall · Caps. 14–20</span>
-      <span>2026</span>
-    </div>
-  </div>
+<canvas id="particles"></canvas>
+
+<header>
+  <div class="badge">🫀 Fisiologia Cardiovascular · P2 · 2026</div>
+  <h1>Fisiologia Cardiovascular P2</h1>
+  <p class="sub">Caps. 14–21 · Circulação · Pressão · Gasto Cardíaco · Coronárias</p>
+  <p class="by">⚡ Feito por Enzo Salmazo · Guyton &amp; Hall 14ª ed.</p>
 </header>
 
-<nav class="tab-nav-wrapper" id="tabNav">
-  <div class="tab-nav">
-    <button class="tab-btn active" data-tab="cap14">Cap. 14</button>
-    <button class="tab-btn" data-tab="cap15">Cap. 15</button>
-    <button class="tab-btn" data-tab="cap16">Cap. 16</button>
-    <button class="tab-btn" data-tab="cap17">Cap. 17</button>
-    <button class="tab-btn" data-tab="cap18">Cap. 18</button>
-    <button class="tab-btn" data-tab="cap19">Cap. 19</button>
-    <button class="tab-btn" data-tab="cap20">Cap. 20</button>
-    <button class="tab-btn" data-tab="cap21">Cap. 21</button>
-    <button class="tab-btn ft" data-tab="flashcards">🃏 Flashcards</button>
-    <button class="tab-btn qt" data-tab="quiz">📝 Quiz (50)</button>
-  </div>
+<nav class="tabs" id="tabNav">
+  <button class="active" onclick="switchTab('cap14')">Cap. 14</button>
+  <button onclick="switchTab('cap15')">Cap. 15</button>
+  <button onclick="switchTab('cap16')">Cap. 16</button>
+  <button onclick="switchTab('cap17')">Cap. 17</button>
+  <button onclick="switchTab('cap18')">Cap. 18</button>
+  <button onclick="switchTab('cap19')">Cap. 19</button>
+  <button onclick="switchTab('cap20')">Cap. 20</button>
+  <button onclick="switchTab('cap21')">Cap. 21</button>
+  <button onclick="switchTab('flashcards')">🃏 Flashcards</button>
+  <button onclick="switchTab('quiz')">📝 Quiz (50)</button>
 </nav>
 
-<main class="main-content">
+<div class="content-wrap" style="max-width:1100px;margin:0 auto;padding:32px 20px;">
 
 <!-- ═══════════════════ CAP 14 ═══════════════════ -->
-<section class="chapter-section active" id="cap14">
+<section class="section active" id="cap14">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 14</div>
     <div class="chapter-title">Visão Geral da Circulação: Pressão, Fluxo e Resistência</div>
@@ -339,7 +346,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAP 15 ═══════════════════ -->
-<section class="chapter-section" id="cap15">
+<section class="section" id="cap15">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 15</div>
     <div class="chapter-title">Distensibilidade Vascular e Funções dos Sistemas Arterial e Venoso</div>
@@ -400,7 +407,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAP 16 ═══════════════════ -->
-<section class="chapter-section" id="cap16">
+<section class="section" id="cap16">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 16</div>
     <div class="chapter-title">Microcirculação e Sistema Linfático</div>
@@ -449,7 +456,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAP 17 ═══════════════════ -->
-<section class="chapter-section" id="cap17">
+<section class="section" id="cap17">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 17</div>
     <div class="chapter-title">Controle Local e Humoral do Fluxo Sanguíneo</div>
@@ -506,7 +513,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAP 18 ═══════════════════ -->
-<section class="chapter-section" id="cap18">
+<section class="section" id="cap18">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 18</div>
     <div class="chapter-title">Regulação Nervosa da Circulação e Controle Rápido da PA</div>
@@ -559,7 +566,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAP 19 ═══════════════════ -->
-<section class="chapter-section" id="cap19">
+<section class="section" id="cap19">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 19</div>
     <div class="chapter-title">Função Dominante dos Rins no Controle a Longo Prazo da PA</div>
@@ -603,7 +610,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAP 20 ═══════════════════ -->
-<section class="chapter-section" id="cap20">
+<section class="section" id="cap20">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 20</div>
     <div class="chapter-title">Gasto Cardíaco, Retorno Venoso e Lei de Frank-Starling</div>
@@ -635,7 +642,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ CAPÍTULO 21 ═══════════════════ -->
-<section class="chapter-section" id="cap21">
+<section class="section" id="cap21">
   <div class="chapter-hero">
     <div class="chapter-num">Capítulo 21</div>
     <div class="chapter-title">Circulação Coronária e Patologias Isquêmicas do Coração</div>
@@ -784,7 +791,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ FLASHCARDS ═══════════════════ -->
-<section class="chapter-section" id="flashcards">
+<section class="section" id="flashcards">
   <div class="fc-header"><h2>🃏 Flashcards Interativos</h2><p style="color:var(--text2);font-size:14px">Clique no card para revelar a resposta · ← → para navegar · Espaço para virar</p></div>
   <div class="cat-row">
     <button class="cat-btn active" onclick="filterCards('all',this)">Todos</button>
@@ -814,7 +821,7 @@ nav.tabs button.active {
 </section>
 
 <!-- ═══════════════════ QUIZ ═══════════════════ -->
-<section class="chapter-section" id="quiz">
+<section class="section" id="quiz">
   <div class="quiz-header"><h2>📝 Quiz P2 – 50 Questões</h2><p style="color:var(--text2);font-size:14px">Caps. 14–21 · Múltipla Escolha, Verdadeiro/Falso e Questões Abertas</p></div>
   <div class="q-stats">
     <div class="sbox c"><div class="sv" id="sC">0</div><div class="sl">Acertos</div></div>
@@ -825,17 +832,30 @@ nav.tabs button.active {
   <button class="reset-btn" onclick="resetQuiz()">🔄 Reiniciar Quiz</button>
 </section>
 
-</main>
+</div>
 
 <script>
 // ═══ TABS ═══
+// PARTICLES
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<60;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.4+0.1});}
+function animParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(79,156,249,${p.alpha})`;ctx.fill();});requestAnimationFrame(animParticles);}
+animParticles();
+
 function switchTab(id){
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));
-  document.querySelectorAll('.chapter-section').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  const sec=document.getElementById(id);
+  if(sec) sec.classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach((b,i)=>{
+    const ids=['cap14','cap15','cap16','cap17','cap18','cap19','cap20','cap21','flashcards','quiz'];
+    b.classList.toggle('active', ids[i]===id);
+  });
   window.scrollTo({top:0,behavior:'smooth'});
 }
-document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
-document.getElementById('tabNav').addEventListener('wheel',e=>{e.preventDefault();e.currentTarget.scrollLeft+=e.deltaY;},{passive:false});
 
 // ═══ FLASHCARDS ═══
 const FC=[

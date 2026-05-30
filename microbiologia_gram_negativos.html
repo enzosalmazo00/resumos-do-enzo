@@ -277,29 +277,47 @@ nav.tabs button.active {
   nav.tabs button{ flex-shrink:0; white-space:nowrap; }
 }
 
+
+/* ── HEADER + NAV (padrão Bioquímica) ── */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+header{position:relative;z-index:10;text-align:center;padding:48px 24px 32px;background:linear-gradient(180deg,rgba(79,156,249,0.08) 0%,transparent 100%);border-bottom:1px solid var(--border);}
+header .badge{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px;}
+header h1{font-family:var(--font-display);font-size:clamp(24px,4vw,44px);font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+header .sub{color:var(--muted);font-size:13px;}
+header .by{margin-top:12px;color:var(--accent);font-family:var(--font-mono);font-size:12px;}
+nav.tabs{position:sticky;top:0;z-index:100;display:flex;gap:4px;flex-wrap:wrap;background:rgba(10,13,20,0.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 16px;justify-content:center;}
+nav.tabs button{background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px;}
+nav.tabs button:hover{color:var(--accent);border-color:var(--accent);}
+nav.tabs button.active{background:var(--accent);color:var(--bg);border-color:var(--accent);box-shadow:0 0 20px rgba(79,156,249,0.4);}
+@media(max-width:768px){nav.tabs{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;justify-content:flex-start;}nav.tabs::-webkit-scrollbar{display:none;}nav.tabs button{flex-shrink:0;white-space:nowrap;}}
+
 </style>
 </head>
 <body>
 
-<!-- COVER -->
-<div id="page-cover" class="page active">
-<div class="cov-in">
-<div class="cov-badge">🔬 Microbiologia Médica · Gram-Negativos</div>
-<h1 class="cov-h1">Resumo de <em>Microbiologia</em><br>Teórica</h1>
-<p class="cov-h2">Bacteriologia Clínica — Bacilos e Cocos Gram-Negativos</p>
-<p class="cov-author">✦ Feito por Enzo Salmazo ✦</p>
-<div class="cov-stats">
-<div><div class="cov-sn">24</div><div class="cov-sl">Microrganismos</div></div>
-<div><div class="cov-sn">6</div><div class="cov-sl">Seções</div></div>
-<div><div class="cov-sn">50</div><div class="cov-sl">Questões</div></div>
-<div><div class="cov-sn">4</div><div class="cov-sl">Casos Clínicos</div></div>
-</div>
-<button class="btn-start" onclick="showPage('page-dashboard')">▶ Iniciar Estudos</button>
-</div>
-</div>
+<canvas id="particles"></canvas>
+
+<header>
+  <div class="badge">🦠 Microbiologia Teórica · Gram-Negativos · P2</div>
+  <h1>Microbiologia Teórica P2</h1>
+  <p class="sub">Enterobactérias · Não-fermentadores · Neisseria · Espiroquetas</p>
+  <p class="by">⚡ Feito por Enzo Salmazo · Jawetz 28ª ed.</p>
+</header>
+
+<nav class="tabs">
+  <button class="active" onclick="showPage('page-dashboard',this)">🏠 Início</button>
+  <button onclick="showPage('page-enterobac',this)">🦠 Enterobactérias</button>
+  <button onclick="showPage('page-nonferment',this)">🧫 Não-ferment.</button>
+  <button onclick="showPage('page-haemoph',this)">🔬 Haemophilus</button>
+  <button onclick="showPage('page-neisseria',this)">⚕️ Neisseria</button>
+  <button onclick="showPage('page-others',this)">🌿 Outras</button>
+  <button onclick="showPage('page-spirochetes',this)">🌀 Espiroquetas</button>
+  <button onclick="initQuiz();showPage('page-quiz',this)">📝 Quiz</button>
+  <button onclick="showPage('page-cases',this)">🏥 Casos Clínicos</button>
+</nav>
 
 <!-- DASHBOARD -->
-<div id="page-dashboard" class="page">
+<div id="page-dashboard" class="page active">
 <div class="dash-top">
 <h1 class="dash-h1">Painel de Estudos</h1>
 <p class="dash-sub">Selecione uma seção para iniciar os flashcards ou vá direto para o quiz e casos clínicos</p>
@@ -307,8 +325,8 @@ nav.tabs button.active {
 <div class="sec-grid" id="dash-secs"></div>
 <div style="max-width:1200px;margin:0 auto;padding:0 20px 16px"><p style="font-size:.72rem;color:var(--tx2);text-transform:uppercase;letter-spacing:2px;font-weight:700">Avaliação &amp; Prática</p></div>
 <div class="dash-extra">
-<div class="dec" onclick="initQuiz();showPage('page-quiz')"><div class="dec-ic">📝</div><div class="dec-nm">Quiz — 50 Questões</div><div class="dec-sub">Estilo prova com gabarito comentado</div></div>
-<div class="dec" onclick="showPage('page-cases')"><div class="dec-ic">🏥</div><div class="dec-nm">Casos Clínicos</div><div class="dec-sub">4 casos completos — diagnóstico e tratamento</div></div>
+<div class="dec" onclick="initQuiz();showPage('page-quiz',null)"><div class="dec-ic">📝</div><div class="dec-nm">Quiz — 50 Questões</div><div class="dec-sub">Estilo prova com gabarito comentado</div></div>
+<div class="dec" onclick="showPage('page-cases',null)"><div class="dec-ic">🏥</div><div class="dec-nm">Casos Clínicos</div><div class="dec-sub">4 casos completos — diagnóstico e tratamento</div></div>
 </div>
 </div>
 
@@ -323,7 +341,7 @@ nav.tabs button.active {
 <!-- QUIZ -->
 <div id="page-quiz" class="page">
 <div class="top-nav">
-<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
+<button class="btn-home" onclick="showPage('page-dashboard',null)">🏠 Início</button>
 <span class="nav-lbl">Quiz de Microbiologia</span>
 </div>
 <div class="q-top">
@@ -337,7 +355,7 @@ nav.tabs button.active {
 <!-- CASES -->
 <div id="page-cases" class="page">
 <div class="top-nav">
-<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
+<button class="btn-home" onclick="showPage('page-dashboard',null)">🏠 Início</button>
 <span class="nav-lbl">Casos Clínicos</span>
 </div>
 <div class="cas-top">
@@ -733,10 +751,25 @@ qs:[
 // ================================================================
 // RENDER ENGINE
 // ================================================================
-function showPage(id){
+// PARTICLES
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+for(let i=0;i<60;i++){particles.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+0.5,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3,alpha:Math.random()*0.4+0.1});}
+function animParticles(){ctx.clearRect(0,0,canvas.width,canvas.height);particles.forEach(p=>{p.x+=p.dx;p.y+=p.dy;if(p.x<0||p.x>canvas.width)p.dx*=-1;if(p.y<0||p.y>canvas.height)p.dy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(79,156,249,${p.alpha})`;ctx.fill();});requestAnimationFrame(animParticles);}
+animParticles();
+
+function showPage(id, btn){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   const p=document.getElementById(id);
   if(p){p.classList.add('active');window.scrollTo(0,0);}
+  // Sync nav tabs
+  if(btn){
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+  }
 }
 
 function getSecColor(secId){
@@ -762,7 +795,7 @@ function renderSections(){
     const bacts=bacteria.filter(b=>b.sec===sec.id);
     p.innerHTML=`
 <div class="top-nav">
-<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
+<button class="btn-home" onclick="showPage('page-dashboard',null)">🏠 Início</button>
 <span class="nav-lbl">${sec.nm}</span>
 </div>
 <div class="sec-hero" style="--sc:${sec.c}">
@@ -846,7 +879,7 @@ ${q.opts.map((o,i)=>`<button class="q-opt" id="qopt-${i}" onclick="selectOpt(${i
 <p class="q-fb-p" id="q-fb-p"></p>
 </div>
 <div class="q-nav">
-<button class="btn-qs" onclick="showPage('page-dashboard')">🏠 Sair</button>
+<button class="btn-qs" onclick="showPage('page-dashboard',null)">🏠 Sair</button>
 <button class="btn-q" id="q-btn" onclick="nextOrCheck()" disabled>Verificar</button>
 </div>`;
   qState.sel=null;qState.answered=false;
@@ -914,7 +947,7 @@ function showResults(){
 <div><div class="qr-n">${pct}%</div><div class="qr-l">Aproveitamento</div></div>
 </div>
 <button class="btn-q" onclick="initQuiz()" style="margin:8px">🔄 Refazer Quiz</button>
-<button class="btn-qs" onclick="showPage('page-dashboard')" style="margin:8px">🏠 Voltar ao Início</button>
+<button class="btn-qs" onclick="showPage('page-dashboard',null)" style="margin:8px">🏠 Voltar ao Início</button>
 </div>`;
   const prog=document.getElementById('q-prog');
   if(prog)prog.style.width='100%';
