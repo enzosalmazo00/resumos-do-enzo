@@ -313,24 +313,50 @@ body{overflow:visible!important;}
 /* ── Botão próxima seção ── */
 .next-btn{background:linear-gradient(135deg,var(--accent2,#38e8c0),var(--accent,#4f9cf9));color:#0a0d14;border:none;padding:1rem 2rem;border-radius:50px;font-family:var(--font-body);font-size:15px;font-weight:800;cursor:pointer;margin:3rem auto 1rem;display:block;text-align:center;transition:all .3s;max-width:380px;letter-spacing:.4px;}
 .next-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(79,156,249,0.45);}
+
+/* ── BACK BTN FIXED ── */
+.back-btn-fixed {
+  position:fixed; bottom:24px; left:24px; z-index:9999;
+  display:flex; align-items:center; gap:9px;
+  padding:12px 26px;
+  background:rgba(10,13,20,0.93);
+  border:1.5px solid rgba(79,156,249,0.42);
+  border-radius:50px;
+  color:#e8eaf6;
+  font-size:13px; font-weight:600; letter-spacing:0.03em;
+  text-decoration:none;
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  box-shadow:0 4px 24px rgba(79,156,249,0.16);
+  transition:all .25s ease;
+}
+.back-btn-fixed:hover {
+  background:rgba(79,156,249,0.14);
+  border-color:rgba(79,156,249,0.85);
+  transform:translateY(-3px);
+  box-shadow:0 8px 32px rgba(79,156,249,0.26);
+}
+
 </style>
 </head>
 <body>
 
-<!-- COVER -->
-<div id="page-cover" class="page active">
-<div class="cov-in">
-<div class="cov-badge">🔬 Microbiologia Médica · Gram-Negativos</div>
-<h1 class="cov-h1">Resumo de <em>Microbiologia</em><br>Teórica</h1>
-<p class="cov-h2">Bacteriologia Clínica — Bacilos e Cocos Gram-Negativos</p>
-<p class="cov-author">✦ Feito por Enzo Salmazo ✦</p>
-<div class="cov-stats">
-<div><div class="cov-sn">24</div><div class="cov-sl">Microrganismos</div></div>
-<div><div class="cov-sn">6</div><div class="cov-sl">Seções</div></div>
-<div><div class="cov-sn">50</div><div class="cov-sl">Questões</div></div>
-<div><div class="cov-sn">4</div><div class="cov-sl">Casos Clínicos</div></div>
-</div>
-<button class="btn-start" onclick="showPage('page-dashboard')">▶ Iniciar Estudos</button>
+<canvas id="particles-cover" style="position:fixed;inset:0;z-index:0;pointer-events:none;"></canvas>
+
+<!-- COVER (Imunologia-style) -->
+<div id="page-cover" class="page active" style="position:relative;z-index:1;">
+<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 24px 32px;background:linear-gradient(180deg,rgba(79,156,249,0.09) 0%,transparent 100%);border-bottom:1px solid var(--border);">
+  <div style="display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px;">🔬 Microbiología Médica · Gram-Negativos · 2026</div>
+  <h1 style="font-family:var(--font-display);font-size:clamp(26px,5vw,48px);font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#fff 0%,var(--accent) 50%,var(--accent2) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:10px;line-height:1.1;">Resumen de Microbiología<br>Bacterias Gram-Negativas</h1>
+  <p style="color:var(--muted);font-size:13px;letter-spacing:1px;margin-bottom:6px;">Enterobacteriáceas · Bacilos No Fermentadores · Haemophilus · Neisseria · Espiroquetas</p>
+  <p style="color:var(--accent2);font-family:var(--font-mono);font-size:12px;margin-bottom:8px;">⚡ Elaborado por Enzo Salmazo · Jawetz 28ª ed. · Dr. Marcos Rigonato</p>
+  <p style="color:var(--gold);font-size:12px;font-style:italic;opacity:0.85;margin-bottom:36px;">📖 "Mil caerán a tu lado y diez mil a tu diestra, pero a ti no te llegará" — Salmos 91:7</p>
+  <div style="display:flex;gap:36px;flex-wrap:wrap;justify-content:center;margin-bottom:40px;">
+    <div><div style="font-size:2.4rem;font-weight:900;font-family:var(--font-display);color:var(--accent);">24</div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Microrganismos</div></div>
+    <div><div style="font-size:2.4rem;font-weight:900;font-family:var(--font-display);color:var(--accent);">6</div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Seções</div></div>
+    <div><div style="font-size:2.4rem;font-weight:900;font-family:var(--font-display);color:var(--accent2);">63</div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Questões</div></div>
+    <div><div style="font-size:2.4rem;font-weight:900;font-family:var(--font-display);color:var(--gold);">4</div><div style="font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:2px;">Casos Clínicos</div></div>
+  </div>
+  <button class="btn-start" onclick="showPage('page-dashboard')">▶ Iniciar Estudos</button>
 </div>
 </div>
 
@@ -1038,6 +1064,57 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderCases();
   sections.forEach(s=>addNextBtn(s.id));
 });
+
+// ── QUESTÕES DA AULA (13 novas questões adicionadas das fotos das slides) ──
+const extraQuizData=[
+{bact:'Leptospira interrogans',q:'Hombre de 29 años, estudiante universitario, con 5 días de fiebre alta (39–39,5°C), cefalea intensa, mialgias severas en músculo gastronêmico, náuseas y vómitos. Asistió a una reunión en un depósito abandonado donde consumió refrigerante directo de una lata húmeda y sucia. Presenta ictericia progresiva, orina oscura, oliguria, dolor abdominal y sensación de debilidad. Examen: ictericia cútaneo-escleral, inyección conjuntival bilateral, dolor en hipocondrio derecho. Labs: leucocitos 12.500, plaquetas 95.000, bilirrubina total elevada, creatinina aumentada, ureia elevada. Serología hepatitis A, B, C: negativas. PCR en sangre solicitada. Microscopía electrónica muestra extremidad flexible del microorganismo. ¿Cuál es el diagnóstico más probable?',opts:['Hepatitis viral aguda','Fiebre tifoidea por Salmonella Typhi','Leptospirosis (Enfermedad de Weil)','Hantavirus'],ans:2,exp:'Cuadro clásico de leptospirosis grave (Enfermedad de Weil): contacto con lata húmeda y sucia (exposición a orina de roedores), fiebre bifásica, mialgias en panturrilhas (gastronêmicos), ictericia, oliguria, inyección conjuntival. Serología hepatitis negativa excluye hepatitis viral. La microscopía electrónica muestra la extremidad en gancho característica de Leptospira interrogans.'},
+{bact:'Legionella pneumophila',q:'Un trabajador de un hotel desarrolla fiebre, escalofríos y mialgias después de exponerse a vapores de agua caliente. Los síntomas duran 3 días y se resuelven espontáneamente. Microbiología: Bacilo Gram negativo, aerobio. ¿Cuál es el diagnóstico?',opts:['Legionelosis (Enfermedad del Legionario)','Fiebre de Pontiac','Influenza','Neumonía por Mycoplasma'],ans:1,exp:'Fiebre de Pontiac = forma benigna y autolimitada de infección por Legionella pneumophila. Se caracteriza por síntomas gripales (fiebre, escalofríos, mialgias) que duran 2-5 días y se resuelven espontáneamente SIN NEUMONÍA. Exposición a vapores de agua caliente (sistemas de agua en hoteles) es el contexto clásico. L. pneumophila es bacilo Gram-negativo aerobio. Diferencia clave: Legionelosis = neumonía grave; Fiebre de Pontiac = síndrome gripal autolimitado.'},
+{bact:'Haemophilus ducreyi',q:'¿Qué característica clínica permite diferenciar la úlcera genital causada por Haemophilus ducreyi (chancroide) de otras infecciones de transmisión sexual bacterianas?',opts:['Lesión única, indurada e indolora','Vesículas agrupadas sobre base eritematosa','Úlcera dolorosa con linfadenopatía inguinal supurativa','Secreción uretral purulenta sin lesión cutánea'],ans:2,exp:'El chancroide (H. ducreyi) se caracteriza por: úlcera DOLOROSA (diferencia de la sífilis primaria, que es indolora), bordes BLANDOS/irregulares sin induración (diferencia de la sífilis cuyo chancro es indurado), y linfadenopatía inguinal SUPURATIVA (bubón blando que puede fistulizar). La opción A describe el chancro sifilítico (sífilis primaria). La opción B describe el herpes genital.'},
+{bact:'Leptospira interrogans',q:'¿Cuál de los siguientes signos clínicos se asocia típicamente con la leptospirosis severa (enfermedad de Weil)?',opts:['Rash maculopapular','Uveítis y linfoadenpatía generalizada','Ictericia, insuficiencia renal y hemorragias','Hipopigmentación y neuropatía periférica'],ans:2,exp:'La Tríada de Weil (leptospirosis grave) = (1) ICTERICIA (predominantemente por bilirrubina directa — daño hepatocelular + colestasis); (2) INSUFICIENCIA RENAL AGUDA (nefritis tubulointersticial); (3) HEMORRAGIAS (vasculitis de pequeños vasos → petequias, hemorragia conjuntival subconjuntival bilateral indolora — signo patognomónico). Mortalidad 5-40% sin tratamiento.'},
+{bact:'Fusobacterium necrophorum',q:'Un joven de 20 años desarrolla tromboflebitis yugular y septicemia después de una faringitis. ¿Qué bacteria anaerobia es responsable de este cuadro conocido como enfermedad de Lemierre?',opts:['Fusobacterium nucleatum','Fusobacterium nucleaphorum','Fusobacterium necrophorum','Peptostreptococcus anaerobius'],ans:2,exp:'La Síndrome de Lemierre es causada por Fusobacterium necrophorum (NO nucleatum ni nucleaphorum — distracción frecuente en examen). F. necrophorum es bacilo fusiforme Gram-negativo anaerobio estricto. Tríada: (1) Faringitis reciente; (2) Tromboflebitis séptica de la vena yugular interna; (3) Embolia pulmonar séptica (nódulos cavitarios). Tratamiento: metronidazol IV ×4-6 semanas.'},
+{bact:'Legionella pneumophila',q:'Un hombre de 60 años fumador desarrolla neumonía severa después de un viaje en crucero. Presenta fiebre alta, tos no productiva y diarrea. Se detecta un Bacilo Gram-negativo aerobio, delgado. ¿Cuál es el diagnóstico más probable?',opts:['Neumonía por Streptococcus pneumoniae','Legionelosis','Neumonía por Mycoplasma','Neumonía viral'],ans:1,exp:'Contexto clásico de Legionelosis: hombre mayor fumador + exposición en sistema de agua de crucero (torres de enfriamiento, duchas) + neumonía grave + diarrea + tos no productiva. Bacilo Gram-negativo aerobio delgado (mal teñido) = Legionella. Pistas: hiponatremia, diarrea + neumonía atípica grave. Diagnóstico rápido: antígeno urinario (gold standard rápido). Tratamiento: levofloxacino IV.'},
+{bact:'Treponema pallidum',q:'Un hombre de 30 años acude a consulta por una úlcera genital única, indolora, de bordes regulares y base limpia, no supurativa. La lesión apareció hace aproximadamente 10 días. No presenta fiebre ni linfadenopatía dolorosa. ¿Cuál es el diagnóstico más probable?',opts:['Herpes genital','Chancroide (Haemophilus ducreyi)','Sífilis primaria (Treponema pallidum)','Úlcera traumática'],ans:2,exp:'Sífilis primaria (chancro duro): úlcera ÚNICA, INDOLORA, bordes regulares y endurecidos (indurados), base limpia (no purulenta), aparece 10-21 días después del contacto sexual. Puede acompañarse de adenopatía inguinal INDOLORA bilateral. Contraste con chancroide (dolorosa, bordes irregulares, supurativa) y herpes (múltiples vesículas/úlceras dolorosas). Diagnóstico: microscopia de campo oscuro, VDRL/RPR + FTA-ABS.'},
+{bact:'Leptospira interrogans',q:'En la fase inmune de la leptospirosis (después del día 7–10), ¿dónde se localizan las leptospiras?',opts:['Circulando en sangre','En tejidos (orina, LCR, humor acuoso)','En líquido cefalorraquídeo exclusivamente','En saliva'],ans:1,exp:'La leptospirosis tiene un curso BIFÁSICO: (1) Fase leptospirêmica (días 1-7): bacteria en SANGRE y LCR — fiebre alta, bacteriemia; (2) Fase inmune (días 7-30, después de la crisis): leptospiras desaparecen de la sangre y se localizan en TEJIDOS (riñón — tubular, orina), humor acuoso (uveítis), LCR. En esta fase aparecen los anticuerpos IgM y se desarrolla la enfermedad de Weil. El diagnóstico en fase inmune se hace por MAT o ELISA IgM.'},
+{bact:'Leptospira interrogans',q:'¿Cuál de los siguientes antibióticos es el tratamiento de elección en los casos leves de leptospirosis?',opts:['Penicilina G intravenosa','Doxiciclina oral','Ceftriaxona','Azitromicina'],ans:1,exp:'Leptospirosis LEVE (anictérica, ambulatorial): DOXICICLINA 100mg 12/12h VO ×7 días. Es el tratamiento de primera línea para formas leves. Leptospirosis GRAVE (Enfermedad de Weil): Penicilina G cristalina IV o Ceftriaxona IV. La profilaxia post-exposición (enchentes/inundaciones) también usa doxiciclina 200mg/semana. Nunca usar doxiciclina en embarazo ni niños < 8 años.'},
+{bact:'Treponema pallidum',q:'El método de diagnóstico directo de elección para el chancro sifilítico primario es la tinción de Gram para identificar espiroquetas. ¿Verdadero o Falso?',opts:['Verdadero','Falso','Solo en chancro secundario','Depende del laboratorio'],ans:1,exp:'FALSO. Treponema pallidum NO se visualiza con la tinción de Gram (es demasiado delgado — 0,1-0,2 μm de diámetro). El método de diagnóstico DIRECTO de elección para el chancro primario es la MICROSCOPIA DE CAMPO OSCURO (visualiza espiroquetas móviles en el exudado de la lesión). También se puede usar la inmunofluorescencia directa (DFA-TP). T. pallidum tampoco puede cultivarse in vitro.'},
+{bact:'Campylobacter spp.',q:'Tres semanas después de recuperarse de una gastroenteritis por Campylobacter jejuni, un paciente de 30 años desarrolla debilidad muscular progresiva que inicia en los miembros inferiores y asciende hacia el tronco. Los reflejos osteotendinosos están abolidos. ¿Cuál es la complicación postinfecciosa más probable?',opts:['Artritis reactiva','Síndrome de Reiter','Síndrome de Guillain-Barré','Mielitis transversa'],ans:2,exp:'Síndrome de Guillain-Barré (SGB): polineuropatía desmielinizante ascendente post-infecciosa. C. jejuni O:19 tiene LOS (lipooligosacárido) con estructura similar al gangliosídeo GM1 → mimetismo molecular → anticuerpos anti-LOS cruzan con GM1 de células de Schwann → desmielinización. Clínica: debilidad ascendente, arreflexia, puede llegar a parálisis respiratoria. Aparece 1-3 semanas post-gastroenteritis. Tríada: debilidad ascendente + arreflexia + líquido cefalorraquídeo con disociación albumino-citológica.'},
+{bact:'Salmonella',q:'Un brote de gastroenteritis en un restaurante se asocia al consumo de huevos crudos. Los pacientes presentan diarrea acuosa, fiebre baja y vómitos. ¿Qué serotipo de Salmonella es más probable?',opts:['Salmonella Typhi','Salmonella Enteritidis','Salmonella Paratyphi A','Salmonella Choleraesuis'],ans:1,exp:'Salmonella Enteritidis es el serotipo NO-Typhi más frecuentemente asociado a huevos y aves de corral. Causa gastroenteritis autolimitada (diarrea acuosa, fiebre baja, vómitos, 12-72h de incubación). Contraste con S. Typhi que causa fiebre tifoidea grave (fiebre en escalera, bradicardia relativa, esplenomegalia) y NO se asocia a huevos. Tratamiento de la gastroenteritis no-Typhi: SOPORTE — NO antibiótico en inmunocompetentes.'},
+{bact:'Serratia spp. / Pseudomonas aeruginosa',q:'Un paciente quemado con quemaduras del 40% de la superficie corporal desarrolla infección de la herida con exudado de coloración azul-verdosa y olor dulzón característico. El agente más probable es la Serratia marcescens. ¿Verdadero o Falso?',opts:['Verdadero','Falso — el agente es Pseudomonas aeruginosa','Verdadero, la prodigiosina da esa coloración','Falso — el agente es Klebsiella pneumoniae'],ans:1,exp:'FALSO. La coloración AZUL-VERDOSA + olor dulzón (2-aminoacetofenona, similar a uva madura) en heridas de quemados es característica de PSEUDOMONAS AERUGINOSA (piocianina azul + pioverdina verde-amarilla). Serratia marcescens produce pigmento ROJO (prodigiosina) a 22-25°C — nunca azul-verdoso. P. aeruginosa es el principal patógeno en quemados (ecthyma gangrenoso), causa infecciones devastadoras. Tratamiento: piperacilina-tazobactam, ceftazidima, meropenem.'}
+];
+quizData.push(...extraQuizData);
+
+
+// ── PARTICLES (Imunologia style) ──
+(function(){
+  const canvas = document.getElementById('particles-cover');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resize(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  for(let i=0;i<60;i++){
+    particles.push({
+      x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+      r: Math.random()*2+0.5,
+      dx: (Math.random()-0.5)*0.3, dy: (Math.random()-0.5)*0.3,
+      alpha: Math.random()*0.35+0.08,
+      color: Math.random()>0.5?'79,156,249':'56,232,192'
+    });
+  }
+  function animParticles(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    particles.forEach(p=>{
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0||p.x>canvas.width) p.dx*=-1;
+      if(p.y<0||p.y>canvas.height) p.dy*=-1;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(${p.color},${p.alpha})`; ctx.fill();
+    });
+    requestAnimationFrame(animParticles);
+  }
+  animParticles();
+})();
+
 </script>
 
 
@@ -1045,6 +1122,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
 <!-- Botão Voltar -->
-<a href="dashboard.html" style="position:fixed;bottom:24px;left:24px;z-index:9999;display:flex;align-items:center;gap:9px;padding:12px 26px;background:rgba(2,10,22,0.93);border:1.5px solid rgba(34,211,238,0.42);border-radius:50px;color:#e2f8fc;font-size:13px;font-weight:600;letter-spacing:0.03em;text-decoration:none;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 24px rgba(34,211,238,0.16);transition:all .25s ease;" onmouseover="this.style.background='rgba(34,211,238,0.14)';this.style.borderColor='rgba(34,211,238,0.85)';this.style.transform='translateY(-3px)'" onmouseout="this.style.background='rgba(2,10,22,0.93)';this.style.borderColor='rgba(34,211,238,0.42)';this.style.transform='translateY(0)'">← Voltar</a>
+<a href="dashboard.html" class="back-btn-fixed">← Voltar</a>
 </body>
 </html>
