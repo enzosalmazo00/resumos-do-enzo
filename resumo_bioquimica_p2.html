@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo de Bioquímica P2 — Enzo Salmazo</title>
+<!-- PAGE_KEY: coluna "bioquimica" na tabela profiles -->
+<script>window.PAGE_KEY = "bioquimica";</script>
+<!-- 1. Oculta a página imediatamente -->
+<script>document.documentElement.style.visibility = "hidden";</script>
+<!-- 2. Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 3. Auth guard: sessão + is_approved + coluna bioquimica -->
+<script src="auth-guard.js"></script>
+<!-- 4. Revela após auth OK -->
+<script>
+  document.addEventListener("authReady", function () {
+    document.documentElement.style.visibility = "visible";
+  });
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --bg: #0a0d14;
+  --bg2: #111520;
+  --bg3: #161c2e;
+  --card: #1a2138;
+  --card2: #1f2845;
+  --accent: #4f9cf9;
+  --accent2: #38e8c0;
+  --accent3: #f9784f;
+  --accent4: #b84ff9;
+  --gold: #f9c94f;
+  --red: #f95f5f;
+  --green: #4ff984;
+  --text: #e8eaf6;
+  --muted: #8892b0;
+  --border: rgba(79,156,249,0.15);
+  --shadow: 0 8px 40px rgba(0,0,0,0.5);
+  --radius: 16px;
+  --font-body: 'DM Sans', sans-serif;
+  --font-display: 'Syne', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#particles { position:fixed; inset:0; z-index:0; pointer-events:none; }
+
+header {
+  position: relative; z-index:10;
+  text-align: center;
+  padding: 48px 24px 32px;
+  background: linear-gradient(180deg, rgba(79,156,249,0.08) 0%, transparent 100%);
+  border-bottom: 1px solid var(--border);
+}
+header .badge {
+  display:inline-block;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  padding: 4px 14px; border-radius:20px; margin-bottom:16px;
+}
+header h1 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 800; letter-spacing:-1px;
+  background: linear-gradient(135deg, #fff 0%, var(--accent) 50%, var(--accent2) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip: text; margin-bottom:8px;
+}
+header .sub { color: var(--muted); font-size:13px; letter-spacing:1px; }
+header .by { margin-top:12px; color: var(--accent); font-family:var(--font-mono); font-size:12px; }
+
+nav.tabs {
+  position:sticky; top:0; z-index:100;
+  display:flex; gap:4px; flex-wrap:wrap;
+  background: rgba(10,13,20,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 10px 16px;
+  justify-content: center;
+}
+nav.tabs button {
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font-body); font-size:12px; font-weight:600;
+  padding: 6px 14px; border-radius: 8px; cursor:pointer;
+  transition: all 0.2s; letter-spacing: 0.3px;
+}
+nav.tabs button:hover { color: var(--accent); border-color: var(--accent); }
+nav.tabs button.active {
+  background: var(--accent); color: var(--bg);
+  border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(79,156,249,0.4);
+}
+
+.section { display:none; animation: fadeIn 0.4s ease; }
+.section.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.container { max-width:1100px; margin:0 auto; padding: 32px 20px; position:relative; z-index:1; }
+
+.chapter-title {
+  font-family: var(--font-display); font-size:22px; font-weight:700;
+  color: var(--accent); margin-bottom:24px;
+  display:flex; align-items:center; gap:12px;
+}
+.chapter-title::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.chap-icon { font-size:24px; }
+
+.glossary-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px; margin-bottom:32px;
+}
+.gloss-card {
+  background: var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:18px 20px;
+  cursor:pointer; transition: all 0.25s;
+  position:relative; overflow:hidden;
+}
+.gloss-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  border-radius:3px 3px 0 0;
+}
+.gloss-card:hover {
+  transform:translateY(-2px); border-color: var(--accent);
+  box-shadow: 0 8px 30px rgba(79,156,249,0.2);
+}
+.gloss-card .term {
+  font-family:var(--font-mono); font-size:13px; color:var(--accent2);
+  font-weight:600; margin-bottom:6px;
+}
+.gloss-card .def { color:var(--text); font-size:13px; line-height:1.6; }
+
+.info-block {
+  background: var(--card2); border-left: 3px solid var(--accent);
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px; margin-bottom:20px;
+}
+.info-block.warn { border-color: var(--gold); }
+.info-block.danger { border-color: var(--red); }
+.info-block.success { border-color: var(--green); }
+.info-block .label {
+  font-family:var(--font-mono); font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:var(--muted); margin-bottom:8px;
+}
+.info-block h4 { font-family:var(--font-display); font-weight:700; margin-bottom:8px; font-size:15px; color:#fff; }
+.info-block p { color: var(--text); }
+.info-block ul, .info-block ol { padding-left:20px; margin-top:8px; color:var(--text); }
+.info-block li { margin:4px 0; }
+
+.compare-table {
+  width:100%; border-collapse:separate; border-spacing:0;
+  border-radius:var(--radius); overflow:hidden; margin-bottom:28px;
+}
+.compare-table th {
+  background: var(--card2); color:var(--accent);
+  font-family:var(--font-display); font-size:13px; font-weight:700;
+  padding:12px 16px; text-align:left;
+  border-bottom:1px solid var(--border);
+}
+.compare-table td {
+  background: var(--card); padding:10px 16px; font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,0.04); color:var(--text);
+}
+.compare-table tr:last-child td { border-bottom:none; }
+.compare-table tr:hover td { background: var(--card2); }
+
+.sec-divider {
+  display:flex; align-items:center; gap:12px;
+  margin: 32px 0 20px;
+}
+.sec-divider h3 {
+  font-family:var(--font-display); font-weight:700; font-size:17px;
+  color:var(--accent3); white-space:nowrap;
+}
+.sec-divider::before, .sec-divider::after {
+  content:''; flex:1; height:1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+/* FLASHCARDS */
+.flashcard-grid {
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+  gap:20px; margin-bottom:32px;
+}
+.flashcard { perspective:1000px; height:220px; cursor:pointer; }
+.flashcard-inner {
+  position:relative; width:100%; height:100%;
+  transition: transform 0.6s cubic-bezier(0.4,0,0.2,1);
+  transform-style: preserve-3d;
+}
+.flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+.flashcard-front, .flashcard-back {
+  position:absolute; inset:0; border-radius:var(--radius);
+  backface-visibility:hidden; padding:24px;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.flashcard-front {
+  background: linear-gradient(135deg, var(--card) 0%, var(--card2) 100%);
+  border: 1px solid var(--border);
+}
+.flashcard-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(135deg, #1a2f4a 0%, #1a3a2e 100%);
+  border: 1px solid rgba(56,232,192,0.3);
+  overflow-y:auto; font-size:13px; line-height:1.6;
+}
+.fc-tag {
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--accent2); letter-spacing:1px; text-transform:uppercase;
+}
+.fc-q {
+  font-family:var(--font-display); font-size:17px; font-weight:700;
+  color:#fff; line-height:1.3; margin:8px 0;
+}
+.fc-hint { font-size:11px; color:var(--accent); text-align:right; opacity:0.7; }
+
+/* QUIZ */
+.quiz-container { max-width:750px; margin:0 auto; }
+.quiz-progress-bar {
+  height:4px; background:var(--card2);
+  border-radius:4px; margin-bottom:28px; overflow:hidden;
+}
+.quiz-progress-fill {
+  height:100%; border-radius:4px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition:width 0.4s ease;
+}
+.quiz-num {
+  font-family:var(--font-mono); font-size:12px; color:var(--muted);
+  margin-bottom:8px; letter-spacing:1px;
+}
+.quiz-q {
+  font-family:var(--font-display); font-size:18px; font-weight:700;
+  color:#fff; margin-bottom:24px; line-height:1.5;
+}
+.quiz-opts { display:flex; flex-direction:column; gap:10px; margin-bottom:20px; }
+.quiz-opt {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:14px 18px;
+  cursor:pointer; transition:all 0.2s;
+  font-size:14px; text-align:left;
+  display:flex; align-items:flex-start; gap:12px;
+  color:var(--text); font-family:var(--font-body);
+}
+.quiz-opt:hover:not(.answered) { border-color:var(--accent); background:var(--card2); }
+.quiz-opt .opt-letter {
+  font-family:var(--font-mono); font-size:12px; font-weight:700;
+  color:var(--accent); min-width:20px;
+}
+.quiz-opt.correct { border-color:var(--green); background:rgba(79,249,132,0.08); }
+.quiz-opt.wrong { border-color:var(--red); background:rgba(249,95,95,0.08); }
+.quiz-opt.correct .opt-letter { color:var(--green); }
+.quiz-opt.wrong .opt-letter { color:var(--red); }
+.quiz-explain {
+  background: var(--card2); border-radius:12px; padding:18px 20px;
+  border-left:3px solid var(--accent2); margin-top:16px;
+  font-size:13px; line-height:1.7; color:var(--text);
+  display:none;
+}
+.quiz-explain.show { display:block; animation:fadeIn 0.3s ease; }
+.quiz-explain strong { color:var(--accent2); }
+.quiz-nav {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:24px; flex-wrap:wrap; gap:12px;
+}
+.btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: var(--bg); font-family:var(--font-display);
+  font-weight:700; font-size:14px; border:none;
+  padding:10px 24px; border-radius:10px; cursor:pointer;
+  transition:all 0.2s; letter-spacing:0.5px;
+}
+.btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(79,156,249,0.4); }
+.score-card {
+  text-align:center; padding:48px 32px;
+  background:var(--card); border-radius:20px;
+  border:1px solid var(--border);
+}
+.score-big {
+  font-family:var(--font-display); font-size:72px; font-weight:800;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.score-msg { color:var(--muted); font-size:16px; margin-top:8px; }
+
+#scrolltop {
+  position:fixed; bottom:24px; right:24px; z-index:200;
+  background:var(--accent); color:var(--bg);
+  width:40px; height:40px; border-radius:50%;
+  border:none; cursor:pointer; font-size:18px;
+  box-shadow:0 4px 20px rgba(79,156,249,0.4);
+  transition:all 0.2s; display:none;
+}
+#scrolltop:hover { transform:translateY(-2px); }
+
+p { margin: 8px 0; color: var(--text); }
+strong { color: #fff; }
+em { color: var(--accent2); }
+
+/* ═══ MOBILE ═══ */
+@media(max-width:768px) {
+  /* Nav scroll horizontal */
+  nav.tabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px;
+    gap: 6px;
+  }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button { flex-shrink: 0; font-size:12px; padding:6px 12px; white-space:nowrap; }
+}
+
+@media(max-width:600px) {
+  header { padding: 32px 16px 24px; }
+  header h1 { font-size: clamp(20px, 7vw, 28px); }
+  header .sub { font-size: 13px; }
+  .container { padding: 16px 14px; }
+  .flashcard-grid { grid-template-columns: 1fr; }
+  .flashcard { height: 220px; }
+  .flashcard-front, .flashcard-back { padding: 16px; font-size: 13px; }
+  .compare-table { font-size: 12px; }
+  .compare-table th, .compare-table td { padding: 8px 10px; }
+  .highlight-box { padding: 14px; }
+  .quiz-option { padding: 10px 14px; font-size: 13px; }
+  .section { padding: 20px 0; }
+}
+
+@media(max-width:380px) {
+  header h1 { font-size: 18px; }
+  nav.tabs button { font-size: 11px; padding: 5px 10px; }
+  .container { padding: 12px 10px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<header>
+  <div class="badge">🧪 Bioquímica Médica P2 · 2026</div>
+  <h1>Resumo de Bioquímica P2</h1>
+  <p class="sub">Enzimas Clínicas · Carboidratos · Lipídios · Digestão</p>
+  <p class="by">⚡ Feito por Enzo Salmazo</p>
+</header>
+
+<nav class="tabs">
+  <button class="active" onclick="showSection('intro', this)">📖 Introdução</button>
+  <button onclick="showSection('enzimas', this)">🧬 Enzimas</button>
+  <button onclick="showSection('carbo', this)">🍞 Carboidratos</button>
+  <button onclick="showSection('lipidios', this)">🥑 Lipídios</button>
+  <button onclick="showSection('digestao', this)">⚗️ Digestão</button>
+  <button onclick="showSection('flashcards', this)">🃏 Flashcards</button>
+  <button onclick="showSection('quiz', this)">❓ Simulado</button>
+</nav>
+
+<!-- ================ INTRODUÇÃO ================ -->
+<div id="intro" class="section active">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">📖</span> Introdução à Bioquímica P2</div>
+
+<div class="info-block">
+  <div class="label">Visão Geral</div>
+  <h4>Sobre este material</h4>
+  <p>Este resumo organiza o conteúdo da P2 de Bioquímica em quatro grandes blocos — <strong>enzimas no diagnóstico clínico</strong>, <strong>carboidratos</strong>, <strong>lipídios</strong> e <strong>digestão de lipídios</strong> — voltados ao estudo de graduação em Medicina. Inclui ainda 35 flashcards interativos e um simulado autocorrigido para revisão ativa.</p>
+</div>
+
+<div class="info-block success">
+  <div class="label">Como estudar</div>
+  <h4>Roteiro sugerido</h4>
+  <ol>
+    <li>Leia cada capítulo em ordem (Enzimas → Carboidratos → Lipídios → Digestão).</li>
+    <li>Use os flashcards após terminar a leitura para fixar conceitos.</li>
+    <li>Por último, faça o simulado e revise as questões erradas.</li>
+  </ol>
+</div>
+
+<div class="sec-divider"><h3>📚 Glossário de Termos Essenciais</h3></div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:16px;">Clique em cada cartão para expandir a definição.</p>
+
+<div class="glossary-grid">
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Centro Ativo</div><div class="def" style="display:none">Região pequena e tridimensional da enzima, formada por poucos aminoácidos (não necessariamente vizinhos), onde o substrato se liga e a catálise ocorre.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Holoenzima</div><div class="def" style="display:none">Enzima completa e ativa = <strong>apoenzima</strong> (parte proteica) + <strong>cofator</strong> (íon) ou <strong>coenzima</strong> (molécula orgânica).</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Saturação Enzimática</div><div class="def" style="display:none">Estado em que todos os centros ativos estão ocupados; aumentar o substrato não aumenta mais a velocidade (Vmáx).</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Encaixe Induzido</div><div class="def" style="display:none">Modelo de <strong>Koshland</strong>: a enzima muda sua conformação ao ligar o substrato, ajustando-se a ele. É o modelo aceito atualmente.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Carboidratos</div><div class="def" style="display:none">Poli-hidroxialdeídos ou poli-hidroxicetonas (CH₂O)ₙ; principal fonte energética celular (<strong>4 kcal/g</strong>).</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Glicogênio</div><div class="def" style="display:none">Polissacarídeo de reserva energética animal, armazenado em <strong>fígado e músculo</strong>.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Lipídios</div><div class="def" style="display:none">Biomoléculas heterogêneas, <strong>insolúveis em água</strong> e solúveis em solventes orgânicos. Densidade energética de <strong>9 kcal/g</strong>.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Lipídios Saponificáveis</div><div class="def" style="display:none">Contêm ácidos graxos esterificados — formam sabão por hidrólise alcalina. Ex.: triglicerídeos, fosfolipídios, glicolipídios.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Sais Biliares</div><div class="def" style="display:none">Emulsificam as gorduras no duodeno, formando micelas que aumentam a superfície de contato para a ação das lipases.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">Quilomícrons</div><div class="def" style="display:none">Lipoproteínas que transportam lipídios provenientes da <strong>dieta</strong>, do intestino para os tecidos via linfa.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">LDL × HDL</div><div class="def" style="display:none"><strong>LDL</strong>: leva colesterol do fígado aos tecidos (aterogênico). <strong>HDL</strong>: faz o transporte reverso, levando colesterol dos tecidos ao fígado.</div></div>
+  <div class="gloss-card" onclick="toggleGloss(this)"><div class="term">CK-MB</div><div class="def" style="display:none">Fração cardíaca da creatina quinase; marcador clássico de <strong>infarto agudo do miocárdio</strong>.</div></div>
+</div>
+
+</div></div>
+
+<!-- ================ ENZIMAS ================ -->
+<div id="enzimas" class="section">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">🧬</span> Capítulo 1 — Enzimas no Diagnóstico Clínico</div>
+
+<div class="info-block">
+  <div class="label">Conceito</div>
+  <h4>O que são enzimas?</h4>
+  <p>As enzimas são <strong>proteínas catalisadoras</strong> que aceleram reações biológicas sem se consumirem. No contexto clínico, sua dosagem no sangue funciona como uma <em>janela bioquímica</em> para detectar lesões em órgãos específicos.</p>
+</div>
+
+<div class="sec-divider"><h3>1.1 Conceitos Fundamentais</h3></div>
+
+<div class="info-block">
+  <div class="label">Centro Ativo</div>
+  <h4>Características</h4>
+  <ul>
+    <li>Região <strong>tridimensional</strong> da enzima, formada por poucos aminoácidos.</li>
+    <li><strong>Pequeno</strong> em relação ao tamanho total da enzima.</li>
+    <li><strong>Específico</strong> para o substrato.</li>
+    <li>Formado por resíduos <strong>não necessariamente vizinhos</strong> na cadeia primária.</li>
+    <li>Mantido por <strong>ligações fracas</strong>.</li>
+  </ul>
+</div>
+
+<div class="info-block warn">
+  <div class="label">Interação Enzima–Substrato</div>
+  <p>O substrato se encaixa no centro ativo formando o complexo <strong>enzima-substrato (ES)</strong>. Ocorre alteração conformacional (encaixe induzido), a reação acontece, e a enzima libera os produtos retornando à forma original.</p>
+</div>
+
+<div class="info-block success">
+  <div class="label">Holoenzima e Saturação</div>
+  <ul>
+    <li><strong>Holoenzima</strong> = apoenzima (parte proteica) + cofator (íon metálico) ou coenzima (molécula orgânica).</li>
+    <li><strong>Saturação enzimática</strong>: todos os centros ativos ocupados → aumentar mais substrato não aumenta a velocidade (Vmáx atingida).</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>1.2 Classificação das Enzimas</h3></div>
+
+<table class="compare-table">
+  <tr><th>Classe</th><th>Função</th><th>Exemplo</th></tr>
+  <tr><td>Oxidorredutases</td><td>Reações de oxidação e redução</td><td>Lactato desidrogenase</td></tr>
+  <tr><td>Transferases</td><td>Transferem grupos químicos</td><td>Alanina aminotransferase</td></tr>
+  <tr><td>Hidrolases</td><td>Quebram ligações usando água</td><td>Lipase, amilase</td></tr>
+  <tr><td>Liases</td><td>Quebram ligações sem hidrólise</td><td>Aldolase</td></tr>
+  <tr><td>Isomerases</td><td>Convertem isômeros</td><td>Fosfoglicose isomerase</td></tr>
+  <tr><td>Ligases</td><td>Unem moléculas usando energia</td><td>DNA ligase</td></tr>
+</table>
+
+<div class="sec-divider"><h3>1.3 Coenzimas</h3></div>
+
+<div class="info-block">
+  <ul>
+    <li><strong>Coenzimas orgânicas:</strong> geralmente derivadas de vitaminas — NAD, FAD, coenzima A.</li>
+    <li><strong>Coenzimas inorgânicas:</strong> íons metálicos como Zn²⁺, Mg²⁺, Fe²⁺ e Cu²⁺.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>1.4 Modelos de União Enzima–Substrato</h3></div>
+
+<div class="info-block">
+  <ul>
+    <li><strong>Chave-fechadura (Fischer):</strong> o substrato encaixa rigidamente, como uma chave numa fechadura.</li>
+    <li><strong>Encaixe induzido (Koshland):</strong> a enzima muda conformação ao ligar o substrato. <em>Modelo aceito atualmente.</em></li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>1.5 Enzimas no Diagnóstico Clínico</h3></div>
+
+<div class="info-block danger">
+  <div class="label">Princípio</div>
+  <p>A presença ou elevação de determinadas enzimas no soro indica <strong>lesão tecidual específica</strong> — base do diagnóstico enzimológico.</p>
+</div>
+
+<table class="compare-table">
+  <tr><th>Enzima</th><th>Localização principal</th><th>Significado clínico</th></tr>
+  <tr><td><strong>ALT / TGP</strong></td><td>Fígado</td><td>Marcador específico de hepatite e lesão hepática</td></tr>
+  <tr><td><strong>AST / TGO</strong></td><td>Fígado, coração, músculo, rim, pâncreas</td><td>Infarto do miocárdio e lesão hepática</td></tr>
+  <tr><td><strong>Fosfatase alcalina</strong></td><td>Fígado e ossos</td><td>Distúrbios ósseos e hepatopatia obstrutiva</td></tr>
+  <tr><td><strong>CK (CK-MB)</strong></td><td>Músculo cardíaco e esquelético</td><td>Diagnóstico de IAM (fração CK-MB) e lesão muscular</td></tr>
+  <tr><td><strong>Amilase e Lipase</strong></td><td>Pâncreas</td><td>Pancreatite aguda</td></tr>
+  <tr><td><strong>LDH</strong></td><td>Vários tecidos</td><td>Hemólise, infarto, hepatopatias</td></tr>
+</table>
+
+</div></div>
+
+<!-- ================ CARBOIDRATOS ================ -->
+<div id="carbo" class="section">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">🍞</span> Capítulo 2 — Carboidratos</div>
+
+<div class="info-block">
+  <div class="label">Definição</div>
+  <h4>O que são?</h4>
+  <p>Também chamados <strong>glicídios</strong> ou açúcares, são as biomoléculas mais abundantes da natureza e a <strong>principal fonte energética</strong> do organismo. Quimicamente são <em>poli-hidroxialdeídos</em> ou <em>poli-hidroxicetonas</em>, com fórmula geral (CH₂O)ₙ.</p>
+</div>
+
+<div class="sec-divider"><h3>2.1 Funções Biológicas</h3></div>
+
+<div class="info-block success">
+  <ul>
+    <li><strong>Energética:</strong> a glicose é o principal substrato energético (4 kcal/g).</li>
+    <li><strong>Reserva:</strong> glicogênio (fígado e músculo) e amido (vegetais).</li>
+    <li><strong>Estrutural:</strong> ribose e desoxirribose nos ácidos nucleicos; celulose nos vegetais.</li>
+    <li><strong>Reconhecimento celular:</strong> glicoproteínas e glicolipídios da membrana.</li>
+    <li><strong>Poupadora de proteínas:</strong> evita catabolismo proteico para fins energéticos.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>2.2 Classificação</h3></div>
+
+<div class="info-block">
+  <div class="label">Monossacarídeos</div>
+  <h4>Açúcares simples, não hidrolisáveis</h4>
+  <p>Classificam-se pelo número de carbonos (trioses, tetroses, pentoses, hexoses) e pelo grupo funcional (aldoses ou cetoses).</p>
+  <ul>
+    <li><strong>Glicose:</strong> principal combustível celular.</li>
+    <li><strong>Frutose:</strong> açúcar das frutas.</li>
+    <li><strong>Galactose:</strong> componente da lactose.</li>
+    <li><strong>Ribose e desoxirribose:</strong> pentoses dos ácidos nucleicos.</li>
+  </ul>
+</div>
+
+<div class="info-block warn">
+  <div class="label">Dissacarídeos</div>
+  <h4>Dois monossacarídeos unidos por ligação glicosídica</h4>
+  <ul>
+    <li><strong>Sacarose</strong> = glicose + frutose (açúcar de cana).</li>
+    <li><strong>Lactose</strong> = glicose + galactose (açúcar do leite).</li>
+    <li><strong>Maltose</strong> = glicose + glicose (produto da digestão do amido).</li>
+  </ul>
+</div>
+
+<div class="info-block">
+  <div class="label">Oligossacarídeos</div>
+  <p>De 3 a 10 monossacarídeos; participam de reconhecimento celular e antígenos de grupo sanguíneo.</p>
+</div>
+
+<div class="sec-divider"><h3>2.3 Polissacarídeos</h3></div>
+
+<table class="compare-table">
+  <tr><th>Tipo</th><th>Função</th><th>Origem</th></tr>
+  <tr><td><strong>Amido</strong></td><td>Reserva energética vegetal</td><td>Vegetais</td></tr>
+  <tr><td><strong>Glicogênio</strong></td><td>Reserva energética animal</td><td>Fígado e músculo</td></tr>
+  <tr><td><strong>Celulose</strong></td><td>Estrutural (parede vegetal); fibra alimentar</td><td>Vegetais</td></tr>
+  <tr><td><strong>Quitina</strong></td><td>Estrutural em artrópodes e fungos</td><td>Animal / fúngica</td></tr>
+</table>
+
+<div class="info-block success">
+  <div class="label">Resumo Prático</div>
+  <p>Monossacarídeos = unidade básica · Dissacarídeos e oligossacarídeos = transporte e sinalização · Polissacarídeos = reserva ou estrutura.</p>
+</div>
+
+</div></div>
+
+<!-- ================ LIPÍDIOS ================ -->
+<div id="lipidios" class="section">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">🥑</span> Capítulo 3 — Lipídios: Estrutura, Classificação e Funções</div>
+
+<div class="info-block">
+  <div class="label">Definição</div>
+  <h4>O que são?</h4>
+  <p>Biomoléculas heterogêneas, <strong>insolúveis em água</strong> e solúveis em solventes orgânicos. Formam membranas, armazenam energia e atuam como mensageiros.</p>
+</div>
+
+<div class="sec-divider"><h3>3.1 Composição</h3></div>
+
+<div class="info-block">
+  <p>Formados principalmente por C, H e O, podendo conter fósforo e nitrogênio. A maioria deriva da união entre <strong>ácidos graxos</strong> e um <strong>álcool</strong> (glicerol ou esfingosina) por ligação éster.</p>
+</div>
+
+<div class="sec-divider"><h3>3.2 Ácidos Graxos</h3></div>
+
+<div class="info-block warn">
+  <p>Cadeias hidrocarbonadas longas terminadas por grupo carboxila. Podem ser <strong>saturados</strong> (sem duplas) ou <strong>insaturados</strong> (com uma ou mais duplas ligações).</p>
+  <ul>
+    <li><strong>Ácido palmítico</strong> — saturado, 16 carbonos.</li>
+    <li><strong>Ácido esteárico</strong> — saturado, 18 carbonos.</li>
+    <li><strong>Ácido oleico</strong> — monoinsaturado, 18 carbonos.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>3.3 Características Gerais</h3></div>
+
+<div class="info-block">
+  <ul>
+    <li>Insolubilidade em água (<strong>hidrofobicidade</strong>).</li>
+    <li>Alta densidade energética (<strong>9 kcal/g</strong>).</li>
+    <li>Caráter <strong>anfipático</strong> em fosfolipídios e glicolipídios.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>3.4 Funções dos Lipídios</h3></div>
+
+<div class="info-block success">
+  <ul>
+    <li><strong>Reserva energética</strong> — triglicerídeos no tecido adiposo.</li>
+    <li><strong>Estrutural</strong> — fosfolipídios e colesterol formam membranas.</li>
+    <li><strong>Isolamento</strong> térmico e mecânico.</li>
+    <li><strong>Hormonal</strong> — esteroides (cortisol, testosterona, estrógenos).</li>
+    <li><strong>Veículo de vitaminas lipossolúveis</strong> A, D, E, K.</li>
+    <li><strong>Sinalização celular</strong> — eicosanoides (prostaglandinas, tromboxanos, leucotrienos).</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>3.5 Classificação</h3></div>
+
+<div class="info-block">
+  <div class="label">Quanto à Saponificação</div>
+  <ul>
+    <li><strong>Saponificáveis:</strong> possuem ácidos graxos esterificados — formam sabão por hidrólise alcalina. Ex.: triglicerídeos, fosfolipídios, glicolipídios.</li>
+    <li><strong>Insaponificáveis:</strong> sem ácidos graxos esterificados. Ex.: esteroides, terpenos, eicosanoides.</li>
+  </ul>
+</div>
+
+<div class="info-block warn">
+  <div class="label">Quanto à Complexidade</div>
+  <ul>
+    <li><strong>Lipídios simples:</strong> apenas ácidos graxos e álcool. Ex.: triglicerídeos, ceras.</li>
+    <li><strong>Lipídios complexos:</strong> além de ácidos graxos e álcool, contêm outros grupos (fosfato, açúcar, nitrogênio). Ex.: fosfolipídios, glicolipídios.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>3.6 Principais Grupos</h3></div>
+
+<table class="compare-table">
+  <tr><th>Grupo</th><th>Estrutura</th><th>Função</th></tr>
+  <tr><td><strong>Triglicerídeos</strong></td><td>Glicerol + 3 ácidos graxos</td><td>Reserva energética</td></tr>
+  <tr><td><strong>Fosfolipídios</strong></td><td>Glicerol + 2 ácidos graxos + fosfato</td><td>Componente principal das membranas</td></tr>
+  <tr><td><strong>Glicolipídios</strong></td><td>Lipídio + carboidrato</td><td>Reconhecimento celular, membranas</td></tr>
+  <tr><td><strong>Esteroides</strong></td><td>Núcleo ciclopentanoperidrofenantreno</td><td>Hormônios, colesterol, sais biliares</td></tr>
+  <tr><td><strong>Terpenos</strong></td><td>Unidades de isopreno</td><td>Vitaminas A, E, K; pigmentos</td></tr>
+  <tr><td><strong>Eicosanoides</strong></td><td>Derivados do ácido araquidônico</td><td>Inflamação, coagulação, sinalização</td></tr>
+</table>
+
+<div class="info-block danger">
+  <div class="label">Atenção Clínica</div>
+  <h4>Efeitos negativos dos anabolizantes (esteroides exógenos)</h4>
+  <p>Atrofia testicular, ginecomastia, acne severa, <strong>hepatotoxicidade</strong>, alterações cardiovasculares (aumento de LDL, hipertensão) e distúrbios psicológicos como agressividade.</p>
+</div>
+
+</div></div>
+
+<!-- ================ DIGESTÃO ================ -->
+<div id="digestao" class="section">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">⚗️</span> Capítulo 4 — Digestão de Lipídios</div>
+
+<div class="info-block">
+  <div class="label">Desafio Fisiológico</div>
+  <p>Moléculas hidrofóbicas precisam ser processadas num meio aquoso. A solução envolve <strong>sais biliares</strong> (emulsificação) e <strong>enzimas específicas</strong>.</p>
+</div>
+
+<div class="sec-divider"><h3>4.1 Etapas da Digestão</h3></div>
+
+<div class="info-block">
+  <div class="label">Boca</div>
+  <p>Ação mínima da <strong>lipase lingual</strong> sobre triglicerídeos de cadeia curta.</p>
+</div>
+
+<div class="info-block warn">
+  <div class="label">Estômago</div>
+  <p><strong>Lipase gástrica</strong> atua em pH ácido, hidrolisando parcialmente triglicerídeos.</p>
+</div>
+
+<div class="info-block success">
+  <div class="label">Duodeno — Principal Local</div>
+  <ul>
+    <li><strong>Sais biliares</strong> emulsificam as gorduras → formam micelas que aumentam a superfície de contato.</li>
+    <li><strong>Lipase pancreática</strong> (+ colipase) hidrolisa triglicerídeos em monoacilglicerol e ácidos graxos livres.</li>
+    <li><strong>Fosfolipase A2</strong> hidrolisa fosfolipídios em lisofosfolipídios e ácidos graxos.</li>
+    <li><strong>Colesterol esterase</strong> libera colesterol livre a partir de seus ésteres.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>4.2 Funções dos Ácidos Biliares</h3></div>
+
+<div class="info-block">
+  <ul>
+    <li>Emulsificar as gorduras dietéticas, facilitando a ação enzimática.</li>
+    <li>Formar <strong>micelas mistas</strong> que transportam lipídios à borda em escova do enterócito.</li>
+    <li>Auxiliar na absorção de <strong>vitaminas lipossolúveis</strong>.</li>
+    <li>Eliminar excesso de <strong>colesterol</strong> pelas fezes.</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>4.3 Absorção Intestinal</h3></div>
+
+<div class="info-block warn">
+  <p>Os produtos da digestão entram no enterócito por <strong>difusão</strong> a partir das micelas. Dentro da célula, são re-esterificados a triglicerídeos e empacotados, junto a colesterol, fosfolipídios e apolipoproteínas, formando os <strong>quilomícrons</strong>, que entram no sistema linfático e depois no sangue.</p>
+</div>
+
+<div class="sec-divider"><h3>4.4 Transporte Sanguíneo — Lipoproteínas</h3></div>
+
+<table class="compare-table">
+  <tr><th>Lipoproteína</th><th>Função</th></tr>
+  <tr><td><strong>Quilomícrons</strong></td><td>Transportam lipídios da <em>dieta</em>, do intestino para os tecidos.</td></tr>
+  <tr><td><strong>VLDL</strong></td><td>Transporta triglicerídeos <em>sintetizados no fígado</em> para os tecidos.</td></tr>
+  <tr><td><strong>LDL</strong></td><td>Transporta <em>colesterol</em> do fígado para tecidos extra-hepáticos. Relacionada à <strong>aterosclerose</strong>.</td></tr>
+  <tr><td><strong>HDL</strong></td><td>Retira o excesso de colesterol das células extra-hepáticas e o leva ao fígado (<em>transporte reverso</em>).</td></tr>
+</table>
+
+<div class="info-block success">
+  <div class="label">Memorize</div>
+  <p><strong>HDL</strong> = "bom" (limpa) · <strong>LDL</strong> = "ruim" (deposita) · <strong>VLDL</strong> = entrega triglicerídeos hepáticos · <strong>Quilomícrons</strong> = entregam lipídios da dieta.</p>
+</div>
+
+</div></div>
+
+<!-- ================ FLASHCARDS ================ -->
+<div id="flashcards" class="section">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">🃏</span> Flashcards — Revisão Ativa</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px;">Clique em cada cartão para virar e revelar a resposta. 35 cartões cobrindo os 4 capítulos.</p>
+
+<div class="flashcard-grid" id="flashcard-grid"></div>
+
+</div></div>
+
+<!-- ================ QUIZ ================ -->
+<div id="quiz" class="section">
+<div class="container">
+
+<div class="chapter-title"><span class="chap-icon">❓</span> Simulado P2 — 40 Questões</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px;">30 questões de múltipla escolha + 10 de verdadeiro ou falso, com correção e explicação imediata.</p>
+
+<div class="quiz-container" id="quiz-container"></div>
+
+</div></div>
+
+<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// PARTICLES
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+for(let i=0;i<60;i++) {
+  particles.push({
+    x: Math.random()*canvas.width, y: Math.random()*canvas.height,
+    r: Math.random()*2+0.5,
+    dx: (Math.random()-0.5)*0.3, dy: (Math.random()-0.5)*0.3,
+    alpha: Math.random()*0.4+0.1
+  });
+}
+function animParticles() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(79,156,249,${p.alpha})`; ctx.fill();
+  });
+  requestAnimationFrame(animParticles);
+}
+animParticles();
+
+// NAV
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleGloss(el) {
+  const def = el.querySelector('.def');
+  def.style.display = def.style.display==='none'?'block':'none';
+  el.style.borderColor = def.style.display==='none'?'var(--border)':'var(--accent2)';
+}
+
+window.addEventListener('scroll',()=>{
+  document.getElementById('scrolltop').style.display = window.scrollY>300?'block':'none';
+});
+
+// FLASHCARDS
+const flashcards = [
+  ["Enzimas","Centro ativo","Região pequena e tridimensional da enzima, formada por poucos aminoácidos não necessariamente vizinhos, onde o substrato se liga e ocorre a catálise."],
+  ["Enzimas","Holoenzima","Enzima completa e ativa = apoenzima (parte proteica) + cofator (íon) ou coenzima (molécula orgânica)."],
+  ["Enzimas","Saturação enzimática","Estado em que todos os centros ativos estão ocupados; aumentar o substrato não aumenta a velocidade (Vmáx)."],
+  ["Enzimas","Modelo chave-fechadura","Modelo de Fischer: o substrato encaixa rigidamente no centro ativo, como uma chave numa fechadura."],
+  ["Enzimas","Encaixe induzido","Modelo de Koshland: a enzima muda sua conformação ao ligar o substrato; modelo aceito atualmente."],
+  ["Enzimas","Coenzimas orgânicas","Moléculas orgânicas, geralmente derivadas de vitaminas — NAD, FAD, coenzima A."],
+  ["Enzimas","Coenzimas inorgânicas","Íons metálicos como Zn²⁺, Mg²⁺, Fe²⁺ e Cu²⁺."],
+  ["Clínica","ALT (TGP)","Alanina aminotransferase — marcador de lesão hepática (hepatites)."],
+  ["Clínica","AST (TGO)","Aspartato aminotransferase — presente em fígado, coração e músculo; elevada no infarto do miocárdio."],
+  ["Clínica","Fosfatase alcalina","Presente sobretudo em fígado e ossos; elevada em distúrbios ósseos e na hepatopatia obstrutiva."],
+  ["Clínica","Creatina quinase (CK-MB)","Fração cardíaca da CK; marcador clássico de infarto agudo do miocárdio."],
+  ["Clínica","Amilase e lipase","Enzimas pancreáticas; elevadas na pancreatite aguda."],
+  ["Carboidratos","Carboidratos","Poli-hidroxialdeídos ou poli-hidroxicetonas; principal fonte energética celular (4 kcal/g)."],
+  ["Carboidratos","Glicose","Monossacarídeo hexose, principal combustível das células."],
+  ["Carboidratos","Sacarose","Dissacarídeo = glicose + frutose; o açúcar de cana."],
+  ["Carboidratos","Lactose","Dissacarídeo = glicose + galactose; o açúcar do leite."],
+  ["Carboidratos","Maltose","Dissacarídeo = glicose + glicose; produto da digestão do amido."],
+  ["Carboidratos","Glicogênio","Polissacarídeo de reserva energética animal, armazenado em fígado e músculo."],
+  ["Carboidratos","Amido","Polissacarídeo de reserva energética vegetal."],
+  ["Carboidratos","Celulose","Polissacarídeo estrutural vegetal; fibra alimentar não digerível por humanos."],
+  ["Lipídios","Ácidos graxos","Cadeias hidrocarbonadas com grupo carboxila; saturados (sem duplas) ou insaturados (com duplas)."],
+  ["Lipídios","Triglicerídeos","Lipídio simples = glicerol + 3 ácidos graxos; reserva energética no tecido adiposo."],
+  ["Lipídios","Fosfolipídios","Lipídios complexos com grupo fosfato; principais constituintes das membranas celulares."],
+  ["Lipídios","Glicolipídios","Lipídios ligados a carboidratos; participam de reconhecimento celular e compõem membranas."],
+  ["Lipídios","Esteroides","Lipídios insaponificáveis com núcleo de ciclopentanoperidrofenantreno; ex.: colesterol, hormônios sexuais."],
+  ["Lipídios","Terpenos","Lipídios insaponificáveis formados por unidades de isopreno; incluem vitaminas A, E e K."],
+  ["Lipídios","Eicosanoides","Derivados do ácido araquidônico — prostaglandinas, tromboxanos e leucotrienos; mediadores inflamatórios."],
+  ["Lipídios","Saponificáveis × Insaponificáveis","Saponificáveis contêm ácidos graxos esterificados (formam sabão); insaponificáveis não."],
+  ["Lipídios","Simples × Complexos","Simples: só ácidos graxos + álcool. Complexos: contêm também grupos extras (fosfato, açúcar)."],
+  ["Digestão","Sais biliares","Emulsificam gorduras no duodeno, formando micelas e facilitando a ação das lipases."],
+  ["Digestão","Lipase pancreática","Principal enzima da digestão de triglicerídeos; atua no duodeno com a colipase."],
+  ["Digestão","Quilomícrons","Lipoproteínas que transportam lipídios da dieta do intestino aos tecidos."],
+  ["Digestão","VLDL","Lipoproteína de muito baixa densidade — leva triglicerídeos do fígado aos tecidos."],
+  ["Digestão","LDL","Lipoproteína de baixa densidade — leva colesterol do fígado aos tecidos extra-hepáticos; ligada à aterosclerose."],
+  ["Digestão","HDL","Lipoproteína de alta densidade — retira o excesso de colesterol e leva ao fígado (transporte reverso)."],
+];
+
+const fcGrid = document.getElementById('flashcard-grid');
+flashcards.forEach(([tag,q,a])=>{
+  const card = document.createElement('div');
+  card.className = 'flashcard';
+  card.innerHTML = `
+    <div class="flashcard-inner">
+      <div class="flashcard-front">
+        <div class="fc-tag">${tag}</div>
+        <div class="fc-q">${q}</div>
+        <div class="fc-hint">clique para virar ↻</div>
+      </div>
+      <div class="flashcard-back">${a}</div>
+    </div>`;
+  card.onclick = ()=>card.classList.toggle('flipped');
+  fcGrid.appendChild(card);
+});
+
+// QUIZ
+const quizData = [
+  {q:"A função principal do centro ativo de uma enzima é:", opts:["Armazenar energia química na forma de ATP.","Ligar-se ao substrato e catalisar sua conversão em produto.","Ligar-se ao substrato apenas para transportá-lo.","Atuar como reserva energética celular."], correct:1, explain:"O centro ativo é a região da enzima que <strong>liga o substrato e catalisa</strong> sua conversão em produto."},
+  {q:"Sobre o centro ativo, é correto afirmar que:", opts:["Ocupa praticamente toda a estrutura da enzima.","É pequeno em relação à enzima, tridimensional e específico para o substrato.","É pequeno e específico, mas bidimensional.","É composto sempre por carboidratos."], correct:1, explain:"O centro ativo é <strong>pequeno, tridimensional e específico</strong> ao substrato."},
+  {q:"Holoenzima é definida como:", opts:["Apenas a porção proteica inativa.","Enzima completa e ativa: apoenzima + cofator/coenzima.","Apoenzima ativa sem cofator.","Tipo de carboidrato estrutural."], correct:1, explain:"<strong>Holoenzima = apoenzima + cofator (ou coenzima)</strong>."},
+  {q:"A saturação enzimática ocorre quando:", opts:["A enzima é degradada por proteases.","Todos os centros ativos estão ocupados, atingindo Vmáx.","Parte dos centros está ocupada e a velocidade ainda sobe.","A enzima troca de substrato."], correct:1, explain:"Saturação = <strong>todos os centros ativos ocupados</strong> → Vmáx."},
+  {q:"O modelo de encaixe induzido (Koshland) propõe que:", opts:["O substrato encaixa rigidamente, sem mudar a enzima.","A enzima muda conformação ao ligar o substrato.","Apenas o substrato muda de forma.","Enzimas são consumidas a cada reação."], correct:1, explain:"Koshland: a <strong>enzima muda conformação</strong> para se ajustar ao substrato."},
+  {q:"Coenzimas orgânicas são geralmente derivadas de:", opts:["Triglicerídeos da dieta.","Vitaminas, como NAD e FAD.","Vitaminas, sempre contendo ferro.","Polissacarídeos como amido."], correct:1, explain:"Coenzimas orgânicas derivam de <strong>vitaminas</strong> — NAD, FAD, CoA."},
+  {q:"A enzima mais específica para lesão hepática (hepatites) é:", opts:["CK-MB.","Alanina aminotransferase (ALT/TGP).","AST/TGO, exclusiva do fígado.","Amilase pancreática."], correct:1, explain:"<strong>ALT (TGP)</strong> é a mais específica para fígado."},
+  {q:"Elevação combinada de AST com CK-MB sugere principalmente:", opts:["Pancreatite aguda.","Infarto agudo do miocárdio.","Hepatite viral isolada.","Diabetes descompensado."], correct:1, explain:"AST + CK-MB elevados → <strong>IAM</strong>."},
+  {q:"A fosfatase alcalina está elevada principalmente em:", opts:["Anemia ferropriva.","Distúrbios ósseos e hepatopatia obstrutiva.","Apenas distúrbios ósseos.","Infecções virais respiratórias."], correct:1, explain:"FAL: <strong>ossos + via biliar obstruída</strong>."},
+  {q:"Amilase e lipase elevadas indicam classicamente:", opts:["Infarto do miocárdio.","Pancreatite aguda.","Pancreatite, mas só amilase é específica do pâncreas.","Hepatite alcoólica."], correct:1, explain:"Amilase + lipase ↑ = <strong>pancreatite aguda</strong>."},
+  {q:"Os carboidratos são quimicamente:", opts:["Polímeros de aminoácidos.","Poli-hidroxialdeídos ou poli-hidroxicetonas.","Aldeídos formados só por C e H.","Ácidos graxos de cadeia longa."], correct:1, explain:"Carboidratos = <strong>poli-hidroxialdeídos ou poli-hidroxicetonas</strong>."},
+  {q:"A principal função dos carboidratos no organismo é:", opts:["Compor a bainha de mielina.","Fornecer energia (~4 kcal/g).","Fornecer a maior densidade calórica do corpo.","Atuar como hormônio esteroide."], correct:1, explain:"Carboidratos = <strong>4 kcal/g</strong> (energia)."},
+  {q:"São exemplos de monossacarídeos:", opts:["Sacarose, lactose, maltose.","Glicose, frutose, galactose.","Glicose, frutose, sacarose.","Amido, glicogênio, celulose."], correct:1, explain:"Monossacarídeos: <strong>glicose, frutose, galactose</strong>."},
+  {q:"A lactose é composta por:", opts:["Glicose + glicose.","Glicose + galactose.","Galactose + frutose.","Glicerol + ácido graxo."], correct:1, explain:"Lactose = <strong>glicose + galactose</strong>."},
+  {q:"O glicogênio é:", opts:["Estrutural da parede vegetal.","Polissacarídeo de reserva animal (fígado e músculo).","Reserva armazenada no tecido adiposo.","Monossacarídeo dos ácidos nucleicos."], correct:1, explain:"Glicogênio = reserva animal no <strong>fígado e músculo</strong>."},
+  {q:"A celulose, nos humanos, atua principalmente como:", opts:["Principal fonte energética.","Fibra alimentar não digerível.","Reserva hepática.","Hormônio digestivo."], correct:1, explain:"Celulose = <strong>fibra alimentar</strong> (humanos não digerem)."},
+  {q:"Sobre os lipídios, é correto:", opts:["Solúveis em água, insolúveis em solventes orgânicos.","Insolúveis em água e solúveis em solventes orgânicos.","Solúveis em água quando ligados a glicerol.","Polímeros de nucleotídeos."], correct:1, explain:"Lipídios = <strong>insolúveis em água</strong>, solúveis em solventes orgânicos."},
+  {q:"São funções dos lipídios, EXCETO:", opts:["Reserva energética.","Componente de membranas.","Fonte primária de aminoácidos essenciais.","Precursores de hormônios esteroides."], correct:2, explain:"Lipídios NÃO fornecem aminoácidos — isso é função das <strong>proteínas</strong>."},
+  {q:"Lipídios saponificáveis caracterizam-se por:", opts:["Não possuírem ácidos graxos.","Conterem ácidos graxos esterificados (formam sabão).","Conter ácidos graxos mas não reagir com bases.","Serem todos hormônios."], correct:1, explain:"Saponificáveis = têm <strong>ácidos graxos esterificados</strong>."},
+  {q:"Exemplos de lipídios insaponificáveis:", opts:["Triglicerídeos e fosfolipídios.","Esteroides, terpenos, eicosanoides.","Esteroides e triglicerídeos.","Quilomícrons e VLDL."], correct:1, explain:"Insaponificáveis: <strong>esteroides, terpenos, eicosanoides</strong>."},
+  {q:"Lipídios simples são formados por:", opts:["Glicerol + ácidos graxos + fosfato.","Apenas ácidos graxos e álcool.","Ácidos graxos, álcool e carboidrato.","Aminoácidos com ligação peptídica."], correct:1, explain:"Simples = <strong>apenas ácidos graxos + álcool</strong>."},
+  {q:"Os fosfolipídios têm como principal função:", opts:["Reserva energética no tecido adiposo.","Constituir a bicamada das membranas.","Atuar como hormônios esteroides.","Polissacarídeo estrutural."], correct:1, explain:"Fosfolipídios = <strong>bicamada das membranas</strong>."},
+  {q:"Os eicosanoides são:", opts:["Carboidratos estruturais.","Derivados do ácido araquidônico envolvidos em inflamação e coagulação.","Derivados do araquidônico atuando como reserva.","Hormônios proteicos do pâncreas."], correct:1, explain:"Eicosanoides = <strong>derivados do ácido araquidônico</strong> (PG, TX, LT)."},
+  {q:"Efeitos negativos dos anabolizantes esteroides:", opts:["Aumento de hemácias por falta de ferro.","Atrofia testicular, hepatotoxicidade, ↑LDL, alterações de humor.","Atrofia testicular sem repercussão hepática.","Redução da pressão e melhora do perfil lipídico."], correct:1, explain:"Anabolizantes: <strong>atrofia testicular, hepatotoxicidade, ↑LDL, agressividade</strong>."},
+  {q:"No duodeno, a digestão dos lipídios depende principalmente de:", opts:["Pepsina e HCl.","Sais biliares + lipase pancreática.","Apenas sais biliares.","Amilase salivar."], correct:1, explain:"<strong>Sais biliares (emulsificam) + lipase pancreática (hidrolisa)</strong>."},
+  {q:"A função dos ácidos biliares na digestão é:", opts:["Hidrolisar triglicerídeos diretamente.","Emulsificar gorduras formando micelas.","Emulsificar e também quebrar triglicerídeos (são enzimas).","Transportar glicose aos enterócitos."], correct:1, explain:"Ácidos biliares <strong>emulsificam</strong> — quem quebra é a lipase."},
+  {q:"A lipoproteína que retira colesterol das células e leva ao fígado é:", opts:["LDL.","HDL.","VLDL.","Quilomícron."], correct:1, explain:"<strong>HDL</strong> = transporte reverso do colesterol."},
+  {q:"A lipoproteína ligada à aterosclerose por levar colesterol aos tecidos é:", opts:["HDL.","LDL.","Quilomícron.","Albumina."], correct:1, explain:"<strong>LDL</strong> = leva colesterol do fígado aos tecidos → aterosclerose."},
+  {q:"Os quilomícrons são responsáveis por:", opts:["Transportar colesterol dos tecidos ao fígado.","Transportar lipídios da dieta do intestino aos tecidos.","Transportar TG sintetizados no fígado.","Transportar glicose."], correct:1, explain:"Quilomícrons = <strong>lipídios da dieta</strong>, intestino → tecidos."},
+  {q:"A VLDL é a lipoproteína que:", opts:["Transporta TG sintetizados no fígado para os tecidos.","Transporta TG da dieta diretamente.","Faz transporte reverso de colesterol.","É produzida no pâncreas."], correct:0, explain:"<strong>VLDL</strong> = triglicerídeos do <strong>fígado</strong> para os tecidos."},
+  // V/F
+  {q:"[V/F] O centro ativo é grande em relação ao tamanho total da enzima.", opts:["Verdadeiro","Falso"], correct:1, explain:"Falso. O centro ativo é <strong>pequeno</strong> em relação à enzima."},
+  {q:"[V/F] A holoenzima corresponde à apoenzima ligada a cofator ou coenzima.", opts:["Verdadeiro","Falso"], correct:0, explain:"Verdadeiro. Holoenzima = <strong>apoenzima + cofator/coenzima</strong>."},
+  {q:"[V/F] No encaixe induzido, a enzima muda conformação ao ligar o substrato.", opts:["Verdadeiro","Falso"], correct:0, explain:"Verdadeiro. <strong>Koshland</strong>."},
+  {q:"[V/F] CK-MB elevada sugere infarto agudo do miocárdio.", opts:["Verdadeiro","Falso"], correct:0, explain:"Verdadeiro. <strong>CK-MB ↑ = IAM</strong>."},
+  {q:"[V/F] A glicose é um dissacarídeo formado por duas frutoses.", opts:["Verdadeiro","Falso"], correct:1, explain:"Falso. Glicose é <strong>monossacarídeo</strong>."},
+  {q:"[V/F] O glicogênio é o polissacarídeo de reserva energética humano.", opts:["Verdadeiro","Falso"], correct:0, explain:"Verdadeiro. Reserva no <strong>fígado e músculo</strong>."},
+  {q:"[V/F] Lipídios são solúveis em água e insolúveis em solventes orgânicos.", opts:["Verdadeiro","Falso"], correct:1, explain:"Falso. É exatamente o <strong>contrário</strong>."},
+  {q:"[V/F] Os ácidos biliares emulsificam gorduras no duodeno.", opts:["Verdadeiro","Falso"], correct:0, explain:"Verdadeiro. Facilitam a ação da <strong>lipase pancreática</strong>."},
+  {q:"[V/F] A HDL leva colesterol do fígado aos tecidos e causa aterosclerose.", opts:["Verdadeiro","Falso"], correct:1, explain:"Falso. Isso é a <strong>LDL</strong>. HDL faz o transporte reverso."},
+  {q:"[V/F] Os quilomícrons transportam lipídios da dieta do intestino aos tecidos.", opts:["Verdadeiro","Falso"], correct:0, explain:"Verdadeiro. Lipídios <strong>exógenos</strong>."},
+];
+
+let currentQ = 0, score = 0, answered = false;
+
+function renderQuiz() {
+  const c = document.getElementById('quiz-container');
+  if(currentQ >= quizData.length) {
+    const pct = Math.round((score/quizData.length)*100);
+    let msg = pct>=90?"🏆 Excelente! Pronto para a P2!":pct>=70?"✅ Bom desempenho! Revise o que errou.":pct>=50?"📚 Precisa revisar o material.":"💪 Releia o resumo e tente novamente!";
+    c.innerHTML = `<div class="score-card">
+      <div style="font-size:48px;margin-bottom:16px">🧪</div>
+      <div class="score-big">${score}/${quizData.length}</div>
+      <div style="font-size:24px;margin:8px 0;color:var(--accent2)">${pct}%</div>
+      <div class="score-msg">${msg}</div>
+      <button class="btn" style="margin-top:24px" onclick="restartQuiz()">🔄 Tentar Novamente</button>
+    </div>`;
+    return;
+  }
+  const q = quizData[currentQ];
+  const pct = Math.round((currentQ/quizData.length)*100);
+  c.innerHTML = `
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+    <div class="quiz-num">QUESTÃO ${currentQ+1} DE ${quizData.length} • Pontos: ${score}</div>
+    <div class="quiz-q">${q.q}</div>
+    <div class="quiz-opts">
+      ${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="selectAnswer(${i})" id="opt-${i}"><span class="opt-letter">${String.fromCharCode(65+i)})</span><span>${o}</span></button>`).join('')}
+    </div>
+    <div class="quiz-explain" id="quiz-explain"></div>
+    <div class="quiz-nav">
+      <span style="color:var(--muted);font-size:12px">${score} acertos até agora</span>
+      <button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none">Próxima →</button>
+    </div>`;
+  answered = false;
+}
+
+function selectAnswer(idx) {
+  if(answered) return;
+  answered = true;
+  const q = quizData[currentQ];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.classList.add('answered'));
+  opts[q.correct].classList.add('correct');
+  if(idx !== q.correct) opts[idx].classList.add('wrong');
+  else score++;
+  const ex = document.getElementById('quiz-explain');
+  ex.innerHTML = `<strong>${idx===q.correct?'✅ Correto!':'❌ Incorreto.'}</strong><br><br>${q.explain}`;
+  ex.classList.add('show');
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQuestion() { currentQ++; renderQuiz(); }
+function restartQuiz() { currentQ=0; score=0; answered=false; renderQuiz(); }
+
+renderQuiz();
+</script>
+
+<!-- Botão flutuante: voltar ao dashboard -->
+<a href="dashboard.html" title="Voltar ao Dashboard" style="
+  position:fixed; bottom:24px; left:24px; z-index:9999;
+  display:flex; align-items:center; gap:8px;
+  padding:11px 20px;
+  background:rgba(10,13,20,0.90);
+  border:1px solid rgba(79,156,249,0.35);
+  border-radius:50px; color:#e2f0ff;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+  text-decoration:none;
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px rgba(79,156,249,0.12);
+  transition:all .25s ease;
+" onmouseover="this.style.borderColor='rgba(79,156,249,0.8)';this.style.background='rgba(79,156,249,0.15)';this.style.transform='translateY(-2px)'"
+   onmouseout="this.style.borderColor='rgba(79,156,249,0.35)';this.style.background='rgba(10,13,20,0.90)';this.style.transform='translateY(0)'">
+  ← Dashboard
+</a>
+
+</body>
+</html>

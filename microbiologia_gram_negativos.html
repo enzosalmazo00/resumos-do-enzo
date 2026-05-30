@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resumo de Microbiologia Teórica – Enzo Salmazo</title>
+<!-- PAGE_KEY: coluna "micro_teorica" na tabela profiles -->
+<script>window.PAGE_KEY = "micro_teorica";</script>
+<!-- 1. Oculta a página imediatamente (evita flash de conteúdo não autorizado) -->
+<script>document.documentElement.style.visibility = "hidden";</script>
+<!-- 2. Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 3. Guard compartilhado: checa sessão + is_approved + coluna micro_teorica -->
+<script src="auth-guard.js"></script>
+<!-- 4. Revela a página somente após auth OK -->
+<script>
+  document.addEventListener("authReady", function () {
+    document.documentElement.style.visibility = "visible";
+  });
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Source+Sans+3:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--bg2:#161b27;--bg3:#1e2738;--ac:#00d4aa;--ac2:#3a8ef0;--tx:#e8eaf0;--tx2:#8890a8;--bd:#252d42;--r:16px;--c-enter:#e67e22;--c-nonfer:#3498db;--c-haem:#9b59b6;--c-neis:#e74c3c;--c-other:#1abc9c;--c-spiro:#f1c40f}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden}
+.page{display:none;min-height:100vh}.page.active{display:block}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--ac)}
+.top-nav{position:sticky;top:0;z-index:200;background:rgba(13,17,23,.97);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.btn-home{background:var(--ac);color:#000;border:none;padding:8px 22px;border-radius:8px;font-weight:700;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:14px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.btn-home:hover{background:#00b896;transform:translateY(-1px)}
+.nav-lbl{font-family:'Playfair Display',serif;font-size:16px;color:var(--ac)}
+#page-cover{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:40px 20px;background:radial-gradient(ellipse 80% 80% at 50% -10%,#002240 0%,var(--bg) 70%);position:relative;overflow:hidden}
+#page-cover::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 60px,rgba(0,212,170,.03) 60px,rgba(0,212,170,.03) 61px),repeating-linear-gradient(90deg,transparent,transparent 60px,rgba(0,212,170,.03) 60px,rgba(0,212,170,.03) 61px);animation:gridA 40s linear infinite}
+@keyframes gridA{0%{transform:translate(0,0)}100%{transform:translate(61px,61px)}}
+.cov-in{position:relative;z-index:1;max-width:720px}
+.cov-badge{display:inline-block;background:rgba(0,212,170,.12);border:1px solid rgba(0,212,170,.4);color:var(--ac);padding:6px 20px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:28px;animation:fuA .8s ease both}
+.cov-h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,4.2rem);font-weight:900;line-height:1.1;margin-bottom:12px;animation:fuA .8s .1s ease both}
+.cov-h1 em{color:var(--ac);font-style:normal}
+.cov-h2{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(.9rem,2.5vw,1.2rem);color:var(--tx2);margin-bottom:8px;animation:fuA .8s .2s ease both}
+.cov-author{font-size:1rem;color:var(--ac);margin-bottom:48px;animation:fuA .8s .3s ease both;font-weight:600;letter-spacing:.5px}
+.cov-stats{display:flex;gap:36px;flex-wrap:wrap;justify-content:center;margin-bottom:48px;animation:fuA .8s .4s ease both}
+.cov-sn{font-size:2.4rem;font-weight:900;font-family:'Playfair Display',serif;color:var(--ac)}
+.cov-sl{font-size:.68rem;color:var(--tx2);text-transform:uppercase;letter-spacing:2px}
+.btn-start{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#000;border:none;padding:18px 56px;border-radius:50px;font-size:1.1rem;font-weight:700;cursor:pointer;font-family:'Source Sans 3',sans-serif;letter-spacing:1px;transition:all .3s;animation:fuA .8s .5s ease both}
+.btn-start:hover{transform:translateY(-3px);box-shadow:0 16px 48px rgba(0,212,170,.35)}
+@keyframes fuA{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+#page-dashboard{padding:0}
+.dash-top{padding:48px 20px 32px;max-width:1200px;margin:0 auto;text-align:center}
+.dash-h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.8rem);margin-bottom:8px}
+.dash-sub{color:var(--tx2);font-size:.95rem}
+.sec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;max-width:1200px;margin:0 auto;padding:0 20px 32px}
+.sc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:28px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--sc)}
+.sc:hover{transform:translateY(-5px);border-color:var(--sc);box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.sc-icon{font-size:2.2rem;margin-bottom:16px}
+.sc-nm{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--sc);margin-bottom:8px}
+.sc-ds{color:var(--tx2);font-size:.8rem;line-height:1.6}
+.sc-ct{display:inline-block;margin-top:14px;background:rgba(255,255,255,.05);border-radius:50px;padding:4px 14px;font-size:.7rem;color:var(--sc);font-weight:600}
+.dash-extra{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;max-width:1200px;margin:0 auto;padding:0 20px 60px}
+.dec{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:24px;cursor:pointer;transition:all .3s;text-align:center}
+.dec:hover{border-color:var(--ac);transform:translateY(-3px)}
+.dec-ic{font-size:2rem;margin-bottom:12px}
+.dec-nm{font-weight:700;font-size:1rem;color:var(--ac)}
+.dec-sub{color:var(--tx2);font-size:.75rem;margin-top:4px}
+.sec-hero{padding:48px 20px 28px;text-align:center;background:linear-gradient(180deg,var(--bg2) 0%,transparent 100%);border-bottom:1px solid var(--bd)}
+.sec-hero h1{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.4rem)}
+.sec-hero p{color:var(--tx2);margin-top:8px;font-size:.88rem}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:24px;max-width:1140px;margin:0 auto;padding:32px 20px 60px}
+.fcw{perspective:1200px;height:500px}
+.fc{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .65s cubic-bezier(.4,0,.2,1);cursor:pointer}
+.fc.flipped{transform:rotateY(180deg)}
+.fc-f,.fc-b{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:var(--r);overflow:hidden;border:1px solid var(--bd);display:flex;flex-direction:column}
+.fc-f{background:var(--bg2)}
+.fc-b{background:var(--bg2);transform:rotateY(180deg)}
+.fc-fh{padding:18px 20px;background:var(--sc);flex-shrink:0}
+.fc-nm{font-family:'Playfair Display',serif;font-style:italic;font-size:1rem;color:#fff}
+.fc-g{display:inline-block;background:rgba(0,0,0,.3);color:rgba(255,255,255,.9);padding:2px 10px;border-radius:50px;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.fc-fb{padding:14px 20px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+.fc-row{display:flex;gap:8px}
+.fc-lbl{font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--sc);min-width:86px;padding-top:1px;flex-shrink:0}
+.fc-val{font-size:.8rem;color:var(--tx);flex:1;line-height:1.55}
+.fc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.fc-tag{display:inline-block;background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:50px;padding:2px 9px;font-size:.7rem;color:var(--tx)}
+.fc-hint{text-align:center;padding:9px;color:var(--tx2);font-size:.68rem;border-top:1px solid var(--bd);flex-shrink:0}
+.fc-bh{padding:13px 20px;background:rgba(0,212,170,.08);border-bottom:1px solid var(--bd);flex-shrink:0}
+.fc-bt{font-family:'Playfair Display',serif;font-style:italic;font-size:.9rem;color:var(--ac)}
+.fc-bb{padding:13px 20px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px}
+.bs-t{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--sc);display:flex;align-items:center;gap:8px;margin-bottom:3px}
+.bs-t::after{content:'';flex:1;height:1px;background:var(--bd)}
+.tg-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.tg{background:rgba(255,255,255,.05);border:1px solid var(--bd);border-radius:50px;padding:3px 10px;font-size:.7rem;color:var(--tx)}
+.tg.tx{border-color:rgba(0,212,170,.4);background:rgba(0,212,170,.07);color:var(--ac)}
+.tg.rx{border-color:rgba(231,76,60,.4);background:rgba(231,76,60,.07);color:#e74c3c}
+.fc-sp{background:rgba(241,196,15,.07);border:1px solid rgba(241,196,15,.25);border-radius:10px;padding:10px 12px;font-size:.75rem;color:#f1c40f;line-height:1.55}
+.fc-ex{background:rgba(58,142,240,.07);border:1px solid rgba(58,142,240,.2);border-radius:10px;padding:10px 12px;font-size:.73rem;color:var(--ac2);line-height:1.55}
+#page-quiz{padding:0}
+.q-top{background:var(--bg2);border-bottom:1px solid var(--bd);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.q-top h1{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--ac)}
+.q-ctr{font-size:.83rem;color:var(--tx2)}
+.prog-wrap{width:100%;height:4px;background:var(--bd)}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--ac),var(--ac2));transition:width .4s}
+.q-main{max-width:780px;margin:0 auto;padding:40px 20px}
+.q-num{font-size:.72rem;color:var(--tx2);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+.q-bact{display:inline-block;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);border-radius:50px;padding:3px 14px;font-size:.73px;color:var(--ac);font-weight:600;margin-bottom:16px;font-size:.73rem}
+.q-txt{font-size:1.05rem;line-height:1.78;color:var(--tx);margin-bottom:28px}
+.q-opts{display:flex;flex-direction:column;gap:10px}
+.q-opt{background:var(--bg2);border:1px solid var(--bd);border-radius:12px;padding:14px 20px;cursor:pointer;transition:all .2s;font-size:.9rem;color:var(--tx);text-align:left;display:flex;align-items:center;gap:14px;width:100%}
+.q-opt:hover{border-color:var(--ac);background:rgba(0,212,170,.05)}
+.q-opt.sel{border-color:var(--ac);background:rgba(0,212,170,.1)}
+.q-opt.correct{border-color:#27ae60;background:rgba(39,174,96,.12);color:#27ae60}
+.q-opt.wrong{border-color:#e74c3c;background:rgba(231,76,60,.08);color:#e74c3c}
+.q-lt{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;transition:all .2s}
+.q-opt.sel .q-lt{background:var(--ac);color:#000}
+.q-opt.correct .q-lt{background:#27ae60;color:#fff}
+.q-opt.wrong .q-lt{background:#e74c3c;color:#fff}
+.q-fb{margin-top:20px;padding:16px 20px;border-radius:12px;background:var(--bg3);border-left:4px solid var(--ac);display:none}
+.q-fb.show{display:block}
+.q-fb-t{font-weight:700;margin-bottom:8px;font-size:.9rem}
+.q-fb-t.ok{color:#27ae60}.q-fb-t.err{color:#e74c3c}
+.q-fb-p{font-size:.84rem;color:var(--tx2);line-height:1.65}
+.q-nav{display:flex;align-items:center;justify-content:space-between;margin-top:32px;flex-wrap:wrap;gap:12px}
+.btn-q{background:var(--ac);color:#000;border:none;padding:12px 32px;border-radius:10px;font-weight:700;cursor:pointer;font-family:'Source Sans 3',sans-serif;font-size:.95rem;transition:all .2s}
+.btn-q:hover{background:#00b896}.btn-q:disabled{opacity:.4;cursor:not-allowed}
+.btn-qs{background:transparent;border:1px solid var(--bd);color:var(--tx2);padding:12px 24px;border-radius:10px;font-size:.9rem;cursor:pointer;font-family:'Source Sans 3',sans-serif;transition:all .2s}
+.btn-qs:hover{border-color:var(--ac);color:var(--ac)}
+.qr{text-align:center;padding:60px 20px}
+.qr-score{font-size:5rem;font-weight:900;font-family:'Playfair Display',serif;color:var(--ac)}
+.qr-tot{color:var(--tx2);margin-bottom:8px}
+.qr-msg{font-size:1.2rem;font-family:'Playfair Display',serif;margin-bottom:40px}
+.qr-grid{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;margin-bottom:40px}
+.qr-n{font-size:2rem;font-weight:700}.qr-l{font-size:.72rem;color:var(--tx2);text-transform:uppercase;letter-spacing:1px}
+.qr-ok{color:#27ae60}.qr-er{color:#e74c3c}
+#page-cases{padding:0}
+.cas-top{padding:48px 20px 28px;text-align:center;background:linear-gradient(180deg,var(--bg2),transparent);border-bottom:1px solid var(--bd)}
+.cas-top h1{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.4rem);color:var(--ac)}
+.cas-body{max-width:900px;margin:0 auto;padding:32px 20px 60px;display:flex;flex-direction:column;gap:48px}
+.cc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.cc-hd{padding:22px 24px;background:var(--bg3);border-bottom:1px solid var(--bd)}
+.cc-num{font-size:.68rem;color:var(--ac);text-transform:uppercase;letter-spacing:3px;font-weight:700;margin-bottom:4px}
+.cc-ttl{font-family:'Playfair Display',serif;font-size:1.2rem}
+.cc-path{display:inline-block;margin-top:8px;background:rgba(0,212,170,.1);border:1px solid rgba(0,212,170,.3);border-radius:50px;padding:3px 14px;font-size:.73rem;color:var(--ac);font-weight:600}
+.cc-bd{padding:24px}
+.cc-scen{background:var(--bg3);border-radius:12px;padding:18px 20px;margin-bottom:22px;border-left:4px solid var(--ac2)}
+.cc-scen p{font-size:.9rem;line-height:1.85;color:var(--tx)}
+.vitals{display:grid;grid-template-columns:repeat(auto-fill,minmax(105px,1fr));gap:10px;margin-bottom:22px}
+.vt{background:var(--bg3);border-radius:10px;padding:12px;text-align:center}
+.vt-v{font-size:1.05rem;font-weight:700;color:var(--ac);font-family:'Fira Code',monospace}
+.vt-l{font-size:.62rem;color:var(--tx2);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+.cc-lab{background:var(--bg3);border-radius:12px;padding:14px 18px;margin-bottom:22px}
+.cc-lab-t{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx2);margin-bottom:10px}
+.lab-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px}
+.li{display:flex;justify-content:space-between;font-size:.8rem;padding:2px 0}
+.li-k{color:var(--tx2)}.li-v{font-weight:600;font-family:'Fira Code',monospace;font-size:.77rem}
+.li-v.ab{color:#e74c3c}
+.cc-qs{display:flex;flex-direction:column;gap:16px}
+.cc-qn{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--ac);margin-bottom:5px}
+.cc-qt{font-size:.93rem;font-weight:600;color:var(--tx);margin-bottom:9px}
+.cc-ans{background:var(--bg3);border-radius:10px;overflow:hidden;border:1px solid transparent;transition:all .3s}
+.cc-ans.rev{border-color:rgba(0,212,170,.3)}
+.cc-ansbtn{width:100%;text-align:left;background:none;border:none;color:var(--tx2);padding:12px 16px;cursor:pointer;font-size:.8rem;font-family:'Source Sans 3',sans-serif;display:flex;align-items:center;gap:8px;transition:color .2s}
+.cc-ansbtn:hover{color:var(--ac)}
+.cc-anshid{padding:0 16px 14px;font-size:.86rem;line-height:1.75;color:var(--tx);display:none}
+.cc-ans.rev .cc-anshid{display:block}
+.rev-ic{transition:transform .3s}
+.cc-ans.rev .rev-ic{transform:rotate(90deg)}
+/* ═══ RESPONSIVE MOBILE ═══ */
+@media(max-width:768px){
+  /* Cover */
+  #page-cover{padding:32px 16px;}
+  .cov-t{font-size:clamp(2rem,8vw,3rem);}
+  .cov-st{font-size:.9rem;}
+  .cov-stats{gap:16px;flex-wrap:wrap;justify-content:center;}
+  .btn-start{padding:14px 36px;font-size:1rem;}
+
+  /* Top nav */
+  .top-nav{padding:10px 14px;gap:10px;}
+  .btn-home{padding:7px 14px;font-size:13px;}
+  .nav-lbl{font-size:14px;}
+
+  /* Internal dashboard */
+  #page-dashboard .sec-grid{grid-template-columns:1fr;padding:16px;}
+  .sc{padding:20px;}
+  .dec{padding:16px;}
+
+  /* Flashcards */
+  .fc-grid{grid-template-columns:1fr;padding:16px 12px 40px;}
+  .fcw{height:520px;}
+  .fc-fh{padding:14px 16px;}
+  .fc-fb{padding:12px 14px;}
+  .fc-bb{padding:12px 14px;}
+
+  /* Section hero */
+  .sec-hero{padding:32px 16px 20px;}
+  .sec-hero h2{font-size:clamp(1.4rem,5vw,2rem);}
+
+  /* Grids → single column */
+  .sec-grid{grid-template-columns:1fr;}
+  .vitals{grid-template-columns:repeat(2,1fr);}
+  .lab-grid{grid-template-columns:1fr;}
+  .qr-grid{gap:16px;grid-template-columns:1fr;}
+
+  /* Quiz */
+  .q-card{padding:20px 16px;}
+  .q-opts{gap:8px;}
+  .q-opt{padding:10px 14px;font-size:.88rem;}
+
+  /* Cases */
+  .case-body{padding:16px;}
+  .case-hd{padding:14px 16px;}
+
+  /* Back button position */
+  a[href="dashboard.html"]{
+    bottom:16px !important;
+    left:16px !important;
+    padding:9px 16px !important;
+    font-size:12px !important;
+  }
+}
+
+@media(max-width:480px){
+  .fcw{height:580px;}
+  .cov-stats{gap:12px;}
+  #page-cover{padding:24px 12px;}
+  .cov-t{font-size:clamp(1.6rem,9vw,2.2rem);}
+  .fc-grid{padding:12px 8px 48px;}
+  .top-nav{padding:8px 10px;gap:8px;}
+  .btn-home{padding:6px 12px;font-size:12px;}
+  .nav-lbl{font-size:13px;}
+  .sec-hero{padding:24px 12px 16px;}
+  .sc{padding:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div id="page-cover" class="page active">
+<div class="cov-in">
+<div class="cov-badge">🔬 Microbiologia Médica · Gram-Negativos</div>
+<h1 class="cov-h1">Resumo de <em>Microbiologia</em><br>Teórica</h1>
+<p class="cov-h2">Bacteriologia Clínica — Bacilos e Cocos Gram-Negativos</p>
+<p class="cov-author">✦ Feito por Enzo Salmazo ✦</p>
+<div class="cov-stats">
+<div><div class="cov-sn">24</div><div class="cov-sl">Microrganismos</div></div>
+<div><div class="cov-sn">6</div><div class="cov-sl">Seções</div></div>
+<div><div class="cov-sn">50</div><div class="cov-sl">Questões</div></div>
+<div><div class="cov-sn">4</div><div class="cov-sl">Casos Clínicos</div></div>
+</div>
+<button class="btn-start" onclick="showPage('page-dashboard')">▶ Iniciar Estudos</button>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page">
+<div class="dash-top">
+<h1 class="dash-h1">Painel de Estudos</h1>
+<p class="dash-sub">Selecione uma seção para iniciar os flashcards ou vá direto para o quiz e casos clínicos</p>
+</div>
+<div class="sec-grid" id="dash-secs"></div>
+<div style="max-width:1200px;margin:0 auto;padding:0 20px 16px"><p style="font-size:.72rem;color:var(--tx2);text-transform:uppercase;letter-spacing:2px;font-weight:700">Avaliação &amp; Prática</p></div>
+<div class="dash-extra">
+<div class="dec" onclick="initQuiz();showPage('page-quiz')"><div class="dec-ic">📝</div><div class="dec-nm">Quiz — 50 Questões</div><div class="dec-sub">Estilo prova com gabarito comentado</div></div>
+<div class="dec" onclick="showPage('page-cases')"><div class="dec-ic">🏥</div><div class="dec-nm">Casos Clínicos</div><div class="dec-sub">4 casos completos — diagnóstico e tratamento</div></div>
+</div>
+</div>
+
+<!-- SECTION PAGES -->
+<div id="page-enterobac" class="page"></div>
+<div id="page-nonferment" class="page"></div>
+<div id="page-haemoph" class="page"></div>
+<div id="page-neisseria" class="page"></div>
+<div id="page-others" class="page"></div>
+<div id="page-spirochetes" class="page"></div>
+
+<!-- QUIZ -->
+<div id="page-quiz" class="page">
+<div class="top-nav">
+<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
+<span class="nav-lbl">Quiz de Microbiologia</span>
+</div>
+<div class="q-top">
+<h1>📝 Quiz — 50 Questões</h1>
+<span class="q-ctr" id="q-ctr">Questão 1 de 50</span>
+</div>
+<div class="prog-wrap"><div class="prog-fill" id="q-prog" style="width:2%"></div></div>
+<div class="q-main" id="q-main"></div>
+</div>
+
+<!-- CASES -->
+<div id="page-cases" class="page">
+<div class="top-nav">
+<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
+<span class="nav-lbl">Casos Clínicos</span>
+</div>
+<div class="cas-top">
+<h1>🏥 Casos Clínicos</h1>
+<p style="color:var(--tx2);margin-top:8px;font-size:.88rem">Identificação do patógeno · Exames · Tratamento de 1ª linha e resistência</p>
+</div>
+<div class="cas-body" id="cas-body"></div>
+</div>
+
+<script>
+const sections=[
+{id:'enterobac',nm:'Enterobacteriaceae',ic:'🦠',c:'#e67e22',ds:'E. coli, Klebsiella (3 spp.), Serratia, Proteus, Shigella, Salmonella, Yersinia',ct:9},
+{id:'nonferment',nm:'Bacilos Curvos / Não-Fermentadores',ic:'🧫',c:'#3498db',ds:'Pseudomonas, Vibrio, Campylobacter, Helicobacter',ct:4},
+{id:'haemoph',nm:'Haemophilaceae & Similares',ic:'🔬',c:'#9b59b6',ds:'H. influenzae, H. ducreyi, Bordetella, Pasteurella',ct:4},
+{id:'neisseria',nm:'Neisseriaceae',ic:'💎',c:'#e74c3c',ds:'N. gonorrhoeae, N. meningitidis',ct:2},
+{id:'others',nm:'Outros Gram-Negativos',ic:'🌿',c:'#1abc9c',ds:'Fusobacterium, Gardnerella, Legionella',ct:3},
+{id:'spirochetes',nm:'Espiroquetas',ic:'🌀',c:'#f1c40f',ds:'Treponema pallidum, Leptospira interrogans',ct:2}
+];
+
+const bacteria=[
+{id:'ecoli',sec:'enterobac',nm:'Escherichia coli',g:'Gram-Negativo',mo:'Bacilo',ox:'Anaeróbio Facultativo',
+kf:'Principal causa de ITU (80%); meningite neonatal (cápsula K1); sepse gram-negativa',
+ag:'MacConkey: colônias ROSA-ESCURAS (fermenta lactose); EMB: brilho metálico-verde; CLED',
+dis:['ITU comunitária (80%)','Meningite neonatal (K1)','Sepse','Peritonite','Pneumonia nosocomial'],
+vir:['Fímbrias tipo 1 e P (uropatogênica)','Flagelos (mobilidade)','LPS (endotoxina/pirexia)','α-hemolisina','Sideróforos (aerobactina)','Cápsula K1 (meningite neonatal)'],
+dx:['Urocultura: >10⁵ UFC/mL (ITU)','MacConkey: colônias rosas (lactose ⊕)','IMViC: Indol ⊕ | VMR ⊕ | VP ⊖ | Citrato ⊖ (++--)', 'Hemocultura + cultura LCR','β-glucuronidase ⊕'],
+tx1:['ITU simples: TMP-SMX ou nitrofurantoína VO','ITU complicada: ceftriaxona IV','Meningite neonatal: ampicilina + gentamicina IV','Sepse: meropenem (grave)'],
+txR:['ESBL → meropenem, ertapenem','KPC → ceftazidima-avibactam','NDM → aztreonam-avibactam, cefiderocol','AmpC → cefepima ou carbapenems'],
+sp:'⚠️ ESBL crescente — evitar fluoroquinolonas empíricas sem antibiograma!',
+ex:'IMViC de E. coli = (++ - -): Indol ⊕ | Vermelho de Metila ⊕ | Voges-Proskauer ⊖ | Citrato ⊖'},
+
+{id:'kpneumo',sec:'enterobac',nm:'Klebsiella pneumoniae',g:'Gram-Negativo',mo:'Bacilo encapsulado',ox:'Anaeróbio Facultativo',
+kf:'"Escarro em geleia de groselha" — pneumonia necrosante em alcoolistas; ESKAPE pathogen; cápsula muito espessa',
+ag:'MacConkey: colônias ROSA MUCOIDE (hipercapsuladaas); Teste do fio ⊕ (>5mm = hvKP)',
+dis:['Pneumonia lobar necrosante','ITU nosocomial','Sepse/bacteremia','Meningite','Abscesso hepático (hvKP)'],
+vir:['Cápsula polissacarídica (principal fator)','LPS','Fímbrias tipo 1 e 3','Sideróforos (aerobactina, enterobactina)','Hipermucoviscosidade (hvKP)'],
+dx:['MacConkey: colônias mucoide rosas','Indol ⊖, VP ⊕, Citrato ⊕, Urease ⊕','Teste do fio: >5mm (hvKP)','PCR resistência (blaKPC, blaNDM)','MALDI-TOF'],
+tx1:['Sem ESBL: ceftriaxona, pip-tazo','ESBL ⊕: meropenem IV','Pneumonia grave: meropenem 2g 8/8h IV'],
+txR:['KPC → ceftazidima-avibactam (Avycaz)','NDM → aztreonam-avibactam, cefiderocol','Polimixina B: última linha','Fosfomicina (ITU, sinérgico)'],
+sp:'⚠️ KPC (Klebsiella Carbapenemase) = emergência infecciosa global. ESKAPE pathogen.',
+ex:'hvKP (hipermucoviscosa): abscesso hepático em jovens asiáticos saudáveis — "Klebsiella invasiva"'},
+
+{id:'koxytoca',sec:'enterobac',nm:'Klebsiella oxytoca',g:'Gram-Negativo',mo:'Bacilo encapsulado',ox:'Anaeróbio Facultativo',
+kf:'Diferencia-se de K. pneumoniae pelo INDOL ⊕; colite hemorrágica associada a antibióticos (tilivalina)',
+ag:'MacConkey: mucoide rosa (similar a K. pneumoniae)',
+dis:['ITU nosocomial','Colite hemorrágica por ATB (amoxicilina, cefalosporinas)','Bacteremia','Pneumonia nosocomial'],
+vir:['Cápsula','LPS','Tilivalina (toxina → colite hemorrágica)'],
+dx:['INDOL ⊕ (principal diferenciador de K. pneumoniae)','VP ⊕, Citrato ⊕','MALDI-TOF (definitivo)','Colonoscopia: mucosa hemorrágica'],
+tx1:['ITU: cefalosporinas, fluoroquinolonas','Colite hemorrágica: SUSPENDER ATB causador (autolimitada)'],
+txR:['ESBL → carbapenems','KPC (menos freq. que K. pneumoniae)'],
+sp:'⚠️ Colite hemorrágica: autolimitada após suspensão do antibiótico causador.',
+ex:'Mnemônico: K. oxytoca = "oXYtoca" → indOL positivo (diferencia das demais Klebsiella)'},
+
+{id:'kgranulo',sec:'enterobac',nm:'Klebsiella granulomatis',g:'Gram-Negativo',mo:'Cocobacilo intracelular',ox:'Anaeróbio Facultativo',
+kf:'Donovanose (Granuloma Inguinal) — IST tropical; úlceras genitais indolores progressivas; Corpos de Donovan',
+ag:'NÃO cultivável em meios convencionais; ovos embrionados ou células HEp-2',
+dis:['Donovanose (granuloma inguinal)','Úlceras genitais crônicas e progressivas','Linfadenopatia inguinal','Disseminação sistêmica (rara)'],
+vir:['Sobrevivência intracelular em macrófagos','Corpos de Donovan (bactérias em células mononucleares)'],
+dx:['Biópsia: Corpos de Donovan em macrófagos (Giemsa/Warthin-Starry) — diagnóstico histológico','PCR (gold standard atual)','Não cultivável em laboratório convencional'],
+tx1:['Azitromicina 1g/semana VO ≥3 semanas (até cicatrização)','Doxiciclina 100mg 12/12h ≥3 semanas'],
+txR:['Ciprofloxacino 750mg 12/12h ≥3 semanas','Eritromicina 500mg 6/6h ≥3 semanas (gestantes)','TMP-SMX 800/160mg 12/12h ≥3 semanas'],
+sp:'⚠️ Não confundir: Donovanose (K. granulomatis) ≠ LGV (Chlamydia) ≠ Cancroide (H. ducreyi).',
+ex:'Endêmica: Papua Nova Guiné, Índia, África do Sul, Caribe. Corpos de Donovan = patognomônico'},
+
+{id:'serratia',sec:'enterobac',nm:'Serratia spp.',g:'Gram-Negativo',mo:'Bacilo',ox:'Anaeróbio Facultativo',
+kf:'Pigmento VERMELHO (prodigiosina) a 22–25°C — S. marcescens; infecções nosocomiais em UTI; DNase ⊕',
+ag:'MacConkey: rosa/vermelho a T° ambiente (NÃO a 37°C!); colônias brancas a 37°C podem ser confundidas',
+dis:['Pneumonia nosocomial (VM)','ITU por cateter','Bacteremia/sepse','Endocardite (UDIV)','Infecção em queimados'],
+vir:['LPS','Hemolisina','Proteases (serralysin)','Lipase','Biofilme (MRSA-like persistence)'],
+dx:['Pigmento vermelho a 22°C (NÃO a 37°C!)','DNase ⊕ (diferencia de Enterobacteriaceae)','Gelatinase ⊕','MacConkey: rosa','MALDI-TOF'],
+tx1:['Cefalosporinas 3ª/4ª geração (ceftriaxona, cefepima)','Fluoroquinolonas (ciprofloxacino)','Carbapenems (sepse grave)'],
+txR:['AmpC → cefepima ou carbapenems','MDR → polimixina B + meropenem','Intrínseco: resistente a ampicilina, cef 1ª–2ª, colistina (S. marcescens)'],
+sp:'⚠️ Resistência intrínseca: ampicilina, cefalosporinas 1ª–2ª geração, colistina (S. marcescens).',
+ex:'Prodigiosina a 22–25°C, NÃO a 37°C → pode ser confundido com contaminante ambiental no laboratório'},
+
+{id:'proteus',sec:'enterobac',nm:'Proteus spp.',g:'Gram-Negativo',mo:'Bacilo (altamente móvel)',ox:'Anaeróbio Facultativo',
+kf:'Urease ⊕⊕⊕ → urina alcalina → cálculos de estruvita; SWARMING em ágar; H₂S ⊕',
+ag:'MacConkey: INCOLOR (não fermenta lactose); swarming concêntrico em ágar sangue',
+dis:['ITU complicada + cálculos de estruvita','Pielonefrite','Bacteremia','Feridas cirúrgicas','Meningite neonatal (P. mirabilis)'],
+vir:['Flagelos (swarming — motilidade em enxame)','Urease (↑pH urina → cristais de estruvita MgNH₄PO₄)','Proteases de IgA/IgG','Hemolisina (P. mirabilis)','ZapA (metaloproteasa)'],
+dx:['Urease ⊕⊕⊕ (muito forte)','H₂S ⊕','Indol ⊖ (P. mirabilis) / Indol ⊕ (P. vulgaris)','Swarming em ágar sangue','pH urinário >7 + cristais de estruvita','MALDI-TOF'],
+tx1:['P. mirabilis: ampicilina (se sensível), cefalosporinas','ITU complicada: TMP-SMX, ciprofloxacino','Sepse: ceftriaxona, pip-tazo IV'],
+txR:['P. vulgaris: resistência intrínseca à ampicilina → cef 3ª geração','ESBL → carbapenems','MDR → pip-tazo + aminoglicosídeo'],
+sp:'⚠️ Cálculos de estruvita (fosfato de amônio-magnésio) formam-se em urina alcalina pela urease.',
+ex:'Reação de Weil-Felix: Proteus OX-19/OX-2 tem antígenos cruzados com Rickettsia (diagnóstico histórico de riquetsioses)'},
+
+{id:'shigella',sec:'enterobac',nm:'Shigella spp.',g:'Gram-Negativo',mo:'Bacilo (IMÓVEL)',ox:'Anaeróbio Facultativo',
+kf:'Dose infectante ≈ 10 organismos; invasão da mucosa colônica; Toxina Shiga (Stx1) em S. dysenteriae',
+ag:'MacConkey: INCOLOR (não fermenta lactose); Hektoen/XLD/SS: colônias verdes/incolores sem H₂S',
+dis:['Disenteria bacilar (sangue + muco + pus)','SHU — S. dysenteriae tipo 1 (Stx1)','Convulsões febris (crianças)','Artrite reativa (Sínd. de Reiter)'],
+vir:['Invasinas IpaB, C, D (SST3 — invasão epitélio)','Toxina Shiga Stx1 (S. dysenteriae): inibe síntese proteica pelo 28S rRNA','LPS (pirexia)','Propagação célula-a-célula (actin-based motility)'],
+dx:['Coprocultura: Hektoen/XLD/SS agar','IMÓVEL (diferencia de Salmonella)','H₂S ⊖, Lactose ⊖','PCR multiplex (fezes — direto)','ELISA Shiga toxina (SHU)'],
+tx1:['Ciprofloxacino 500mg 12/12h VO ×3 dias (adultos)','Azitromicina 500mg D1 → 250mg D2–5 (crianças, gestantes)','Ceftriaxona IV (formas graves)'],
+txR:['Resistência crescente a fluoroquinolonas e ampicilina','TMP-SMX: apenas se antibiograma sensível','Sempre verificar sensibilidade local'],
+sp:'⚠️ NUNCA usar antiperistálticos (loperamida) na disenteria invasiva — piora dramaticamente o quadro!',
+ex:'Espécies: A=dysenteriae, B=flexneri, C=boydii, D=sonnei (mais comum no Brasil). Mnemônico: "A Bela Castelo Domina"'},
+
+{id:'salmonella',sec:'enterobac',nm:'Salmonella Typhi e não-Typhi',g:'Gram-Negativo',mo:'Bacilo móvel (flagelo peritríqueo)',ox:'Anaeróbio Facultativo',
+kf:'S. Typhi: febre tifoide = febre em degrau + bradicardia relativa + manchas rosadas; não-Typhi: gastroenterite autolimitada',
+ag:'MacConkey: incolor; SS/Hektoen: H₂S (centro negro); Bismuto-sulfito: colônias negras',
+dis:['Febre tifoide (S. Typhi/Paratyphi)','Gastroenterite alimentar (não-Typhi)','Bacteremia (não-Typhi em imunossuprimidos)','Portador crônico (vesícula biliar)'],
+vir:['Antígeno Vi (cápsula — S. Typhi)','LPS (febre)','Invasão das Placas de Peyer','CDT (toxina)','Sobrevivência intracelular em macrófagos (SPI-2)'],
+dx:['1ª semana: HEMOCULTURA (gold standard)','2ª–3ª semana: coprocultura, urinocultura, mielocultura','Widal: ≥1:160 anti-O/H (baixa especificidade)','H₂S ⊕, Lactose ⊖, Móvel','PCR e RDT (teste rápido)'],
+tx1:['Febre tifoide: ceftriaxona 2g IV/dia ×14 dias','Alternativa: azitromicina 1g/dia ×5–7 dias','Gastroenterite não-Typhi: SUPORTE HÍDRICO (sem ATB!)'],
+txR:['S. Typhi MDR: azitromicina + ceftriaxona','XDR Typhi (Paquistão): aztreonam, carbapenems','Vacina Vi-PS ou Ty21a (prevenção)'],
+sp:'⚠️ NÃO tratar gastroenterite não-Typhi com ATB — prolonga excreção e seleciona resistência!',
+ex:'Febre tifoide: bradicardia relativa + roséola tifoide (manchas rosadas no tronco, 3ª semana) + leucopenia + esplenomegalia'},
+
+{id:'yersinia',sec:'enterobac',nm:'Yersinia pestis',g:'Gram-Negativo',mo:'Cocobacilo (bipolar — "alfinete de segurança")',ox:'Anaeróbio Facultativo',
+kf:'Peste bubônica: pulgas de roedores → bubão inguinal doloroso; mortalidade >50% sem tratamento; BSL-3',
+ag:'Ágar sangue 28°C: colônias acinzentadas ("ovo frito"); NÃO cresce bem em MacConkey a 37°C',
+dis:['Peste bubônica (bubão = linfadenomegalia supurativa)','Peste septicêmica (bacteremia + CIVD)','Peste pneumônica (pneumonia grave, transmissão respiratória)','Y. enterocolitica: gastroenterite/linfadenite mesentérica'],
+vir:['Antígeno F1 (cápsula anti-fagocítica)','LcrV (antígeno V — anti-inflamatório)','Pla (ativador do plasminogênio)','Yops (SST3 — efetores)','Yersiniabactina (sideróforo)'],
+dx:['Aspirado de bubão: coloração Wayson/Giemsa — bipolar ("alfinete de segurança")','DIF (imunofluorescência direta)','Hemocultura (BSL-3)','ELISA antígeno F1','PCR (gene F1)'],
+tx1:['Estreptomicina 15mg/kg 12/12h IM ×10 dias (DOC clássico)','Gentamicina IV/IM (mais usada atualmente)','Doxiciclina VO (ambulatorial/profilaxia)'],
+txR:['Cloranfenicol (meningite pestosa — boa penetração SNC)','Ciprofloxacino (alternativa)','Cepas resistentes raras (reportadas em Madagascar)'],
+sp:'⚠️ NOTIFICAÇÃO COMPULSÓRIA IMEDIATA (OMS). BSL-3. Potencial arma biológica.',
+ex:'Y. enterocolitica: linfadenite mesentérica → diferencial de apendicite! Coloração bipolar "safety pin" = característica diagnóstica'},
+
+// NON-FERMENTERS
+{id:'pseudomonas',sec:'nonferment',nm:'Pseudomonas aeruginosa',g:'Gram-Negativo',mo:'Bacilo não-fermentador',ox:'Aeróbio estrito',
+kf:'Piocianina (azul) + Pioverdina (verde fluorescente); odor de uva; ESKAPE pathogen; FC e neutropênicos',
+ag:'MacConkey: INCOLOR (não fermenta); Oxidase ⊕; Cetrimida (seletivo): fluorescente; cresce a 42°C',
+dis:['Pneumonia hospitalar/VAP','Fibrose cística (exacerbação)','Queimados','ITU nosocomial','Otite externa maligna (diabéticos)','Ecthyma gangrenosum (neutropênicos)'],
+vir:['Piocianina (azul — ROS antimicrobiano)','Pioverdina (verde — sideróforo fluorescente)','Exotoxina A (ADP-ribosila EF-2 = mesmo mecanismo da toxina diftérica)','Elastase (LasB)','Alginato (biofilme em FC)','ExoU, ExoS, ExoT, ExoY (SST3)'],
+dx:['Oxidase ⊕⊕ (fundamental)','NÃO fermenta glicose (OF oxidativo apenas)','Pigmento azul-verde','Odor de uva madura (2-aminoacetofenona)','Cresce a 42°C (diferencia de P. fluorescens)','Cetrimida: fluorescente','MALDI-TOF'],
+tx1:['Piperacilina-tazobactam 4,5g 6/6h IV','Ceftazidima 2g 8/8h IV','Meropenem 1–2g 8/8h IV (antipseudomonas)','Ciprofloxacino (FQ com atividade anti-Pseudo)','Amicacina/gentamicina (combinação)'],
+txR:['MDR: ceftolozana-tazobactam (Zerbaxa)','XDR: cefiderocol, imipenem-relebactam','Última linha: polimixina B + fosfomicina','Intrínseco: amp, cef 1ª–2ª, TMP-SMX, tetraciclinas'],
+sp:'⚠️ Ecthyma gangrenosum = lesão cutânea necrótica hemorrágica → sepse por P. aeruginosa em neutropênicos até prova em contrário!',
+ex:'Exotoxina A ≡ Toxina Diftérica: ambas ADP-ribosilam EF-2 (Fator de Elongação 2) → inibem síntese proteica'},
+
+{id:'vibrio',sec:'nonferment',nm:'Vibrio cholerae',g:'Gram-Negativo',mo:'Bacilo curvo (vírgula)',ox:'Anaeróbio Facultativo',
+kf:'Cólera: diarreia "água de arroz" profusa; Toxina Colérica → ↑AMPc → hipersecreção; NOTIFICAÇÃO COMPULSÓRIA',
+ag:'TCBS: colônias AMARELAS (V. cholerae O1/O139 — sacarose ⊕); pH alcalino (8,6) favorece crescimento',
+dis:['Cólera (V. cholerae O1 El Tor e O139)','Gastroenterite leve (não-O1/não-O139)','V. vulnificus: septicemia grave (feridas + água do mar)','V. parahaemolyticus: intoxicação por frutos do mar'],
+vir:['Toxina Colérica (CT): ADP-ribosila Gsα → adenilato ciclase permanentemente ativa → ↑AMPc → hipersecreção Cl⁻/H₂O','TCP (fímbria corregulada pela toxina — colonização)','RTX toxin','Neuraminidase'],
+dx:['Campo escuro: mobilidade "disparo de canhão"','TCBS: colônias amarelas (sacarose ⊕)','Aglutinação com antisoro O1/O139','PCR (gene ctxA — toxigênico)','RDT (imunocromatográfico — rápido)'],
+tx1:['REIDRATAÇÃO ORAL/IV = tratamento PRIMÁRIO (SRO OMS ou Ringer Lactato)','Doxiciclina 300mg dose única VO (adultos)','Azitromicina 1g dose única VO (crianças, gestantes)'],
+txR:['TMP-SMX (onde sensível)','Ciprofloxacino 1g dose única','Resistência a tetraciclinas crescente em V. cholerae O139'],
+sp:'⚠️ NOTIFICAÇÃO COMPULSÓRIA OMS. Reidratação adequada reduz mortalidade de >50% para <1%!',
+ex:'Mecanismo CT: Subunit B → GM1 gangliosídeo → A1 ADP-ribosila Gsα → adenilato ciclase ativa permanente → ↑AMPc → CFTR secreta Cl⁻ → H₂O por osmose → diarreia profusa'},
+
+{id:'campylo',sec:'nonferment',nm:'Campylobacter spp.',g:'Gram-Negativo',mo:'Bacilo curvo ("asa de gaivota")',ox:'Microaerófilo (5% O₂, 10% CO₂)',
+kf:'Principal causa bacteriana de diarreia em países desenvolvidos; FORTEMENTE associado à Síndrome de Guillain-Barré',
+ag:'Skirrow/Campy agar a 42°C em microaerofilia (3–5 dias); colônias acinzentadas, mucoides',
+dis:['Gastroenterite febril com diarreia sanguinolenta','Síndrome de Guillain-Barré (mimetismo GM1)','Síndrome de Miller Fisher','Artrite reativa','Bacteremia (imunossuprimidos)'],
+vir:['CDT (toxina distensora citoletal)','CiaB (invasina)','Flagelos (CflA, CflB)','LOS (mimetismo com GM1 → auto-anticorpos → SGB)','Adesinas (PEB1)'],
+dx:['Cultura: Skirrow a 42°C microaerofilia — gold standard','Gram: bacilos curvos "asa de gaivota"','Oxidase ⊕, Catalase ⊕','Hipurato ⊕ = C. jejuni (diferencia de C. coli)','PCR multiplex (fezes direto)','EIA antígeno fecal'],
+tx1:['Maioria AUTOLIMITADA (3–7 dias): hidratação oral','Azitromicina 500mg/dia ×3–5 dias (quando indicado)','Formas graves: aminoglicosídeos IV'],
+txR:['Resistência crescente a fluoroquinolonas (>50% em alguns países — NÃO usar empiricamente)','Eritromicina (alternativa clássica)','Aminoglicosídeos (invasivos graves)'],
+sp:'⚠️ SGB pós-Campylobacter: 1–3 semanas após diarreia. C. jejuni O:19 → anti-GM1 → polineuropatia desmielinizante ascendente.',
+ex:'Reservatório: aves domésticas (frango — temperatura intestinal 42°C = ótimo crescimento). Hipurato ⊕ = C. jejuni'},
+
+{id:'helicobacter',sec:'nonferment',nm:'Helicobacter pylori',g:'Gram-Negativo',mo:'Bacilo espiral (helicoidal)',ox:'Microaerófilo',
+kf:'Carcinógeno Grupo I (OMS); urease ⊕⊕⊕; úlcera péptica, gastrite crônica, adenocarcinoma gástrico, linfoma MALT',
+ag:'Brucella/Columbia agar + sangue; 5–10% CO₂; 37°C; 3–5 dias (crescimento lento)',
+dis:['Gastrite crônica ativa (100% dos infectados)','Úlcera duodenal (90–95%)','Úlcera gástrica (70–80%)','Adenocarcinoma gástrico','Linfoma MALT gástrico'],
+vir:['Urease ⊕⊕⊕ (neutraliza HCl gástrico)','CagA (ilha cag + TFSS → reorganização do citoesqueleto → carcinogênese)','VacA (vacuolização → apoptose)','BabA (adesina Lewis B)','OipA (inflamação)'],
+dx:['Teste respiratório ¹³C-ureia (gold standard pós-tratamento — não invasivo)','Antígeno fecal (ELISA/imunocromatografia)','Endoscopia + biópsia: CLO (urease rápida), histologia (Giemsa), cultura','Sorologia IgG (triagem — não diferencia ativo vs curado)','PCR (resistência à claritromicina)'],
+tx1:['Terapia tripla 14 dias: IBP (2×/dia) + Claritromicina 500mg + Amoxicilina 1g 12/12h','Terapia quádrupla (resistência): IBP + Bismuto + Metronidazol + Tetraciclina ×14 dias'],
+txR:['Resistência à claritromicina: PCR antes ou quádrupla empírica','2ª linha: IBP + Levofloxacino + Amoxicilina ×14 dias','3ª linha: IBP + Rifabutina + Amoxicilina'],
+sp:'⚠️ Confirmar erradicação: ¹³C-ureia ou antígeno fecal 4–6 semanas após término do tratamento (suspender IBP 2 semanas antes).',
+ex:'CagA = "oncoproteína bacteriana". Regra dos 20: 80% infectados → 20% úlcera → 1–2% câncer gástrico'},
+
+// HAEMOPHILACEAE
+{id:'hinfluenzae',sec:'haemoph',nm:'Haemophilus influenzae',g:'Gram-Negativo',mo:'Cocobacilo pleomórfico',ox:'Anaeróbio Facultativo',
+kf:'Fatores X (hemina) e V (NAD); cresce em ágar CHOCOLATE (não em sangue); satelitismo com S. aureus; Hib = meningite/epiglotite',
+ag:'Ágar CHOCOLATE (X e V livres por hemólise); satelitismo ao redor de S. aureus; NÃO cresce em ágar sangue',
+dis:['Meningite bacteriana (Hib <5 anos — não vacinados)','Epiglotite aguda (Hib — "cereja vermelha")','Pneumonia','Otite média/sinusite (H. influenzae não tipável)','Artrite séptica','Celulite periorbitária'],
+vir:['Cápsula PRP (poliribosil-ribitol-fosfato) — sorotipo b = principal fator invasivo','IgA1 protease','LOS (lipooligossacarídeo)','Fímbrias','OMP P2, P5, P6 (adesão)'],
+dx:['Ágar chocolate (fatores X e V livres)','Satelitismo ao redor de S. aureus (S. aureus fornece fator V)','Discos X + V separados (crescimento apenas quando juntos)','Hemocultura + cultura de LCR','PCR multiplex','Látex-aglutinação (PRP no LCR)'],
+tx1:['Meningite Hib: ceftriaxona 100mg/kg/dia IV ×7–10 dias','Epiglotite: ceftriaxona IV + VIA AÉREA SEGURA (URGÊNCIA!)','Otite/sinusite: amoxicilina-clavulanato VO'],
+txR:['β-lactamase ⊕ → amoxicilina-clavulanato, ceftriaxona','BLNAR (resistência sem β-lactamase) → fluoroquinolonas','Cloranfenicol (alternativa histórica — meningite)'],
+sp:'⚠️ VACINA Hib (PRP-proteína carreadora) = conquista em saúde pública. Epiglotite: NÃO examinar garganta sem via aérea segura!',
+ex:'"Sinal do polegar" (thumb sign) na RX lateral: epiglote edemaciada. Satelitismo: S. aureus fornece fator V (NAD) → H. influenzae cresce ao redor'},
+
+{id:'hducreyi',sec:'haemoph',nm:'Haemophilus ducreyi',g:'Gram-Negativo',mo:'Cocobacilo ("cardume de peixes")',ox:'Anaeróbio Facultativo',
+kf:'Cancroide (cancro mole): úlcera genital DOLOROSA, bordas MOLES (sem induração); cofator para transmissão HIV',
+ag:'Ágar GC enriquecido + sangue de coelho a 33°C; difícil de cultivar (sensibilidade ~70%)',
+dis:['Cancroide (cancro mole)','Úlcera genital dolorosa + bubão mole inguinal supurativo','Cofator HIV (rompe barreira mucosa)','Balanite'],
+vir:['LOS (lipooligossacarídeo)','CDT (toxina distensora citoletal — apoptose)','HhdA (hemolisina)','DltA (dermonecrotic factor)','Evasão do complemento'],
+dx:['CLÍNICO (principal): úlcera dolorosa, bordas MOLES, sem induração','Gram de exsudato: cadeias de cocobacilos ("escola de peixes")','PCR (mais sensível e específico)','Cultura: sangue de coelho a 33°C (sensibilidade ~70%)','Exclusão sífilis (VDRL) e HSV (PCR)'],
+tx1:['Azitromicina 1g dose única VO (mais prático e eficaz)','Ceftriaxona 250mg IM dose única'],
+txR:['Ciprofloxacino 500mg 12/12h ×3 dias','Eritromicina 500mg 6/6h ×7 dias','TMP-SMX: resistência crescente — verificar sensibilidade local'],
+sp:'⚠️ Diferencial crítico: Cancroide (doloroso, bordas moles) vs Sífilis 1° (indolor, borda dura) vs Herpes (múltiplas vesículas/úlceras).',
+ex:'Tríade ISTs ulcerativas: Sífilis (cancro duro — indolor — borda endurecida) | Cancroide (mole — doloroso) | Herpes (vesículas — dolorosas)'},
+
+{id:'bordetella',sec:'haemoph',nm:'Bordetella pertussis',g:'Gram-Negativo',mo:'Cocobacilo',ox:'Aeróbio estrito',
+kf:'Coqueluche: Fase catarral (contagiosa) → Paroxística (guincho inspiratório) → Convalescença; LINFOCITOSE ABSOLUTA',
+ag:'Bordet-Gengou (glicerol + sangue + batata) — colônias "gotas de mercúrio"; Regan-Lowe (alternativa)',
+dis:['Coqueluche (whooping cough)','Pneumonia em lactentes <6 meses (GRAVE — pode ser fatal)','Linfocitose absoluta (>15.000 — patognomônica)','Apneia em recém-nascidos','B. parapertussis: forma mais leve'],
+vir:['Toxina Pertussis (PT): ADP-ribosila Giα → ↑AMPc; responsável pela linfocitose','Adenilato ciclase toxina (ACT/CyaA)','Hemaglutinina Filamentosa (FHA — principal adesina)','Pertactina (PRN)','Fímbrias Fim2/Fim3','Citotoxina traqueal (CTT — paralisa cílios)'],
+dx:['PCR nasofaríngeo (mais sensível e rápido — método PREFERIDO; positivo até 4 semanas)','Cultura: Bordet-Gengou (1ª semana — gold standard clássico)','Sorologia IgG anti-PT (após fase aguda)','Leucograma: LINFOCITOSE ABSOLUTA (>15.000/μL) na fase paroxística'],
+tx1:['Azitromicina: neonatos (<1mês): 10mg/kg/dia ×5d; >1mês/adultos: 500mg D1 + 250mg D2–5','Eritromicina 40–50mg/kg/dia ÷ 6/6h ×14d (alternativa — mais efeitos adversos)'],
+txR:['Claritromicina 15mg/kg/dia ÷ 12/12h ×7 dias','TMP-SMX (intolerância a macrolídeos)','Profilaxia pós-exposição: azitromicina (mesma dose)'],
+sp:'⚠️ Vacina DTP (difteria, tétano, pertussis acelular = DTaP). dTpa para gestantes e adultos. Macrólides para contatos!',
+ex:'3 Fases: Catarral (1–2 sem — mais CONTAGIOSA, parece resfriado) | Paroxística (4–6 sem — guincho + cianose) | Convalescença (semanas–meses)'},
+
+{id:'pasteurella',sec:'haemoph',nm:'Pasteurella spp.',g:'Gram-Negativo',mo:'Cocobacilo (coloração BIPOLAR)',ox:'Anaeróbio Facultativo',
+kf:'P. multocida: mordedura de animal (gatos >> cães); celulite rápida em <24–48h; RESISTENTE a clindamicina e cefalexina',
+ag:'Ágar sangue/chocolate; 24–48h; NÃO cresce em MacConkey (diferencia de Enterobacteriaceae!)',
+dis:['Celulite por mordedura (P. multocida)','Pneumonia (DPOC, bronquiectasia)','Bacteremia/sepse (imunossuprimidos)','Meningite neonatal','Endocardite','Tenossinovite pós-mordedura'],
+vir:['Cápsula (anti-fagocítica)','LPS','PMT — Toxina P. multocida (dermonecrosis)','Proteases (fibronectina-binding)'],
+dx:['NÃO cresce em MacConkey (≠ Enterobacteriaceae)','Oxidase ⊕, Catalase ⊕','Indol ⊕ (P. multocida)','Coloração bipolar em Giemsa','Crescimento rápido 24–48h','MALDI-TOF'],
+tx1:['Amoxicilina-clavulanato 875/125mg 12/12h ×5–10d (ESCOLHA — cobre Pasteurella + anaeróbios)','Penicilina G IV (formas graves/bacteremia)'],
+txR:['Doxiciclina (alergia à penicilina — adultos)','TMP-SMX','Fluoroquinolonas (ciprofloxacino)','⚠️ RESISTENTE a clindamicina e cefalexina — NÃO usar para mordeduras!'],
+sp:'⚠️ Mordedura de gato = alto risco (75% infectam)! Amoxicilina-clavulanato = OBRIGATÓRIO nas mordeduras.',
+ex:'Profilaxia mordedura: lavar + irrigar copiosamente; amoxicilina-clavulanato ×5d; avaliar anti-rábica + antitetânica'},
+
+// NEISSERIA
+{id:'ngono',sec:'neisseria',nm:'Neisseria gonorrhoeae',g:'Gram-Negativo',mo:'Diplococo (grão de café) intracelular',ox:'Aeróbio (CO₂ 5%)',
+kf:'Gonorreia; fermenta APENAS GLICOSE (não maltose); diplococos intracelulares em PMN; Thayer-Martin',
+ag:'Thayer-Martin modificado (Vancomicina + Colistina + Anfotericina + Trimetoprim); 35–37°C + 5–10% CO₂',
+dis:['Uretrite gonocócica (corrimento purulento)','Cervicite (frequentemente assintomática)','DIP (Doença Inflamatória Pélvica)','Conjuntivite neonatal (oftalmia neonatorum)','Faringite, proctite','Infecção Gonocócica Disseminada (artrite + tenossinovite + lesões cutâneas)'],
+vir:['Pili tipo IV (adesão + variação antigênica)','Proteína Opa (invasão celular)','Por B (bloqueia complemento)','LOS (variação de fase)','IgA1 protease','β-lactamase plasmidial (PPNG)'],
+dx:['Gram de exsudato: diplococos Gram-negativos INTRACELULARES em PMN (sens. >95% em uretrite masculina)','NAAT/PCR (gold standard): urina, swab uretral/cervical/vaginal','Cultura em Thayer-Martin','Oxidase ⊕; fermenta SOMENTE GLICOSE'],
+tx1:['Ceftriaxona 500mg IM dose única (CDC 2021; se >150kg: 1g)','DIP: ceftriaxona 500mg IM + doxiciclina 100mg 12/12h ×14d + metronidazol 500mg 12/12h ×14d'],
+txR:['⚠️ Resistência crescente a fluoroquinolonas — NÃO usar empiricamente!','Gonorreia MDR: ceftriaxona 1g IM + azitromicina 2g VO','Cefixima oral: inferior à ceftriaxona'],
+sp:'⚠️ Sempre tratar parceiros. Rastrear outras ISTs (HIV, sífilis, clamídia). Profilaxia ocular neonatal (eritromicina 0,5%).',
+ex:'Gonococo ≠ Meningococo: Gonococo = APENAS glicose; Meningococo = glicose + MALTOSE. Mnemônico: "Gonococo Não gosta de Maltose"'},
+
+{id:'nmenin',sec:'neisseria',nm:'Neisseria meningitidis',g:'Gram-Negativo',mo:'Diplococo encapsulado',ox:'Aeróbio (CO₂ 5%)',
+kf:'Meningococcemia: púrpura NÃO-branqueável; fermenta glicose E maltose; Waterhouse-Friderichsen; sorogrupos A, B, C, W, Y',
+ag:'Ágar chocolate, Mueller-Hinton; Thayer-Martin (espécimens com flora normal)',
+dis:['Meningite bacteriana (2ª causa adultos jovens)','Meningococcemia (púrpura fulminante)','Síndrome de Waterhouse-Friderichsen (hemorragia adrenal + CIVD)','Pneumonia meningocócica','Pericardite, artrite séptica'],
+vir:['Cápsula polissacarídica (sorogrupos A, B, C, W135, Y, X)','LPS (choque séptico)','Fímbrias (nasofaringe)','Proteínas Opa, Opc','IgA1 protease','TbpA/B (captação de ferro)'],
+dx:['LCR: turvo, PMN ↑, glicose <40mg/dL, proteína ↑','Gram do LCR: diplococos Gram-negativos intracelulares','Hemocultura + cultura de LCR (URGENTE)','PCR multiplex (LCR, sangue)','Fermenta glicose E MALTOSE (≠ N. gonorrhoeae)','Látex-aglutinação para antígenos capsulares'],
+tx1:['Penicilina G cristalina 300.000 UI/kg/dia IV (se sensível)','Ceftriaxona 4g/dia IV (empírico/suspeita)','Dexametasona 0,15mg/kg 6/6h ×4 dias (ANTES ou junto ao ATB)'],
+txR:['PROFILAXIA contatos: rifampicina 600mg 12/12h ×2 dias ou ciprofloxacino 500mg dose única','Gestantes: ceftriaxona 250mg IM dose única','Vacinas: MenACWY (conjugada), MenB (Bexsero/Trumenba)'],
+sp:'⚠️ EMERGÊNCIA! Petéquias/púrpura que NÃO branqueia ao vitropressão = meningococcemia até prova em contrário. ATB IMEDIATO.',
+ex:'Waterhouse-Friderichsen = hemorragia adrenal bilateral + CIVD + colapso cardiovascular. Portadores nasofaríngeos assintomáticos: 5–15% da população'},
+
+// OTHERS
+{id:'fusobac',sec:'others',nm:'Fusobacterium necrophorum',g:'Gram-Negativo',mo:'Bacilo fusiforme (anaeróbio)',ox:'Anaeróbio estrito',
+kf:'Síndrome de Lemierre: tromboflebite séptica da veia jugular interna pós-faringite em jovens; embolia pulmonar séptica',
+ag:'Ágar sangue (anaeróbio): β-hemolítico; odor fétido; crescimento lento',
+dis:['Síndrome de Lemierre (tromboflebite VJI → embolia séptica pulmonar)','Abscesso periamigdaliano e retrofaríngeo','Sepse orofacial','Osteomielite mandibular','Infecção intra-abdominal pós-cirúrgica'],
+vir:['LktA (leucotoxina)','LPS','Proteases','Hemaglutinina','Hemolisina','FomA (porina — adesão ao epitélio)'],
+dx:['TC pescoço com contraste: trombo na VJI (diagnóstico de imagem)','Hemocultura (anaeróbio rigoroso — 5 dias)','Gram: bacilos fusiformes pleomórficos Gram-negativos','PCR 16S rRNA (identificação)','Cultura anaeróbia (Brucella agar)'],
+tx1:['Metronidazol 500mg 8/8h IV ×4–6 semanas (excelente cobertura anaeróbia)','β-lactâmico + inibidor: ampicilina-sulbactam, pip-tazo IV'],
+txR:['Carbapenems (formas graves)','Clindamicina: resistência crescente no grupo Fusobacterium — CUIDADO','Anticoagulação: controversa — decisão individualizada'],
+sp:'⚠️ Jovem com faringite + febre persistente + massa cervical + dor ao girar pescoço = INVESTIGAR Síndrome de Lemierre!',
+ex:'Tríade de Lemierre: (1) Faringite recente + (2) Trombo VJI + (3) Embolia pulmonar séptica. "Doença esquecida" em ressurgência'},
+
+{id:'gardnerella',sec:'others',nm:'Gardnerella vaginalis',g:'Gram-Variável',mo:'Bacilo pleomórfico pequeno',ox:'Anaeróbio Facultativo',
+kf:'Vaginose bacteriana: clue cells + pH >4,5 + descarga homogênea + odor de peixe; Critérios de Amsel (3/4)',
+ag:'Columbia agar + sangue humano (HBT): β-hemólise difusa; NÃO diagnosticar apenas por cultura isolada!',
+dis:['Vaginose bacteriana (VB)','Endometrite pós-parto/aborto (polimicrobiana)','DIP (componente polimicrobiano)','Associada a parto prematuro e RPMMP','Bacteremia puerperal (rara)'],
+vir:['Vaginolisina (citolisina formadora de poros)','Biofilme (BVAB)','Sialidase (destrói muco protetor)','Adesinas','Resistência ao complemento'],
+dx:['CRITÉRIOS DE AMSEL (3 de 4): (1) Descarga homogênea branco-acinzentada; (2) pH vaginal >4,5; (3) Whiff test ⊕ (KOH 10% → odor de peixe); (4) Clue cells >20%','NUGENT SCORE (Gram): 0–3 normal | 4–6 intermediário | 7–10 = VB','PCR (Gardnerella + BVAB)'],
+tx1:['Metronidazol 500mg 12/12h VO ×7 dias','Metronidazol gel 0,75% vaginal: 5g 1×/dia ×5 dias','Clindamicina creme 2% vaginal: 5g/dia ×7 dias'],
+txR:['Clindamicina 300mg 12/12h VO ×7 dias','Tinidazol 2g/dia ×2 dias (VB recorrente)','Secnidazol 2g dose única VO (boa adesão)'],
+sp:'⚠️ NÃO é IST clássica — parceiro masculino assintomático NÃO precisa ser tratado. VB recorrente: metronidazol gel supressivo 2×/sem ×6 meses.',
+ex:'Diferencial: VB (pH>4,5, homogênea, KOH⊕) vs Candida (pH<4,5, grumosa branca) vs Trichomonas (pH>4,5, bolhosa amarelada, parasita móvel)'},
+
+{id:'legionella',sec:'others',nm:'Legionella pneumophila',g:'Gram-Negativo (mal corado — prata/DIF)',mo:'Bacilo',ox:'Aeróbio',
+kf:'Doença do Legionário: pneumonia grave atípica; BCYE (L-cisteína + ferro); antígeno urinário = GOLD STANDARD rápido',
+ag:'BCYE (Buffered Charcoal Yeast Extract): L-cisteína + α-cetoglutarato + ferro; 35°C; 3–7 dias; NÃO cresce em ágar sangue',
+dis:['Doença do Legionário: pneumonia grave + hiponatremia + diarreia + confusão mental','Febre de Pontiac (gripal autolimitada — sem pneumonia)','Bacteremia (imunossuprimidos)'],
+vir:['Dot/Icm (SST4 — sobrevivência intracelular em macrófagos alveolares)','LPS sorogrupo 1 (antígeno urinário — 70% dos casos)','Mip (proteína de macrófago)','Sideróforos','Flagelo'],
+dx:['ANTÍGENO URINÁRIO (EIA/ICT): sorogrupo 1 — GOLD STANDARD RÁPIDO (sens. 80%, espec. >99%)','Cultura em BCYE (3–7 dias; NÃO cresce em ágar sangue!)','Coloração de prata (Dieterle/Warthin-Starry) no tecido','PCR lavado brônquico (mais sensível que cultura)','DFA (imunofluorescência direta)'],
+tx1:['Levofloxacino 750mg/dia IV/VO ×5–10 dias (pneumonia leve-moderada)','Azitromicina 500mg/dia IV/VO ×5 dias (gestantes, leve)','Pneumonia grave: levofloxacino IV + rifampicina 600mg 12/12h ×3 semanas'],
+txR:['Sem resistência clinicamente significativa documentada','β-lactâmicos NÃO funcionam (patógeno intracelular!)','Doxiciclina (alternativa histórica)'],
+sp:'⚠️ Transmissão: sistemas de água aquecida (torres, chuveiros, hidromassagem). NUNCA transmissão pessoa-a-pessoa.',
+ex:'Pista clínica: hiponatremia + pneumonia + diarreia + confusão = LEGIONELLA até prova em contrário. Febre de Pontiac: incubação 24–48h, gripal, autolimitada'},
+
+// SPIROCHETES
+{id:'treponema',sec:'spirochetes',nm:'Treponema pallidum',g:'Não corado pelo Gram',mo:'Espiroqueta (espiral regular, extremidades afiladas)',ox:'Microaerófilo',
+kf:'Sífilis: cancro duro (1°), roséola palmo-plantar (2°), goma/neurossífilis (3°); NÃO CULTIVÁVEL in vitro',
+ag:'NÃO CULTIVÁVEL in vitro — apenas in vivo (testículo de coelho)',
+dis:['Sífilis 1°: cancro duro (úlcera indolor, indurada, base limpa)','Sífilis 2°: exantema palmo-plantar, condiloma plano, alopecia "clareira"','Sífilis 3°: goma sifilítica, aortite + aneurisma, neurossífilis (tabes dorsalis)','Sífilis congênita: rinite, surdez, dentes de Hutchinson, tíbia em sabre'],
+vir:['Proteínas de membrana externa (motilidade rotatória)','Flagelos periplásmicos (7–11 filamentos)','Adesinas (Tp0751 — fibronectina)','Evasão imune (baixa densidade proteínas superfície)'],
+dx:['CAMPO ESCURO: lesões primárias/secundárias úmidas (espiroquetas móveis)','TESTES NÃO-TREPONÊMICOS (triagem + monitoramento): VDRL, RPR','TESTES TREPONÊMICOS (confirmatórios — PERMANECEM ⊕ PARA SEMPRE): FTA-ABS, TPHA, ELISA','LCR: VDRL do LCR + citologia + proteínas (neurossífilis)','PCR (lesões primárias, LCR)'],
+tx1:['Sífilis 1° e 2°: BENZATINA PENICILINA G 2,4 milhões UI IM DOSE ÚNICA','Sífilis latente tardia/3°: Benzatina PG 2,4 milhões UI IM 1×/sem ×3 semanas','Neurossífilis: Penicilina G cristalina 3–4 milhões UI IV 4/4h ×10–14 dias'],
+txR:['Alergia (não gestante): doxiciclina 100mg 12/12h ×14 dias (1°/2°) ou ×28 dias (latente)','GESTANTE ALÉRGICA: DESSENSIBILIZAÇÃO À PENICILINA (obrigatório)','Ceftriaxona 2g/dia ×10–14 dias (alternativa com dados limitados)'],
+sp:'⚠️ Reação de Jarisch-Herxheimer: febre + calafrios + hipotensão nas primeiras 24h pós-penicilina. NÃO é alergia — é lise de espiroquetas!',
+ex:'VDRL/RPR: deve cair 4× em 6 meses (1°/2°) ou 12 meses (latente). FTA-ABS permanece ⊕ para sempre → NÃO usar para monitorar tratamento'},
+
+{id:'leptospira',sec:'spirochetes',nm:'Leptospira interrogans',g:'Gram-Negativo fraco (melhor com prata)',mo:'Espiroqueta com extremidades em gancho ("?" / "J")',ox:'Aeróbio',
+kf:'Leptospirose: Doença de Weil (grave) = ICTERÍCIA + IRA + HEMORRAGIAS; urina de rato; epidemia em enchentes',
+ag:'EMJH (Ellinghausen-McCullough-Johnson-Harris) ou Fletcher; 28–30°C; semanas de crescimento',
+dis:['Leptospirose anictérica (80–90%): síndrome bifásica gripal → melhora → recidiva','Doença de Weil (10%): icterícia, IRA, hemorragia conjuntival/pulmonar, miocardite','SHPS (Sínd. de Hemorragia Pulmonar Grave)','Meningite asséptica'],
+vir:['LipL32 (lipoproteína — adesão)','LPS (patogenicidade)','Hemolisinas (SphA, SphB)','Colagenase, proteases','FhbA/B (evasão do complemento)'],
+dx:['FASE LEPTOSPIRÊMICA (1–7 dias): campo escuro (sangue/urina frescos), hemocultura em EMJH, PCR (gold standard fase aguda)','FASE IMUNE (8–30 dias): MAT (Microscopic Agglutination Test — gold standard sorológico, título ≥1:800 ou 4× aumento), ELISA IgM','Bioquímica: ↑bilirrubina direta, ↑creatinina, plaquetopenia, ↑CK'],
+tx1:['Leve: doxiciclina 100mg 12/12h ×7 dias VO','Grave (Weil): penicilina G cristalina 1,5 milhões UI 6/6h IV ×7 dias','Alternativa grave: ceftriaxona 1g IV/dia ×7 dias ou ampicilina IV'],
+txR:['Azitromicina (alternativa oral, especialmente crianças)','Profilaxia pós-exposição (enchentes): doxiciclina 200mg/semana ×duração da exposição'],
+sp:'⚠️ NOTIFICAÇÃO COMPULSÓRIA no Brasil. Surtos em enchentes = emergência de saúde pública. Reservatório: ratos Rattus norvegicus (excretam na urina por anos).',
+ex:'Tríade de Weil: (1) Icterícia + (2) IRA + (3) Hemorragias. Hemorragia conjuntival subconjuntival indolor = pista patognomônica da leptospirose grave'}
+];
+
+const quizData=[
+{bact:'Escherichia coli',q:'Qual bactéria é responsável por aproximadamente 80% das infecções do trato urinário (ITU) comunitárias?',opts:['Klebsiella pneumoniae','Escherichia coli','Proteus mirabilis','Staphylococcus saprophyticus'],ans:1,exp:'E. coli é a causa mais comum de ITU (80–85%). Fatores de virulência uropatogênicos incluem fímbrias tipo P (adesão ao trato urinário) e sideróforos que captam ferro.'},
+{bact:'Escherichia coli',q:'Um recém-nascido com 3 dias de vida apresenta febre, letargia e abaulamento de fontanela. A cultura do LCR evidencia bacilo Gram-negativo com cápsula K1. Qual é o agente mais provável?',opts:['Haemophilus influenzae tipo b','Listeria monocytogenes','Escherichia coli (K1)','Neisseria meningitidis'],ans:2,exp:'E. coli com cápsula K1 é a principal causa de meningite gram-negativa neonatal. O mecanismo envolve evasão do complemento pelo polissacarídeo K1 (semelhante ao sorogrupo B do meningococo).'},
+{bact:'Klebsiella pneumoniae',q:'Homem de 52 anos, alcoolista, com febre alta, tosse produtiva e escarro com coloração escura e viscosidade gelatinosa. A Rx de tórax mostra consolidação no lobo superior direito com abaulamento da fissura. Qual o agente mais provável?',opts:['Streptococcus pneumoniae','Klebsiella pneumoniae','Staphylococcus aureus','Pseudomonas aeruginosa'],ans:1,exp:'K. pneumoniae causa pneumonia necrosante em alcoolistas e imunossuprimidos. O escarro em "geleia de groselha" (sangue + muco) e o abaulamento da fissura por edema pulmonar são característicos. Alta mortalidade.'},
+{bact:'Klebsiella pneumoniae',q:'Paciente com K. pneumoniae produtora de ESBL (KPC) em hemocultura. Qual o agente de escolha para tratamento?',opts:['Ampicilina-sulbactam','Piperacilina-tazobactam','Ceftazidima-avibactam','Ciprofloxacino'],ans:2,exp:'KPC (Klebsiella Carbapenemase) = resistência aos carbapenems. Ceftazidima-avibactam (Avycaz) é o agente de escolha para KPC. NDM (metalo-β-lactamase) requer aztreonam-avibactam ou cefiderocol.'},
+{bact:'Klebsiella oxytoca',q:'Qual teste bioquímico diferencia Klebsiella oxytoca de Klebsiella pneumoniae?',opts:['Urease','Voges-Proskauer','Indol','Citrato'],ans:2,exp:'K. oxytoca é Indol POSITIVO, enquanto K. pneumoniae é Indol NEGATIVO. Ambas são VP ⊕, Citrato ⊕ e Urease ⊕. O indol é o teste diferenciador principal.'},
+{bact:'Klebsiella granulomatis',q:'A confirmação diagnóstica de granuloma inguinal (Donovanose) é feita através de qual achado histopatológico?',opts:['Células de Reed-Sternberg','Corpos de Donovan em macrófagos','Células guia (clue cells)','Inclusões intranucleares'],ans:1,exp:'Corpos de Donovan são inclusões bacterianas (K. granulomatis) dentro de células mononucleares grandes (macrófagos), visualizados pela coloração de Giemsa ou Warthin-Starry na biópsia.'},
+{bact:'Serratia spp.',q:'Uma amostra bacteriana cresce em MacConkey e produz pigmento vermelho visível a 22°C, mas não a 37°C. DNase positivo. Qual o microrganismo?',opts:['Chromobacterium violaceum','Serratia marcescens','Pseudomonas aeruginosa','Staphylococcus aureus'],ans:1,exp:'S. marcescens produz prodigiosina (pigmento vermelho) a 22–25°C, mas NÃO a 37°C. A DNase positiva também é característica que diferencia Serratia de outras Enterobacteriaceae.'},
+{bact:'Proteus spp.',q:'Paciente com ITU de repetição apresenta urease fortemente positiva na urocultura, urina alcalina e cálculos no sistema coletor renal. Qual o tipo de cálculo esperado e a bactéria responsável?',opts:['Cálculo de ácido úrico — E. coli','Cálculo de oxalato de cálcio — Klebsiella','Cálculo de estruvita — Proteus mirabilis','Cálculo de cistina — Serratia'],ans:2,exp:'Proteus mirabilis possui urease que hidrolisa ureia → amônia → urina alcalina → precipitação de fosfato de amônio e magnésio (estruvita = struvite stones). Podem preencher toda a pelve renal (cálculo coraliforme).'},
+{bact:'Shigella spp.',q:'Qual é a dose infectante mínima de Shigella spp., que explica a facilidade de transmissão interpessoal?',opts:['10⁶ organismos','10³ organismos','~10 organismos','10⁸ organismos'],ans:2,exp:'Shigella tem uma das menores doses infectantes bacterianas conhecidas: apenas ~10 organismos são suficientes para causar doença. Isso explica a alta transmissibilidade direta (fecal-oral, inclusive por contato físico).'},
+{bact:'Shigella spp.',q:'A Toxina Shiga (Stx1), produzida por Shigella dysenteriae tipo 1, exerce seu principal efeito patogênico por qual mecanismo?',opts:['ADP-ribosilação de Gs (↑AMPc)','Ativação da adenilato ciclase via toxina pertussis','Clivagem do RNA ribossômico 28S → inibe síntese proteica','Formação de poros na membrana plasmática'],ans:2,exp:'Toxina Shiga (Stx1) e Stx2 de E. coli (STEC) inibem a síntese proteica pela clivagem do RNA ribossômico 28S da subunidade 60S → apoptose de células endoteliais → SHU (Síndrome Hemolítico-Urêmica).'},
+{bact:'Salmonella Typhi',q:'Viajante de 27 anos retorna da Índia com febre progressiva em "degrau" por 12 dias, bradicardia relativa, esplenomegalia e manchas rosadas no abdome. O hemograma mostra leucopenia. Qual exame tem maior sensibilidade na 1ª semana?',opts:['Coprocultura','Teste de Widal','Hemocultura','Urinocultura'],ans:2,exp:'Hemocultura é o gold standard para febre tifoide na 1ª semana (bacteremia primária). Mielocultura é mais sensível mas invasiva. Coprocultura tem maior rendimento na 2ª–3ª semana. O Widal tem baixa especificidade.'},
+{bact:'Salmonella não-Typhi',q:'Por que não se deve prescrever antibióticos para gastroenterite causada por Salmonella não-Typhi em pacientes imunocompetentes?',opts:['Causa hepatotoxicidade grave','Prolonga o estado de portador e seleciona resistência','É contraindicado em diarreia com sangue','Não penetra na mucosa intestinal'],ans:1,exp:'ATB na gastroenterite não-Typhi prolonga a excreção fecal do microrganismo (estado de portador), selecionam cepas resistentes e não diminuem a duração dos sintomas. Exceção: bacteremia, imunossuprimidos, <3 meses ou >50 anos.'},
+{bact:'Pseudomonas aeruginosa',q:'Paciente com fibrose cística é internado com exacerbação pulmonar grave. Cultura do escarro isola Pseudomonas aeruginosa. Qual a combinação antibiótica de primeira linha?',opts:['Amoxicilina-clavulanato + metronidazol','Ceftriaxona + azitromicina','Piperacilina-tazobactam ou ceftazidima + aminoglicosídeo','Vancomicina + linezolida'],ans:2,exp:'P. aeruginosa é resistente a ampicilina, cef 1ª–2ª, TMP-SMX. Em FC: piperacilina-tazobactam, ceftazidima, meropenem ou ceftolozana-tazobactam (MDR) ± aminoglicosídeo (tobramicina inalada). Dupla cobertura reduz emergência de resistência.'},
+{bact:'Pseudomonas aeruginosa',q:'A Exotoxina A de Pseudomonas aeruginosa compartilha o mecanismo de ação com qual outra toxina bacteriana?',opts:['Toxina colérica','Toxina diftérica','Toxina pertussis','Toxina Shiga'],ans:1,exp:'Tanto a Exotoxina A (P. aeruginosa) quanto a Toxina Diftérica (Corynebacterium diphtheriae) inibem a síntese proteica por ADP-ribosilação do Fator de Elongação 2 (EF-2). Mecanismo idêntico, origem evolutiva diferente.'},
+{bact:'Pseudomonas aeruginosa',q:'Qual pigmento produzido por P. aeruginosa contribui para a coloração azul-esverdeada das culturas e tem atividade antimicrobiana direta via geração de espécies reativas de oxigênio?',opts:['Pioverdina','Prodigiosina','Piocianina','Violaceína'],ans:2,exp:'Piocianina (azul) + Pioverdina (amarelo-verde fluorescente) = pigmentação azul-esverdeada. Piocianina gera H₂O₂ e O₂⁻ (ROS) que matam bactérias competidoras e danificam células do hospedeiro. Pioverdina funciona como sideróforo.'},
+{bact:'Vibrio cholerae',q:'Qual é o mecanismo pelo qual a toxina colérica (CT) causa diarreia secretora maciça?',opts:['Invasão do epitélio colônico com destruição das vilosidades','ADP-ribosilação da subunidade Gs → adenilato ciclase permanentemente ativa → ↑AMPc → hipersecreção','Formação de poros na membrana → lise osmótica das células epiteliais','Inibição da bomba Na⁺/K⁺-ATPase nas células intestinais'],ans:1,exp:'CT: Subunidade B liga-se ao gangliosídeo GM1 → subunidade A1 ADP-ribosila Gsα → adenilato ciclase ativada permanentemente → ↑AMPc → CFTR secreta Cl⁻ ativamente → H₂O segue por osmose → diarreia "água de arroz" profusa.'},
+{bact:'Vibrio cholerae',q:'Em qual ágar seletivo cresce Vibrio cholerae e como são as colônias de V. cholerae O1?',opts:['Hektoen — colônias verdes','TCBS — colônias AMARELAS (fermenta sacarose)','Thayer-Martin — colônias acinzentadas','Bordet-Gengou — gotas de mercúrio'],ans:1,exp:'TCBS (Thiosulfate Citrate Bile Salts Sucrose) é o ágar seletivo para Vibrio. V. cholerae O1 e O139 fermentam sacarose → colônias AMARELAS. V. parahaemolyticus NÃO fermenta sacarose → colônias AZUIS/VERDES.'},
+{bact:'Campylobacter spp.',q:'Qual grave complicação neurológica pode ocorrer 1–3 semanas após gastroenterite por Campylobacter jejuni, por mimetismo molecular entre o LOS bacteriano e gangliosídeos do nervo periférico?',opts:['Meningite bacteriana','Síndrome de Guillain-Barré','Neurocisticercose','Encefalite de Rasmussen'],ans:1,exp:'C. jejuni sorotipo O:19 possui LOS com estrutura semelhante ao gangliosídeo GM1 → anticorpos anti-LOS cruzam com GM1 das células de Schwann → SGB (polineuropatia desmielinizante ascendente). Pode levar à paralisia respiratória.'},
+{bact:'Helicobacter pylori',q:'Qual fator de virulência do H. pylori é considerado uma "oncoproteína bacteriana" por reorganizar o citoesqueleto das células gástricas e promover carcinogênese?',opts:['Urease','VacA','CagA','BabA'],ans:2,exp:'CagA é injetada nas células gástricas pelo sistema de secreção tipo IV (TFSS) → fosforilação por tirosina quinases → reorganização do citoesqueleto → proliferação celular + inibição de apoptose → carcinogênese. Cepas CagA+ têm maior risco de câncer.'},
+{bact:'Helicobacter pylori',q:'Qual teste não-invasivo é o gold standard para confirmar a ERRADICAÇÃO de H. pylori após o tratamento?',opts:['Sorologia (IgG anti-H. pylori)','Endoscopia com biópsia e histologia','Teste respiratório com ¹³C-ureia','Cultura quantitativa de suco gástrico'],ans:2,exp:'O teste respiratório com ¹³C-ureia é o gold standard para confirmar erradicação (não-invasivo, >90% sensibilidade e especificidade). Deve ser realizado ≥4 semanas após término do ATB e ≥2 semanas após suspensão do IBP. Sorologia permanece positiva por anos.'},
+{bact:'Haemophilus influenzae',q:'Haemophilus influenzae requer dois fatores de crescimento ausentes no ágar sangue convencional, mas presentes no ágar chocolate. Quais são eles?',opts:['Fatores I e II (coagulação)','Fatores X (hemina) e V (NAD)','L-cisteína e ferro','Colesterol e vitamina K'],ans:1,exp:'H. influenzae é fastidioso: necessita do Fator X (hemina — porfirina do grupo heme) para síntese de citocromos e do Fator V (NAD/NADP) para respiração. O ágar chocolate libera esses fatores por hemólise suave. Ágar sangue não os libera.'},
+{bact:'Haemophilus influenzae',q:'Criança de 4 anos não vacinada chega ao PS com febre alta súbita, disfagia intensa, sialorreia, posição de tripé, estridor e aspecto tóxico. A laringoscopia (feita com precaução) mostra epiglote "em cereja vermelha". Qual o agente e a conduta prioritária?',opts:['Streptococcus pyogenes — penicilina G IV','H. influenzae tipo b — ceftriaxona IV + garantir via aérea','Croup viral — adrenalina inalatória','Corpo estranho — laringoscopia direta urgente'],ans:1,exp:'Epiglotite aguda por Hib = emergência pediátrica. A via aérea é a prioridade (intubação/traqueostomia em ambiente cirúrgico se necessário). Ceftriaxona IV cobre Hib. NÃO examinar a garganta sem via aérea segura — pode precipitar laringoespasmo fatal.'},
+{bact:'Haemophilus ducreyi',q:'Paciente com úlcera genital dolorosa, de bordas irregulares e moles (sem induração), com linfadenopatia inguinal supurativa. VDRL negativo, PCR HSV negativo. Qual o diagnóstico e tratamento?',opts:['Sífilis primária — benzatina penicilina G','LGV (Chlamydia) — doxiciclina 3 semanas','Cancroide (H. ducreyi) — azitromicina 1g dose única','Herpes genital — aciclovir 5 dias'],ans:2,exp:'Cancroide = úlcera DOLOROSA de bordas MOLES (sem induração) + bubão mole inguinal. VDRL ⊖ (exclui sífilis). Azitromicina 1g VO dose única ou ceftriaxona 250mg IM são os tratamentos de escolha. Confirmar com PCR.'},
+{bact:'Bordetella pertussis',q:'Uma criança de 6 semanas é internada com episódios de tosse paroxística seguidos de apneia e cianose. O leucograma mostra leucocitose de 32.000/μL com 85% de linfócitos. Qual toxina de B. pertussis explica a linfocitose?',opts:['Adenilato ciclase toxina (ACT)','Hemaglutinina filamentosa (FHA)','Toxina Pertussis (PT)','Citotoxina traqueal (CTT)'],ans:2,exp:'Toxina Pertussis (PT) ADP-ribosila Giα → bloqueia receptor de quimiocinas nos linfócitos → linfócitos não migram para linfonodos → linfocitose absoluta no sangue periférico (>15.000/μL). É o mecanismo da linfocitose patognomônica da coqueluche.'},
+{bact:'Bordetella pertussis',q:'Qual meio de cultura específico é utilizado para isolamento de B. pertussis?',opts:['TCBS agar','Ágar Thayer-Martin','Ágar Bordet-Gengou','Ágar BCYE'],ans:2,exp:'Bordet-Gengou (glicerol + batata + sangue) é o meio histórico. Regan-Lowe é uma alternativa mais prática. As colônias de B. pertussis têm aspecto de "gotas de mercúrio" (pequenas, brilhantes, β-hemolíticas). PCR nasofaríngeo é preferido atualmente (mais rápido e sensível).'},
+{bact:'Yersinia pestis',q:'Yersinia pestis é transmitida a humanos principalmente por qual vetor, após picar roedores infectados?',opts:['Mosquito Aedes aegypti','Carrapato Ixodes','Pulga (Xenopsylla cheopis)','Piolho Pediculus humanus'],ans:2,exp:'Pulgas de roedores (Xenopsylla cheopis) transmitem Y. pestis ao picar roedores infectados e depois humanos. O ciclo é: roedor → pulga → humano. Contato direto com animal infectado ou gotículas (peste pneumônica) são outras formas de transmissão.'},
+{bact:'Yersinia pestis',q:'A coloração de Wayson ou Giemsa do aspirado de bubão revela cocobacilos com coloração mais intensa nas extremidades do que no centro. Como se denomina esse padrão e qual organismo sugere?',opts:['"Anel de suspensão" — Treponema pallidum','Coloração bipolar "alfinete de segurança" — Yersinia pestis','Coloração de MacConkey — Shigella sonnei','Coloração em "escola de peixes" — Haemophilus ducreyi'],ans:1,exp:'Coloração bipolar ("safety pin" ou "alfinete de segurança"): os polos do cocobacilo coram mais intensamente que o centro, dando aparência de um alfinete de segurança. É característica de Y. pestis, Pasteurella multocida e Burkholderia pseudomallei.'},
+{bact:'Pasteurella spp.',q:'48h após mordedura de gato na mão, paciente desenvolve celulite dolorosa, quente e eritematosa. A cultura da ferida cresce cocobacilo Gram-negativo oxidase ⊕, que NÃO cresce em MacConkey. Qual o agente e antibiótico de escolha?',opts:['Capnocytophaga canimorsus — meropenem','Staphylococcus aureus — cefalexina','Pasteurella multocida — amoxicilina-clavulanato','Eikenella corrodens — clindamicina'],ans:2,exp:'P. multocida é o agente mais comum de infecção por mordedura de gato. NÃO cresce em MacConkey. Amoxicilina-clavulanato é obrigatória (cobre Pasteurella, Streptococcus, Staphylococcus e anaeróbios). Clindamicina e cefalexina são INADEQUADOS — resistência intrínseca.'},
+{bact:'Neisseria gonorrhoeae',q:'Como o padrão de fermentação de açúcares diferencia Neisseria gonorrhoeae de Neisseria meningitidis?',opts:['N. gonorrhoeae fermenta glicose e maltose; N. meningitidis não fermenta nada','N. gonorrhoeae fermenta apenas glicose; N. meningitidis fermenta glicose e maltose','N. gonorrhoeae fermenta glicose, maltose e lactose; N. meningitidis fermenta apenas glicose','Ambas fermentam apenas glicose — não há diferença'],ans:1,exp:'N. gonorrhoeae = APENAS glicose. N. meningitidis = glicose + MALTOSE (e às vezes lactose e frutose, dependendo do sorogrupo). Mnemônico: "Gonococo não gosta de Maltose; Meningococo gosta de M(altose)."'},
+{bact:'Neisseria gonorrhoeae',q:'Mulher de 24 anos com DIP (doença inflamatória pélvica) por gonorreia confirmada. Qual esquema antibiótico é recomendado para DIP gonocócica?',opts:['Azitromicina 1g dose única','Penicilina G IV + metronidazol','Ceftriaxona 500mg IM + doxiciclina 100mg 12/12h ×14d + metronidazol 500mg 12/12h ×14d','Ciprofloxacino 500mg ×7 dias'],ans:2,exp:'DIP requer cobertura de gonococo (ceftriaxona), Chlamydia (doxiciclina ×14d) e anaeróbios (metronidazol). Ciprofloxacino NÃO é mais recomendado empiricamente pela resistência crescente de N. gonorrhoeae. Sempre tratar parceiros.'},
+{bact:'Neisseria meningitidis',q:'Adolescente de 16 anos em internato chega ao PS com febre alta, cefaleia intensa, rigidez de nuca e petéquias que não branqueiam ao vitropressão. Há suspeita de meningococcemia. Qual conduta IMEDIATA é prioritária?',opts:['Realizar TC de crânio antes do tratamento','Aguardar resultado de PCR para confirmar diagnóstico','Administrar ceftriaxona IV imediatamente (sem aguardar qualquer resultado)','Realizar punção lombar antes do tratamento e aguardar cultura'],ans:2,exp:'Meningococcemia = emergência! ATB imediato salva vidas. Em suspeita clínica de meningococcemia com choque/CIVD, a antibioticoterapia NÃO deve ser retardada por nenhum exame. Ceftriaxona ou penicilina G IV imediatamente. PL pode ser feita após ATB se seguro.'},
+{bact:'Neisseria meningitidis',q:'Qual síndrome caracteriza-se por hemorragia adrenal bilateral, CIVD e colapso circulatório, sendo associada à meningococcemia fulminante?',opts:['Síndrome de Reye','Síndrome de Lemierre','Síndrome de Waterhouse-Friderichsen','Síndrome de Stevens-Johnson'],ans:2,exp:'Síndrome de Waterhouse-Friderichsen: meningococcemia fulminante → endotoxemia maciça → CIVD → hemorragia adrenal bilateral → insuficiência adrenocortical aguda + choque distributivo. Mortalidade muito alta. Tratamento: ATB + corticoide (controverso) + suporte intensivo.'},
+{bact:'Neisseria meningitidis',q:'Qual é a profilaxia recomendada para contatos próximos de um caso confirmado de doença meningocócica?',opts:['Azitromicina 1g dose única','Rifampicina 600mg 12/12h ×2 dias OU ciprofloxacino 500mg dose única','Amoxicilina-clavulanato ×7 dias','Ceftriaxona 2g/dia ×3 dias'],ans:1,exp:'Contatos íntimos (conviventes, namorado/a, creche): rifampicina 600mg 12/12h ×2 dias (adultos) ou ciprofloxacino 500mg dose única (prático — sem interações). Gestantes: ceftriaxona 250mg IM dose única. Objetivo: eliminar portadores nasofaríngeos e prevenir novos casos.'},
+{bact:'Fusobacterium necrophorum',q:'Jovem de 19 anos, previamente saudável, com dor de garganta há 12 dias. Evoluiu com piora da febre, dor e rigidez no pescoço à direita, dispneia e dor pleurítica. TC de tórax mostra nódulos cavitários bilaterais. TC de pescoço: trombo na veia jugular interna direita. Qual é o diagnóstico?',opts:['Abscesso retrofaríngeo simples','Síndrome de Lemierre','Tuberculose pulmonar miliar','Endocardite infecciosa direita'],ans:1,exp:'Síndrome de Lemierre: tríade — faringite recente + tromboflebite da veia jugular interna + embolia pulmonar séptica (nódulos cavitários). Agente: Fusobacterium necrophorum (anaeróbio). Tratamento: metronidazol IV por 4–6 semanas.'},
+{bact:'Gardnerella vaginalis',q:'Para o diagnóstico de vaginose bacteriana pelos Critérios de Amsel, quantos critérios de quatro devem estar presentes?',opts:['Todos os 4','3 de 4','2 de 4','1 de 4'],ans:1,exp:'Critérios de Amsel (3/4 para diagnóstico de VB): (1) Descarga homogênea branco-acinzentada; (2) pH vaginal >4,5; (3) Whiff test (KOH 10%) positivo — odor de peixe; (4) Clue cells >20% na microscopia. Sensibilidade ~70%, especificidade ~94%.'},
+{bact:'Gardnerella vaginalis',q:'O que são as "células-guia" (clue cells) observadas no diagnóstico de vaginose bacteriana?',opts:['Macrófagos com bactérias intracelulares','Células epiteliais vaginais cobertas por Gardnerella (e outras bactérias) com bordas opacificadas','Células multinucleadas gigantes do tipo corpo estranho','Plasmócitos com inclusões citoplasmáticas'],ans:1,exp:'Clue cells = células epiteliais vaginais com superfície opacificada pela aderência maciça de Gardnerella vaginalis e outras bactérias associadas à VB (BVAB). Quando >20% das células são clue cells → critério de Amsel positivo. Visualizadas na microscopia a fresco ou Gram.'},
+{bact:'Legionella pneumophila',q:'Qual suplemento específico é INDISPENSÁVEL no ágar BCYE para o crescimento de Legionella pneumophila, sem o qual não há desenvolvimento bacteriano?',opts:['Glicose e manitol','L-cisteína (+ ferro)','Fator X (hemina) e Fator V (NAD)','Sorbitol e vancomicina'],ans:1,exp:'Legionella necessita obrigatoriamente de L-cisteína e ferro (além de α-cetoglutarato e pH tamponado no BCYE). NÃO cresce em ágar sangue convencional. Ausência de crescimento em sangue + crescimento em BCYE = pista diagnóstica para Legionella.'},
+{bact:'Legionella pneumophila',q:'Paciente de 58 anos, imunossuprimido, com pneumonia grave, hiponatremia (Na⁺ 125 mEq/L), diarreia e confusão mental. O escarro não mostra patógeno relevante no Gram. Qual o método diagnóstico de escolha rápido e qual o tratamento de primeira linha?',opts:['Hemocultura — amoxicilina-clavulanato','Antígeno urinário de Legionella — levofloxacino','PCR de LAVADO brônquico — ceftriaxona','Sorologia IgG — eritromicina'],ans:1,exp:'Antígeno urinário (EIA) para Legionella sorogrupo 1 = gold standard rápido (sens. 80%, espec. >99%). Levofloxacino 750mg/dia IV é a 1ª linha (fluoroquinolona). β-lactâmicos são ineficazes (intracelular). Adicionar rifampicina nos casos graves.'},
+{bact:'Treponema pallidum',q:'Jovem de 25 anos com úlcera genital indolor, de base limpa e bordas endurecidas há 10 dias. VDRL reagente 1:32. FTA-ABS positivo. Qual estágio da sífilis e qual o tratamento de escolha?',opts:['Sífilis secundária — doxiciclina 100mg ×14 dias','Sífilis primária — benzatina penicilina G 2,4 milhões UI IM dose única','Sífilis latente tardia — benzatina penicilina 3 doses','Neurossífilis — penicilina G cristalina IV'],ans:1,exp:'Sífilis primária = cancro duro (úlcera indolore, indurada, base limpa + adenopatia regional indolor). VDRL ≥1:8 na primária/secundária. Tratamento = benzatina penicilina G 2,4 milhões UI IM em dose ÚNICA. FTA-ABS permanece ⊕ para sempre.'},
+{bact:'Treponema pallidum',q:'Qual exame sorológico para sífilis permanece positivo para toda a vida mesmo após tratamento bem-sucedido, e portanto NÃO deve ser utilizado para monitorar a resposta terapêutica?',opts:['VDRL','RPR','FTA-ABS','Nenhum deles permanece positivo'],ans:2,exp:'Testes treponêmicos (FTA-ABS, TPHA, ELISA treponêmico) detectam anticorpos contra o próprio T. pallidum → permanecem ⊕ para sempre após infecção (mesmo curada). Testes não-treponêmicos (VDRL, RPR — detectam cardiolipina) devem cair ≥4× em 6 meses = resposta ao tratamento.'},
+{bact:'Leptospira interrogans',q:'Trabalhador de limpeza após enchente, com febre, mialgia intensa, icterícia, oligúria e hemorragia conjuntival subconjuntival bilateral sem dor. O exame mais indicado na fase aguda (1ª semana) é:',opts:['MAT (Microscopic Agglutination Test)','Sorologia IgG anti-Leptospira','PCR em sangue ou hemocultura em EMJH','ELISA IgM único'],ans:2,exp:'Fase leptospirêmica (1–7 dias): PCR em sangue é o gold standard de fase aguda (mais sensível que cultura). Hemocultura em EMJH cresce em semanas. MAT (fase imune) e IgM ELISA têm rendimento a partir da 2ª semana. Hemorragia conjuntival subconjuntival = pista patognomônica.'},
+{bact:'Leptospira interrogans',q:'Qual é o tratamento de escolha para a Doença de Weil (leptospirose grave)?',opts:['Doxiciclina 100mg 12/12h VO ×7 dias','Penicilina G cristalina IV ou ceftriaxona IV ×7 dias','Metronidazol IV ×14 dias','Azitromicina 1g dose única'],ans:1,exp:'Doença de Weil (grave): penicilina G cristalina 1,5 milhões UI 6/6h IV ×7 dias ou ceftriaxona 1g IV/dia ×7 dias. Forma leve: doxiciclina 100mg 12/12h VO ×7 dias. Profilaxia pós-exposição (enchentes): doxiciclina 200mg/semana.'},
+{bact:'Bordetella pertussis',q:'Qual achado laboratorial é considerado patognomônico da fase paroxística da coqueluche?',opts:['Neutrofilia com desvio à esquerda (>20.000 neutrófilos)','Eosinofilia acentuada (>5.000/μL)','Linfocitose absoluta (>15.000 linfócitos/μL)','Trombocitopenia grave (<50.000/μL)'],ans:2,exp:'Linfocitose absoluta (>15.000–25.000 linfócitos/μL) na fase paroxística é patognomônica de coqueluche. A Toxina Pertussis bloqueia a migração de linfócitos para linfonodos (via bloqueio de receptores de quimiocinas), acumulando-os no sangue periférico.'},
+{bact:'Klebsiella pneumoniae',q:'Paciente com bacteremia por Klebsiella pneumoniae KPC (produtora de carbapenemase). Qual associação representa a melhor opção terapêutica disponível?',opts:['Meropenem isolado em dose dupla','Polimixina B + meropenem','Ceftazidima-avibactam (ou aztreonam-avibactam para NDM)','Cefepima + metronidazol'],ans:2,exp:'KPC: ceftazidima-avibactam (avibactam inibe KPC, CTX-M, OXA-48). NDM (metalo-β-lactamase): aztreonam-avibactam (aztreonam não é hidrolisado por metalo-β-lactamases; avibactam inibe β-lactamases concomitantes). Cefiderocol é alternativa para MDR/XDR.'},
+{bact:'Pseudomonas aeruginosa',q:'Paciente neutropênico com febre e lesão cutânea: pápula eritematosa que evoluiu para úlcera necrótica com halo hemorrágico e centro escuro. Qual o diagnóstico e o agente?',opts:['Furúnculo por S. aureus','Ecthyma gangrenosum por Pseudomonas aeruginosa','Celulite por Streptococcus pyogenes','Úlcera de pressão infectada'],ans:1,exp:'Ecthyma gangrenosum = lesão cutânea necrótica hemorrágica em pacientes neutropênicos com sepse por P. aeruginosa. Fisiopatologia: bacteremia → invasão vascular → trombose + isquemia + necrose cutânea. Mortalidade elevada. Tratar com antipseudomonas: pip-tazo, ceftazidima ou meropenem.'},
+{bact:'Campylobacter spp.',q:'Qual teste bioquímico diferencia Campylobacter jejuni de Campylobacter coli, sendo positivo apenas no primeiro?',opts:['Oxidase','Catalase','Hipurato','Urease'],ans:2,exp:'C. jejuni = Hipurato POSITIVO (hidrolisa hipurato de sódio em glicina + ácido benzoico). C. coli = Hipurato NEGATIVO. Ambos são oxidase ⊕, catalase ⊕, microaerófilos e crescem a 42°C. Importante diferencial clínico, pois C. jejuni é mais associado ao SGB.'},
+{bact:'Treponema pallidum',q:'Paciente com sífilis tardia e comprometimento do SNC (neurossífilis). Qual é o tratamento de escolha?',opts:['Benzatina penicilina G 2,4 milhões UI IM 3 doses semanais','Penicilina G cristalina 3–4 milhões UI IV 4/4h ×10–14 dias','Doxiciclina 200mg/dia ×28 dias','Ceftriaxona 2g IM dose única'],ans:1,exp:'Neurossífilis = penicilina G cristalina IV (altíssimas doses) ×10–14 dias, pois a concentração no LCR precisa ser treponemicida. Benzatina penicilina IM não atinge concentrações adequadas no LCR. Após o tratamento IV, completar com benzatina IM ×3 semanas.'},
+{bact:'Salmonella Typhi',q:'O Teste de Widal detecta anticorpos contra quais antígenos de Salmonella Typhi?',opts:['Antígeno Vi e antígeno K','Antígenos O (somático) e H (flagelar)','Antígenos H e F1','Antígeno Vi somente'],ans:1,exp:'Widal detecta aglutininas (IgM) contra antígenos O (somático/LPS) e H (flagelar) de Salmonella Typhi e Paratyphi. Título ≥1:160 sugestivo, mas baixa especificidade (reação cruzada com outras Salmonella, malária, dengue). Utilidade diagnóstica limitada.'},
+{bact:'Vibrio cholerae',q:'Qual é o tratamento PRINCIPAL da cólera, que por si só reduz a mortalidade de >50% para <1%?',opts:['Doxiciclina 300mg dose única','Azitromicina 1g dose única','Reidratação oral ou intravenosa adequada','Ciprofloxacino 1g dose única'],ans:2,exp:'A REIDRATAÇÃO é o pilar fundamental do tratamento da cólera. A Solução de Reidratação Oral (SRO) da OMS ou Ringer Lactato IV em casos graves. Antibióticos (doxiciclina, azitromicina) reduzem a duração da diarreia e excreção mas são ADJUVANTES — não substituem a reidratação.'},
+{bact:'Yersinia pestis',q:'Qual é o antibiótico de primeira escolha (DOC clássico) para o tratamento da peste bubônica por Yersinia pestis?',opts:['Penicilina G cristalina IV','Ceftriaxona IV','Estreptomicina IM (ou gentamicina IV)','Eritromicina VO'],ans:2,exp:'Estreptomicina IM é o DOC histórico para a peste (bactericida, penetra em tecidos linfoides). Gentamicina IV é a alternativa mais prática. Doxiciclina VO é usada em casos mais leves ou profilaxia pós-exposição. Cloranfenicol = meningite pestosa (boa penetração SNC).'},
+{bact:'Legionella pneumophila',q:'Qual é a rota de transmissão de Legionella pneumophila e por que NÃO ocorre transmissão interpessoal?',opts:['Transmissão fecal-oral por água contaminada com fezes','Inalação de aerossóis de água contaminada (sistemas de água quente); sem transmissão pessoa-a-pessoa pois é intracelular obrigatório','Contato direto com secreções respiratórias de infectados','Picada de vetor artrópode'],ans:1,exp:'Legionella se multiplica em amebas livres em sistemas de água aquecida (torres de resfriamento, chuveiros, banheiras). Humanos se infectam inalando aerossóis. NÃO há transmissão interpessoal — a bactéria precisa de células hospedeiras e não se mantém em secreções.'},
+{bact:'Haemophilus influenzae',q:'O fenômeno de satelitismo de Haemophilus influenzae ao redor de colônias de Staphylococcus aureus em placa de ágar sangue ocorre porque:',opts:['S. aureus produz substâncias tóxicas que inibem outras bactérias ao redor','S. aureus fornece o Fator V (NAD) por hemólise, permitindo crescimento de H. influenzae','H. influenzae parasita S. aureus para obter fatores de crescimento intracelulares','S. aureus produz o Fator X (hemina) necessário para H. influenzae'],ans:1,exp:'S. aureus realiza β-hemólise → libera NAD (Fator V) no meio. H. influenzae, que necessita do Fator V (e do Fator X liberado pelo ágar sangue pela hemólise suave), cresce melhor nas proximidades de S. aureus — "satélite". Colônias são maiores perto de S. aureus e menores longe.'},
+{bact:'Fusobacterium necrophorum',q:'Qual é o antibiótico de escolha para tratamento da Síndrome de Lemierre causada por Fusobacterium necrophorum?',opts:['Cefalexina VO ×14 dias','Metronidazol IV ×4–6 semanas','Ciprofloxacino IV ×7 dias','Amoxicilina VO ×10 dias'],ans:1,exp:'Metronidazol IV é o antibiótico de escolha para Fusobacterium necrophorum (anaeróbio estrito). Cobertura excelente. Alternativas: ampicilina-sulbactam, pip-tazo, carbapenems. Clindamicina tem resistência crescente no grupo Fusobacterium. Duração mínima: 4–6 semanas.'},
+{bact:'Neisseria gonorrhoeae',q:'A profilaxia ocular neonatal para prevenção da oftalmia neonatorum (conjuntivite gonocócica) é realizada com qual agente?',opts:['Colírio de ceftriaxona 1%','Colírio de eritromicina 0,5%','Colírio de ciprofloxacino 0,3%','Nitrato de prata 2% (método de Credé — atual)'],ans:1,exp:'Colírio de eritromicina 0,5% em ambos os olhos ao nascimento é a profilaxia atual (substituiu o nitrato de prata que causava conjuntivite química e não cobria Chlamydia). Cobre tanto N. gonorrhoeae quanto Chlamydia trachomatis. Ceftriaxona neonatal: usada quando a mãe tem gonorreia confirmada.'},
+{bact:'Campylobacter spp.',q:'Quais são as condições ideais de cultivo de Campylobacter spp. que o diferenciam de outras bactérias patogênicas?',opts:['Aerobiose a 37°C em MacConkey','Anaerobiose estrita a 35°C em ágar sangue','Microaerofilia (5% O₂, 10% CO₂) a 42°C em ágar Skirrow','Aerobiose a 28°C em BCYE'],ans:2,exp:'Campylobacter é MICROAERÓFILO (5% O₂, 10% CO₂, 85% N₂) — morre em aerobiose e anaerobiose. Temperatura ótima: 42°C (coincide com temperatura intestinal das aves-reservatório). Ágar Skirrow (ou Campy agar) é seletivo, contendo antibióticos que inibem outras bactérias.'},
+{bact:'Gardnerella vaginalis',q:'Uma mulher de 28 anos apresenta corrimento vaginal acinzentado e homogêneo com odor fétido. pH vaginal = 5,2. O teste das aminas (Whiff test) com KOH 10% é positivo. A microscopia mostra >20% de clue cells. Qual é o diagnóstico e tratamento de 1ª linha?',opts:['Candidíase vaginal — fluconazol 150mg dose única','Tricomoníase — metronidazol 2g dose única','Vaginose bacteriana — metronidazol 500mg 12/12h ×7 dias','Vaginite atrófica — estrogênio tópico'],ans:2,exp:'Critérios de Amsel: pH >4,5 ⊕ (aqui 5,2), Whiff test ⊕, clue cells >20% ⊕ = 3/4 critérios = VB. Metronidazol 500mg 12/12h VO ×7 dias é a 1ª linha. Candida: pH <4,5, descarga grumosa. Trichomonas: parasita móvel na microscopia, descarga bolhosa.'}
+];
+
+const clinicalCases=[
+{num:'Caso 01',ttl:'O Alcoolista com Pneumonia Necrosante',path:'Klebsiella pneumoniae',
+scen:`Homem de 54 anos, alcoolista crônico, é trazido ao pronto-socorro por familiares com febre alta (39,8°C) há 3 dias, tosse produtiva com escarro de coloração escura e viscosidade gelatinosa (descrita como "geleia de groselha"), dispneia progressiva e dor pleurítica à direita. Histórico de DPOC e internações anteriores por pneumonia. Não é tabagista ativo no momento. Ao exame: paciente tóxico, com tiragem intercostal, macicez à percussão no lobo superior direito e estertores crepitantes.`,
+vitals:[{v:'39,8°C',l:'Temperatura'},{v:'118 bpm',l:'FC'},{v:'88/58 mmHg',l:'PA'},{v:'86%',l:'SpO₂ (ar)'},{v:'28 rpm',l:'FR'},{v:'14',l:'Glasgow'}],
+labs:[{k:'WBC',v:'22.400/μL',ab:true},{k:'Neutrófilos',v:'19.000/μL',ab:true},{k:'PCR',v:'320 mg/L',ab:true},{k:'Procalcitonina',v:'18 ng/mL',ab:true},{k:'Creatinina',v:'1,8 mg/dL',ab:true},{k:'Lactato',v:'4,2 mmol/L',ab:true},{k:'Rx Tórax',v:'Consolidação LSd + abaulamento da fissura',ab:true},{k:'Gram do escarro',v:'Bacilos G(-) encapsulados',ab:false}],
+qs:[
+{n:'Questão 1',q:'Qual é o diagnóstico mais provável e por que o escarro tem esse aspecto característico?',a:'Pneumonia lobar necrosante por Klebsiella pneumoniae. A cápsula polissacarídica espessa e a produção de enzimas destrutivas (proteases, LPS) causam necrose tecidual extensa. O escarro em "geleia de groselha" resulta da mistura de sangue com muco espesso da cápsula bacteriana. O abaulamento da fissura é sinal radiológico clássico — o edema pulmonar empurra os lobos adjacentes.'},
+{n:'Questão 2',q:'Quais achados de laboratório/microbiologia confirmam o diagnóstico e qual o perfil esperado em ágar MacConkey?',a:'MacConkey: colônias rosa-mucoide (encapsuladas) — aspecto de "barril". Testes bioquímicos: Indol ⊖, VP ⊕, Citrato ⊕, Urease ⊕. Hemocultura e cultura do escarro (gold standard). MALDI-TOF para identificação definitiva. Pesquisa de mecanismos de resistência: PCR para blaKPC, blaNDM (fundamental antes de escolher ATB). Sensibilidade antimicrobiana (antibiograma E-test/VITEK).'},
+{n:'Questão 3',q:'Qual é o tratamento de primeira linha e como modificar se for ESBL ou KPC?',a:'Empírico inicial (sem sensibilidade): meropenem 2g IV 8/8h + pip-tazo 4,5g 6/6h (pneumonia grave de origem hospitalar). Confirmado K. pneumoniae sem ESBL/KPC: ceftriaxona 2g IV/dia. ESBL confirmado: meropenem 1–2g 8/8h IV (carbapenems). KPC (Klebsiella produtora de carbapenemase): CEFTAZIDIMA-AVIBACTAM (Avycaz) — droga de escolha. NDM: aztreonam-avibactam ou cefiderocol. Polimixina B: última linha se demais opções indisponíveis. Duração: 14–21 dias (pneumonia grave).'},
+{n:'Questão 4',q:'Quais fatores neste caso predispõem ao perfil ESKAPE de resistência e qual a estratégia de controle de infecção?',a:'Alcoolismo (aspiração + imunossupressão), hospitalização prévia (exposição a cepas nosocomiais), DPOC (clearance mucociliar prejudicado) e uso provável de ATB anterior (pressão seletiva). Estratégias: notificar laboratório de microbiologia sobre casos KPC, isolamento de contato, higienização das mãos (álcool gel + sabão), desescalonamento precoce baseado no antibiograma e programa de antimicrobial stewardship.'}
+]},
+{num:'Caso 02',ttl:'A "Doença Esquecida" no Jovem Saudável',path:'Fusobacterium necrophorum — Síndrome de Lemierre',
+scen:`Estudante universitária de 20 anos, previamente saudável, é internada por febre alta persistente há 9 dias. Iniciou com faringite há 2 semanas (tratada sintomaticamente — sem ATB), melhorou parcialmente e piorou novamente. Há 4 dias: massa cervical direita dolorosa, torcicolos, disfagia e odinofagia intensa. Hoje: dispneia aos pequenos esforços e dor pleurítica à direita. Ao exame: tóxica, adenomegalia cervical direita endurecida e dolorosa (5 cm), sem amigdalas purulentas visíveis. Ausculta: diminuição do MV na base direita.`,
+vitals:[{v:'39,5°C',l:'Temperatura'},{v:'126 bpm',l:'FC'},{v:'96/62 mmHg',l:'PA'},{v:'91%',l:'SpO₂ (ar)'},{v:'26 rpm',l:'FR'},{v:'15',l:'Glasgow'}],
+labs:[{k:'WBC',v:'28.600/μL',ab:true},{k:'PCR',v:'298 mg/L',ab:true},{k:'D-dímero',v:'12.400 ng/mL',ab:true},{k:'Lactato',v:'3,1 mmol/L',ab:true},{k:'TC pescoço c/contraste',v:'Trombo em VJI direita',ab:true},{k:'TC tórax',v:'Nódulos cavitários bilaterais',ab:true},{k:'Hemocultura',v:'Bacilo G(-) fusiforme',ab:false},{k:'Plaquetas',v:'88.000/μL',ab:true}],
+qs:[
+{n:'Questão 1',q:'Qual é o diagnóstico e qual é a tríade clássica desta síndrome?',a:'Síndrome de Lemierre causada por Fusobacterium necrophorum. Tríade clássica: (1) Faringite recente (história de odinofagia 2 semanas atrás); (2) Tromboflebite séptica da veia jugular interna (TC pescoço: trombo em VJI direita); (3) Embolia pulmonar séptica (nódulos cavitários bilaterais no TC tórax). É chamada de "doença esquecida" pois quase desapareceu com o uso rotineiro de penicilina para faringite — mas ressurgiu com a restrição de antibióticos.'},
+{n:'Questão 2',q:'Como confirmar o diagnóstico microbiológico e quais características ao Gram e na cultura?',a:'Hemocultura em frasco de anaerobiose (incubação de 5 dias): Gram mostra bacilos fusiformes Gram-negativos pleomórficos (irregulares, pontiagudos). Cultura anaeróbia em Brucella agar ou ágar sangue em anaerobiose: colônias pequenas, β-hemolíticas, com ODOR FÉTIDO característico (ácido butírico). PCR do 16S rRNA para identificação definitiva. MALDI-TOF também identifica Fusobacterium. Importante: Fusobacterium é anaeróbio ESTRITO — a coleta deve preservar anaerobiose.'},
+{n:'Questão 3',q:'Qual é o tratamento de escolha e por quanto tempo? Deve anticoagular?',a:'METRONIDAZOL 500mg 8/8h IV (mínimo 4–6 semanas) = tratamento de escolha (excelente cobertura anaeróbia). Alternativas: ampicilina-sulbactam IV, pip-tazo IV, carbapenems (formas graves). CUIDADO: clindamicina tem resistência crescente em Fusobacterium — evitar como monoterapia. Anticoagulação (heparina, HBPM): controversa — sem consenso. Pode ser considerada em trombos extensos progressivos, TEP grave ou ausência de melhora com ATB. Decisão individualizada. Controle radiológico (TC) para monitorar resolução do trombo.'},
+{n:'Questão 4',q:'Qual seria a conduta adequada se a paciente tivesse recebido amoxicilina na faringite inicial? A síndrome seria evitada?',a:'Provavelmente sim. Fusobacterium necrophorum é sensível à penicilina/amoxicilina. O paradoxo é que a restrição de antibióticos para faringite viral (correta na maioria dos casos) pode atrasar o tratamento em casos de faringite bacteriana por F. necrophorum — que não é diagnosticada pelo teste rápido para estreptococo. Sinais de alarme que justificam investigação ampliada: febre persistente >5 dias após faringite + massa cervical + sintomas sistêmicos = investigar Lemierre com TC cervical e hemocultura.'}
+]},
+{num:'Caso 03',ttl:'Febre Bifásica após as Enchentes',path:'Leptospira interrogans — Doença de Weil',
+scen:`Homem de 38 anos, trabalhador de limpeza pública, dá entrada no PS 10 dias após participar das obras de limpeza em área de enchente sem EPI adequado. Relata febre alta súbita há 8 dias (39,5°C), mialgia intensa (especialmente panturrilhas), cefaleia frontal e calafrios — melhorou 2 dias e voltou pior. Agora: icterícia progressiva, oligúria (300mL/24h), hemorragia subconjuntival bilateral indolor e petéquias em membros inferiores. Sem diarreia ou vômitos relevantes.`,
+vitals:[{v:'39,2°C',l:'Temperatura'},{v:'112 bpm',l:'FC'},{v:'92/64 mmHg',l:'PA'},{v:'92%',l:'SpO₂ (ar)'},{v:'22 rpm',l:'FR'},{v:'14',l:'Glasgow'}],
+labs:[{k:'Bilirrubina Total',v:'18,4 mg/dL',ab:true},{k:'Bilirrubina Direta',v:'15,2 mg/dL',ab:true},{k:'Creatinina',v:'5,8 mg/dL',ab:true},{k:'Ureia',v:'148 mg/dL',ab:true},{k:'CK',v:'4.800 U/L (miosite)',ab:true},{k:'Plaquetas',v:'42.000/μL',ab:true},{k:'PCR',v:'245 mg/L',ab:true},{k:'Leucócitos',v:'18.200/μL (neutrofilia)',ab:true}],
+qs:[
+{n:'Questão 1',q:'Qual é o diagnóstico? Descreva a tríade característica e o achado clínico patognomônico.',a:'Doença de Weil (forma grave de leptospirose) por Leptospira interrogans. Tríade de Weil: (1) ICTERÍCIA (bilirrubina predominantemente direta = 15,2mg/dL); (2) INSUFICIÊNCIA RENAL AGUDA (creatinina 5,8mg/dL, oligúria); (3) HEMORRAGIA (subconjuntival bilateral, petéquias). Achado patognomônico: HEMORRAGIA CONJUNTIVAL (subconjuntival) BILATERAL INDOLOR — ocorre por vasculite de pequenos vasos sem traumatismo e sem dor, altamente sugestivo de leptospirose grave. Elevação de CK aponta miosite (mialgia em panturrilhas = característica).'},
+{n:'Questão 2',q:'Qual exame diagnóstico é mais adequado nesta fase (fase imune) e qual é o gold standard sorológico?',a:'Fase imune (8–30 dias após infecção): MAT — Microscopic Agglutination Test = gold standard sorológico (título ≥1:800 ou ≥4× aumento entre amostras pareadas é confirmatório). ELISA IgM anti-Leptospira (mais acessível, disponível comercialmente — para triagem). Na fase leptospirêmica (1–7 dias): PCR em sangue seria o ideal (mais sensível). Hemocultura em EMJH (cresce em semanas — sem utilidade imediata). Campo escuro (microscopia): baixa sensibilidade, depende de operador experiente. NOTIFICAÇÃO COMPULSÓRIA imediata no Brasil.'},
+{n:'Questão 3',q:'Qual é o tratamento de escolha para esta forma grave? E para a forma leve?',a:'Doença de Weil (GRAVE): Penicilina G cristalina 1,5 milhões UI 6/6h IV ×7 dias. Alternativa: Ceftriaxona 1g IV/dia ×7 dias (prático, boa penetração tecidual) ou Ampicilina 1g 6/6h IV. Forma LEVE (anictérica, ambulatorial): Doxiciclina 100mg 12/12h VO ×7 dias. Suporte intensivo: hemodiálise (IRA grave), transfusão (trombocitopenia grave com hemorragia), ventilação mecânica (SHPS/ARDS). Profilaxia pós-exposição a enchentes: Doxiciclina 200mg/semana ×duração da exposição (eficácia limitada, uso individualizado).'},
+{n:'Questão 4',q:'Qual é o reservatório principal e a forma de transmissão? Como orientar a prevenção coletiva?',a:'Reservatório: Rattus norvegicus (rato de esgoto) — excreta Leptospira na urina por ANOS sem adoecer. Transmissão: contato de mucosas ou pele com lesões com água/solo contaminados pela urina de ratos (enchentes, lama, esgoto). NÃO há transmissão interpessoal. Prevenção individual: botas/luvas impermeáveis, EPI em áreas de risco. Prevenção coletiva: saneamento básico, controle de roedores (desratização), manejo adequado do lixo. Vigilância epidemiológica: notificação obrigatória, mapeamento de áreas de risco em enchentes.'}
+]},
+{num:'Caso 04',ttl:'Emergência: A Púrpura que Não Branqueia',path:'Neisseria meningitidis — Meningococcemia',
+scen:`Adolescente de 17 anos, estudante de internato, é levado ao PS em estado grave às 23h com histórico de 8 horas de cefaleia intensa, febre alta (40,2°C) e náuseas. Nas últimas 2 horas evoluiu com piora rápida do estado geral, surgimento de petéquias que se expandiram para púrpura no tronco e membros inferiores. Não apresenta rigidez de nuca ao exame. Está confuso (Glasgow 13). Ao realizar o vitropressão nas lesões: as manchas NÃO desaparecem. Dois colegas de quarto tiveram faringite leve na última semana.`,
+vitals:[{v:'40,2°C',l:'Temperatura'},{v:'138 bpm',l:'FC'},{v:'72/40 mmHg',l:'PA — CHOQUE'},{v:'95%',l:'SpO₂ (O₂ 15L)'},{v:'30 rpm',l:'FR'},{v:'13',l:'Glasgow'}],
+labs:[{k:'WBC',v:'3.200/μL (leucopenia!)',ab:true},{k:'Plaquetas',v:'28.000/μL',ab:true},{k:'TP/INR',v:'2,8 (CIVD)',ab:true},{k:'PCR',v:'380 mg/L',ab:true},{k:'Lactato',v:'6,8 mmol/L',ab:true},{k:'Na⁺',v:'132 mEq/L',ab:true},{k:'Creatinina',v:'2,4 mg/dL',ab:true},{k:'Gram do LCR',v:'Diplococos G(-) intracelulares',ab:false}],
+qs:[
+{n:'Questão 1',q:'Qual é o diagnóstico e por que a púrpura não branqueia ao vitropressão? Qual síndrome tem risco de ocorrer?',a:'Meningococcemia fulminante por Neisseria meningitidis. A púrpura NÃO branqueia porque é causada por extravasamento de hemácias para a derme (púrpura verdadeira = sangue fora dos vasos) — diferente do eritema inflamatório que desaparece ao vitropressão (vasos dilatados com sangue dentro). A meningococcemia causa CIVD (coagulopatia — TP 2,8, plaquetas 28.000) → microtrombos em capilares → hemorragia cutânea → púrpura. Risco: Síndrome de Waterhouse-Friderichsen (hemorragia adrenal bilateral + CIVD + colapso cardiovascular = alta mortalidade).'},
+{n:'Questão 2',q:'Qual deve ser a conduta IMEDIATA? Deve aguardar punção lombar e cultura para iniciar o antibiótico?',a:'CONDUTA IMEDIATA: (1) Acesso venoso calibroso + ressuscitação volêmica (cristaloides 20–30mL/kg em bólus); (2) CEFTRIAXONA 4g IV EM BÓLUS IMEDIATAMENTE (sem aguardar NENHUM resultado — nem PL, nem cultura, nem TC); (3) Suporte de via aérea (IOT se Glasgow ≤8); (4) Dexametasona 0,15mg/kg 6/6h ×4 dias (ANTES ou junto ao ATB — reduz sequelas neurológicas). A PL pode ser feita APÓS o ATB se o paciente estiver estável — a cultura do LCR ainda pode ser positiva por 6–8h após ATB. Meningococcemia em choque = PRIORIDADE ABSOLUTA ao ATB. Atraso no ATB aumenta mortalidade exponencialmente.'},
+{n:'Questão 3',q:'Quais medidas de saúde pública são necessárias em relação aos contatos próximos deste paciente?',a:'QUIMIOPROFILAXIA para contatos próximos (coabitantes, namorado/a, colegas de quarto, contactantes familiares íntimos — NÃO contatos casuais): Rifampicina 600mg 12/12h ×2 dias (adultos); 10mg/kg 12/12h ×2 dias (crianças >1 mês); 5mg/kg 12/12h ×2 dias (<1 mês). OU Ciprofloxacino 500mg dose única (adultos — mais prático). Gestantes: Ceftriaxona 250mg IM dose única. Prazo: idealmente em até 24h. Vacina não substitui a quimioprofilaxia imediata mas deve ser considerada para completar cobertura dos contatos. NOTIFICAÇÃO COMPULSÓRIA IMEDIATA ao serviço de vigilância epidemiológica.'},
+{n:'Questão 4',q:'Como diferenciar N. meningitidis de N. gonorrhoeae no laboratório e quais são os sorogrupos vacinais disponíveis?',a:'Diferenciação bioquímica: N. meningitidis = Oxidase ⊕ + fermenta GLICOSE + MALTOSE. N. gonorrhoeae = Oxidase ⊕ + fermenta APENAS GLICOSE (não fermenta maltose). Ambas: diplococos Gram-negativos, Oxidase ⊕. Sorogrupos de N. meningitidis: A, B, C, W135, Y, X. Vacinas disponíveis: MenACWY (conjugada quadrivalente — cobre A, C, W, Y); MenB (Bexsero® ou Trumenba® — cobre sorogrupo B). No Brasil: Men-B + Men-ACWY no calendário vacinal. Sorogrupo B é o mais prevalente no Brasil atualmente, mas varia regionalmente.'}
+]}
+];
+
+// ================================================================
+// RENDER ENGINE
+// ================================================================
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const p=document.getElementById(id);
+  if(p){p.classList.add('active');window.scrollTo(0,0);}
+}
+
+function getSecColor(secId){
+  const m={enterobac:'#e67e22',nonferment:'#3498db',haemoph:'#9b59b6',neisseria:'#e74c3c',others:'#1abc9c',spirochetes:'#f1c40f'};
+  return m[secId]||'#00d4aa';
+}
+
+function initDashboard(){
+  const g=document.getElementById('dash-secs');
+  g.innerHTML=sections.map(s=>`
+<div class="sc" style="--sc:${s.c}" onclick="showPage('page-${s.id}')">
+<div class="sc-icon">${s.ic}</div>
+<div class="sc-nm">${s.nm}</div>
+<div class="sc-ds">${s.ds}</div>
+<span class="sc-ct">${s.ct} microrganismos</span>
+</div>`).join('');
+}
+
+function renderSections(){
+  sections.forEach(sec=>{
+    const p=document.getElementById('page-'+sec.id);
+    if(!p)return;
+    const bacts=bacteria.filter(b=>b.sec===sec.id);
+    p.innerHTML=`
+<div class="top-nav">
+<button class="btn-home" onclick="showPage('page-dashboard')">🏠 Início</button>
+<span class="nav-lbl">${sec.nm}</span>
+</div>
+<div class="sec-hero" style="--sc:${sec.c}">
+<h1 style="color:${sec.c}">${sec.ic} ${sec.nm}</h1>
+<p>${sec.ds} &mdash; Clique no cartão para virar</p>
+</div>
+<div class="fc-grid">
+${bacts.map((b,i)=>renderCard(b,sec.c,i)).join('')}
+</div>`;
+  });
+}
+
+function renderCard(b,color,i){
+  return `<div class="fcw" id="fcw-${b.id}">
+<div class="fc" id="fc-${b.id}" onclick="flipCard('${b.id}')" style="--sc:${color}">
+<div class="fc-f">
+<div class="fc-fh" style="background:${color}">
+<div class="fc-nm">${b.nm}</div>
+<span class="fc-g">${b.g} · ${b.mo}</span>
+</div>
+<div class="fc-fb">
+<div class="fc-row"><span class="fc-lbl" style="color:${color}">Aerobiose</span><span class="fc-val">${b.ox}</span></div>
+<div class="fc-row"><span class="fc-lbl" style="color:${color}">Fato-chave</span><span class="fc-val">${b.kf}</span></div>
+<div class="fc-row"><span class="fc-lbl" style="color:${color}">Ágar/Meio</span><span class="fc-val">${b.ag}</span></div>
+<div class="fc-row"><span class="fc-lbl" style="color:${color}">Doenças</span><div>
+${b.dis.map(d=>`<span class="fc-tag">${d}</span>`).join('')}
+</div></div>
+</div>
+<div class="fc-hint">↻ Toque para ver Diagnóstico &amp; Tratamento</div>
+</div>
+<div class="fc-b">
+<div class="fc-bh"><div class="fc-bt">${b.nm}</div></div>
+<div class="fc-bb">
+<div><div class="bs-t" style="--sc:${color}">Virulência</div><div class="tg-wrap">${b.vir.map(v=>`<span class="tg">${v}</span>`).join('')}</div></div>
+<div><div class="bs-t" style="--sc:${color}">Diagnóstico</div><div class="tg-wrap">${b.dx.map(d=>`<span class="tg">${d}</span>`).join('')}</div></div>
+<div><div class="bs-t" style="--sc:${color}">Tratamento 1ª linha</div><div class="tg-wrap">${b.tx1.map(t=>`<span class="tg tx">${t}</span>`).join('')}</div></div>
+<div><div class="bs-t" style="--sc:${color}">Resistência</div><div class="tg-wrap">${b.txR.map(t=>`<span class="tg rx">${t}</span>`).join('')}</div></div>
+<div class="fc-sp">${b.sp}</div>
+<div class="fc-ex">💡 ${b.ex}</div>
+</div>
+</div>
+</div>
+</div>`;
+}
+
+function flipCard(id){
+  const fc=document.getElementById('fc-'+id);
+  if(fc)fc.classList.toggle('flipped');
+}
+
+// ================================================================
+// QUIZ ENGINE
+// ================================================================
+let qState={cur:0,sel:null,answered:false,score:0,wrongs:[]};
+
+function initQuiz(){
+  qState={cur:0,sel:null,answered:false,score:0,wrongs:[]};
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const main=document.getElementById('q-main');
+  const ctr=document.getElementById('q-ctr');
+  const prog=document.getElementById('q-prog');
+  const total=quizData.length;
+  const q=quizData[qState.cur];
+  const pct=Math.round(((qState.cur)/total)*100);
+  if(ctr)ctr.textContent=`Questão ${qState.cur+1} de ${total} · ✓ ${qState.score} corretas`;
+  if(prog)prog.style.width=Math.max(2,pct)+'%';
+  main.innerHTML=`
+<div class="q-num">Questão ${qState.cur+1} / ${total}</div>
+<div class="q-bact">📌 ${q.bact}</div>
+<p class="q-txt">${q.q}</p>
+<div class="q-opts" id="q-opts">
+${q.opts.map((o,i)=>`<button class="q-opt" id="qopt-${i}" onclick="selectOpt(${i})">
+<span class="q-lt">${String.fromCharCode(65+i)}</span>${o}
+</button>`).join('')}
+</div>
+<div class="q-fb" id="q-fb">
+<div class="q-fb-t" id="q-fb-t"></div>
+<p class="q-fb-p" id="q-fb-p"></p>
+</div>
+<div class="q-nav">
+<button class="btn-qs" onclick="showPage('page-dashboard')">🏠 Sair</button>
+<button class="btn-q" id="q-btn" onclick="nextOrCheck()" disabled>Verificar</button>
+</div>`;
+  qState.sel=null;qState.answered=false;
+}
+
+function selectOpt(i){
+  if(qState.answered)return;
+  qState.sel=i;
+  document.querySelectorAll('.q-opt').forEach((o,idx)=>{
+    o.classList.remove('sel');
+    if(idx===i)o.classList.add('sel');
+  });
+  const btn=document.getElementById('q-btn');
+  if(btn){btn.disabled=false;btn.textContent='Verificar';}
+}
+
+function nextOrCheck(){
+  if(!qState.answered){
+    if(qState.sel===null)return;
+    qState.answered=true;
+    const q=quizData[qState.cur];
+    const correct=(qState.sel===q.ans);
+    if(correct)qState.score++;else qState.wrongs.push(qState.cur);
+    document.querySelectorAll('.q-opt').forEach((o,i)=>{
+      if(i===q.ans)o.classList.add('correct');
+      else if(i===qState.sel)o.classList.add('wrong');
+      o.style.cursor='default';
+    });
+    const fb=document.getElementById('q-fb');
+    const ft=document.getElementById('q-fb-t');
+    const fp=document.getElementById('q-fb-p');
+    if(fb&&ft&&fp){
+      fb.classList.add('show');
+      ft.textContent=correct?'✅ Correto!':'❌ Incorreto';
+      ft.className='q-fb-t '+(correct?'ok':'err');
+      fp.textContent=q.exp;
+    }
+    const btn=document.getElementById('q-btn');
+    if(btn){
+      btn.textContent=qState.cur<quizData.length-1?'Próxima →':'Ver Resultado';
+    }
+  } else {
+    qState.cur++;
+    if(qState.cur>=quizData.length){showResults();return;}
+    renderQuestion();
+  }
+}
+
+function showResults(){
+  const pct=Math.round((qState.score/quizData.length)*100);
+  let msg='',color=var_ac;
+  if(pct>=90){msg='🏆 Excelente! Domínio completo!';color='#27ae60';}
+  else if(pct>=70){msg='👍 Bom desempenho! Continue revisando.';color=var_ac;}
+  else if(pct>=50){msg='📚 Razoável — foque nos erros abaixo.';color='#e67e22';}
+  else{msg='🔄 Revise os flashcards e tente novamente!';color='#e74c3c';}
+  const main=document.getElementById('q-main');
+  main.innerHTML=`
+<div class="qr">
+<div class="qr-score" style="color:${color}">${qState.score}</div>
+<div class="qr-tot">de ${quizData.length} questões — ${pct}% de acerto</div>
+<div class="qr-msg" style="color:${color}">${msg}</div>
+<div class="qr-grid">
+<div class="qr-ok"><div class="qr-n">${qState.score}</div><div class="qr-l">✅ Corretas</div></div>
+<div class="qr-er"><div class="qr-n">${quizData.length-qState.score}</div><div class="qr-l">❌ Erradas</div></div>
+<div><div class="qr-n">${pct}%</div><div class="qr-l">Aproveitamento</div></div>
+</div>
+<button class="btn-q" onclick="initQuiz()" style="margin:8px">🔄 Refazer Quiz</button>
+<button class="btn-qs" onclick="showPage('page-dashboard')" style="margin:8px">🏠 Voltar ao Início</button>
+</div>`;
+  const prog=document.getElementById('q-prog');
+  if(prog)prog.style.width='100%';
+  const ctr=document.getElementById('q-ctr');
+  if(ctr)ctr.textContent=`Concluído! ${qState.score}/${quizData.length} corretas`;
+}
+
+const var_ac='#00d4aa';
+
+// ================================================================
+// CLINICAL CASES
+// ================================================================
+function renderCases(){
+  const body=document.getElementById('cas-body');
+  body.innerHTML=clinicalCases.map(cc=>`
+<div class="cc">
+<div class="cc-hd">
+<div class="cc-num">${cc.num}</div>
+<div class="cc-ttl">${cc.ttl}</div>
+<span class="cc-path">🦠 ${cc.path}</span>
+</div>
+<div class="cc-bd">
+<div class="cc-scen"><p>${cc.scen}</p></div>
+<p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx2);margin-bottom:10px">Sinais Vitais</p>
+<div class="vitals">${cc.vitals.map(v=>`<div class="vt"><div class="vt-v">${v.v}</div><div class="vt-l">${v.l}</div></div>`).join('')}</div>
+<div class="cc-lab">
+<div class="cc-lab-t">Exames Complementares</div>
+<div class="lab-grid">${cc.labs.map(l=>`<div class="li"><span class="li-k">${l.k}</span><span class="li-v${l.ab?' ab':''}">${l.v}</span></div>`).join('')}</div>
+</div>
+<div class="cc-qs">
+${cc.qs.map((q,qi)=>`
+<div>
+<div class="cc-qn">${q.n}</div>
+<div class="cc-qt">${q.q}</div>
+<div class="cc-ans" id="cca-${cc.num.replace(/\s/g,'')}-${qi}">
+<button class="cc-ansbtn" onclick="toggleAnswer('cca-${cc.num.replace(/\s/g,'')}-${qi}')">
+<span class="rev-ic">▶</span> Clique para revelar a resposta
+</button>
+<div class="cc-anshid">${q.a}</div>
+</div>
+</div>`).join('')}
+</div>
+</div>
+</div>`).join('');
+}
+
+function toggleAnswer(id){
+  const el=document.getElementById(id);
+  if(el)el.classList.toggle('rev');
+}
+
+// ================================================================
+// INIT
+// ================================================================
+document.addEventListener('DOMContentLoaded',()=>{
+  initDashboard();
+  renderSections();
+  renderCases();
+});
+</script>
+
+<!-- ── Botão flutuante: voltar ao dashboard externo ── -->
+<a href="dashboard.html" title="Voltar ao Dashboard" style="
+  position:fixed;
+  bottom:24px;
+  left:24px;
+  z-index:9999;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:11px 20px;
+  background:rgba(13,17,23,0.90);
+  border:1px solid rgba(0,212,170,0.35);
+  border-radius:50px;
+  color:#e8eaf0;
+  font-family:'Source Sans 3',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  text-decoration:none;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  box-shadow:0 4px 20px rgba(0,212,170,0.12);
+  transition:all .25s ease;
+" onmouseover="this.style.borderColor='rgba(0,212,170,0.8)';this.style.background='rgba(0,212,170,0.15)';this.style.transform='translateY(-2px)'"
+   onmouseout="this.style.borderColor='rgba(0,212,170,0.35)';this.style.background='rgba(13,17,23,0.90)';this.style.transform='translateY(0)'">
+  ← Dashboard
+</a>
+
+</body>
+</html>

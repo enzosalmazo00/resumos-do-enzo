@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genética Médica P2 — Enzo Salmazo</title>
+<!-- PAGE_KEY: coluna "genetica" na tabela profiles -->
+<script>window.PAGE_KEY = "genetica";</script>
+<!-- 1. Oculta a página imediatamente -->
+<script>document.documentElement.style.visibility = "hidden";</script>
+<!-- 2. Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- 3. Auth guard: sessão + is_approved + coluna genetica -->
+<script src="auth-guard.js"></script>
+<!-- 4. Revela após auth OK -->
+<script>
+  document.addEventListener("authReady", function () {
+    document.documentElement.style.visibility = "visible";
+  });
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+  --bg:#0a0d14;--bg2:#111520;--bg3:#161c2e;
+  --card:#1a2138;--card2:#1f2845;
+  --accent:#4f9cf9;--accent2:#38e8c0;--accent3:#f9784f;--accent4:#b84ff9;
+  --gold:#f9c94f;--red:#f95f5f;--green:#4ff984;
+  --text:#e8eaf6;--muted:#8892b0;--border:rgba(79,156,249,0.15);
+  --radius:16px;
+  --font-body:'DM Sans',sans-serif;--font-display:'Syne',sans-serif;--font-mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.6;min-height:100vh;overflow-x:hidden}
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none}
+header{position:relative;z-index:10;text-align:center;padding:48px 24px 32px;background:linear-gradient(180deg,rgba(56,232,192,0.08) 0%,transparent 100%);border-bottom:1px solid var(--border)}
+header .badge{display:inline-block;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--bg);font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:16px}
+header h1{font-family:var(--font-display);font-size:clamp(22px,4vw,42px);font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#fff 0%,var(--accent2) 50%,var(--accent) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+header .sub{color:var(--muted);font-size:13px;letter-spacing:1px}
+header .by{margin-top:12px;color:var(--accent2);font-family:var(--font-mono);font-size:12px}
+nav.tabs{position:sticky;top:0;z-index:100;display:flex;gap:4px;flex-wrap:wrap;background:rgba(10,13,20,0.97);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:10px 16px;justify-content:center}
+nav.tabs button{background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:var(--font-body);font-size:12px;font-weight:600;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all 0.2s;letter-spacing:0.3px}
+nav.tabs button:hover{color:var(--accent2);border-color:var(--accent2)}
+nav.tabs button.active{background:var(--accent2);color:var(--bg);border-color:var(--accent2);box-shadow:0 0 20px rgba(56,232,192,0.4)}
+.section{display:none;animation:fadeIn 0.4s ease}
+.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.container{max-width:1100px;margin:0 auto;padding:32px 20px;position:relative;z-index:1}
+.chapter-title{font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent2);margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.chapter-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+.sec-divider{display:flex;align-items:center;gap:12px;margin:32px 0 20px}
+.sec-divider h3{font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--accent3);white-space:nowrap}
+.sec-divider::before,.sec-divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.info-block{background:var(--card2);border-left:3px solid var(--accent2);border-radius:0 12px 12px 0;padding:16px 20px;margin-bottom:20px}
+.info-block.warn{border-color:var(--gold)}.info-block.danger{border-color:var(--red)}.info-block.success{border-color:var(--green)}.info-block.purple{border-color:var(--accent4)}
+.info-block .label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.info-block h4{font-family:var(--font-display);font-weight:700;margin-bottom:8px;font-size:15px}
+.info-block p,.info-block li{font-size:13px;line-height:1.7}
+.info-block ul{padding-left:1.2rem;margin-top:6px}.info-block ul li{margin-bottom:4px}
+.compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:var(--radius);overflow:hidden;margin-bottom:28px}
+.compare-table th{background:var(--card2);color:var(--accent2);font-family:var(--font-display);font-size:13px;font-weight:700;padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+.compare-table td{background:var(--card);padding:10px 16px;font-size:13px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:top}
+.compare-table tr:last-child td{border-bottom:none}.compare-table tr:hover td{background:var(--card2)}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;font-family:var(--font-mono)}
+.tag-green{background:rgba(79,249,132,0.15);color:var(--green)}.tag-red{background:rgba(249,95,95,0.15);color:var(--red)}
+.tag-gold{background:rgba(249,201,79,0.15);color:var(--gold)}.tag-blue{background:rgba(79,156,249,0.15);color:var(--accent)}
+.tag-teal{background:rgba(56,232,192,0.15);color:var(--accent2)}.tag-purple{background:rgba(184,79,249,0.15);color:var(--accent4)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
+.mini-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px}
+.mini-card h4{font-family:var(--font-display);font-size:14px;font-weight:700;margin-bottom:8px;color:#fff}
+.mini-card p,.mini-card li{font-size:12px;color:var(--text);line-height:1.6}
+.mini-card ul{padding-left:1rem;margin-top:4px}
+.char-row{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px}
+.char-num{min-width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--bg);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.char-text{font-size:13px;color:var(--text);line-height:1.5}
+.pattern-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:20px;position:relative;overflow:hidden}
+.pattern-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.pattern-card.ad::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.pattern-card.ar::before{background:linear-gradient(90deg,var(--gold),var(--accent3))}
+.pattern-card.xd::before{background:linear-gradient(90deg,var(--accent4),var(--accent))}
+.pattern-card.xr::before{background:linear-gradient(90deg,var(--red),var(--accent4))}
+.pattern-card h3{font-family:var(--font-display);font-weight:700;font-size:17px;margin-bottom:14px;color:#fff}
+.loc{font-family:var(--font-mono);font-size:11px;background:rgba(79,156,249,0.15);color:var(--accent);padding:2px 6px;border-radius:4px;margin-left:4px}
+.blood-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:28px}
+.blood-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.blood-type{font-family:var(--font-display);font-size:36px;font-weight:800;margin:8px 0 4px}
+.blood-type.a{color:#f95f5f}.blood-type.b{color:#4f9cf9}.blood-type.ab{color:#b84ff9}.blood-type.o{color:#38e8c0}
+.blood-card .label{font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.blood-card p{font-size:12px;margin-top:6px;line-height:1.5}
+.flashcard-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-bottom:32px}
+.flashcard{perspective:1000px;height:220px;cursor:pointer}
+.flashcard-inner{position:relative;width:100%;height:100%;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);transform-style:preserve-3d}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg)}
+.flashcard-front,.flashcard-back{position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;padding:22px;display:flex;flex-direction:column;justify-content:space-between}
+.flashcard-front{background:linear-gradient(135deg,var(--card) 0%,var(--card2) 100%);border:1px solid var(--border)}
+.flashcard-back{transform:rotateY(180deg);background:linear-gradient(135deg,#12302a 0%,#1a2f4a 100%);border:1px solid rgba(56,232,192,0.3);overflow-y:auto}
+.fc-tag{font-family:var(--font-mono);font-size:10px;color:var(--accent2);letter-spacing:1px;text-transform:uppercase}
+.fc-name{font-family:var(--font-display);font-size:16px;font-weight:700;color:#fff;line-height:1.2;margin:8px 0}
+.fc-sub{font-size:12px;color:var(--muted)}
+.fc-hint{font-size:10px;color:var(--accent);text-align:right;opacity:0.7}
+.fc-answer-label{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--accent2);margin-bottom:4px}
+.fc-answer-text{font-size:12px;color:var(--text);line-height:1.5}
+.quiz-container{max-width:800px;margin:0 auto}
+.quiz-progress-bar{height:4px;background:var(--card2);border-radius:4px;margin-bottom:28px;overflow:hidden}
+.quiz-progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width 0.4s ease}
+.quiz-num{font-family:var(--font-mono);font-size:12px;color:var(--muted);margin-bottom:8px;letter-spacing:1px}
+.quiz-q{font-family:var(--font-display);font-size:17px;font-weight:700;color:#fff;margin-bottom:20px;line-height:1.5}
+.quiz-context{background:var(--card2);border-radius:12px;padding:12px 16px;font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;border-left:3px solid var(--accent3);font-style:italic}
+.quiz-opts{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.quiz-opt{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 16px;cursor:pointer;transition:all 0.2s;font-size:13px;text-align:left;display:flex;align-items:flex-start;gap:10px;color:var(--text)}
+.quiz-opt:hover:not(.answered){border-color:var(--accent2);background:var(--card2)}
+.quiz-opt .opt-letter{font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--accent2);min-width:20px;flex-shrink:0}
+.quiz-opt.correct{border-color:var(--green);background:rgba(79,249,132,0.08)}
+.quiz-opt.wrong{border-color:var(--red);background:rgba(249,95,95,0.08)}
+.quiz-opt.correct .opt-letter{color:var(--green)}.quiz-opt.wrong .opt-letter{color:var(--red)}
+.quiz-explain{background:var(--card2);border-radius:12px;padding:16px 18px;border-left:3px solid var(--accent2);margin-top:12px;font-size:13px;line-height:1.7;color:var(--text);display:none}
+.quiz-explain.show{display:block;animation:fadeIn 0.3s ease}
+.quiz-explain strong{color:var(--accent2)}
+.quiz-nav{display:flex;justify-content:space-between;align-items:center;margin-top:20px;flex-wrap:wrap;gap:12px}
+.btn{background:linear-gradient(135deg,var(--accent2),var(--accent));color:var(--bg);font-family:var(--font-display);font-weight:700;font-size:14px;border:none;padding:10px 24px;border-radius:10px;cursor:pointer;transition:all 0.2s;letter-spacing:0.5px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(56,232,192,0.4)}
+.score-card{text-align:center;padding:48px 32px;background:var(--card);border-radius:20px;border:1px solid var(--border)}
+.score-big{font-family:var(--font-display);font-size:72px;font-weight:800;background:linear-gradient(135deg,var(--accent2),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.score-msg{color:var(--muted);font-size:16px;margin-top:8px}
+#scrolltop{position:fixed;bottom:24px;right:24px;z-index:200;background:var(--accent2);color:var(--bg);width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;font-size:18px;box-shadow:0 4px 20px rgba(56,232,192,0.4);transition:all 0.2s;display:none;align-items:center;justify-content:center}
+#scrolltop:hover{transform:translateY(-2px)}
+.ottoni-badge{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--accent3));color:var(--bg);font-family:var(--font-mono);font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;margin-left:8px;vertical-align:middle}
+/* ═══ RESPONSIVE MOBILE ═══ */
+@media(max-width:768px){
+  nav.tabs{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    overflow-y:hidden;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+    justify-content:flex-start;
+    padding:8px 12px;
+  }
+  nav.tabs::-webkit-scrollbar{display:none}
+  nav.tabs button{flex-shrink:0;white-space:nowrap;font-size:12px;padding:6px 12px}
+}
+@media(max-width:600px){
+  header{padding:32px 16px 24px}
+  header h1{font-size:clamp(20px,7vw,28px)}
+  .main-content{padding:16px 14px}
+  .grid2{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+  .pattern-card{padding:16px}
+  .info-block{padding:12px 14px}
+  .compare-table th,.compare-table td{padding:8px 10px;font-size:12px}
+  .mini-card{padding:14px}
+  .chapter-title{font-size:15px}
+  .tab-content{padding:16px 0}
+  section{padding-bottom:24px}
+}
+@media(max-width:380px){
+  header{padding:24px 12px 18px}
+  header h1{font-size:18px}
+  nav.tabs button{font-size:11px;padding:5px 10px}
+  .main-content{padding:12px 10px}
+  .pattern-card{padding:12px}
+}
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<header>
+  <div class="badge">🧬 Genética Médica P2 · 2026</div>
+  <h1>Resumo Completo — Genética Médica P2</h1>
+  <p class="sub">Emery — Elementos de Genética Médica · Dr. Roberto Ottoni · UCP Pedro Juan Caballero</p>
+  <p class="by">⚡ Feito por Enzo Salmazo</p>
+</header>
+<nav class="tabs">
+  <button class="active" onclick="showSection('defeitos')">🧬 Defeitos Congênitos</button>
+  <button onclick="showSection('heranca')">🔗 Herança Ligada ao Sexo</button>
+  <button onclick="showSection('prenatal')">🔬 Diagnóstico Pré-natal</button>
+  <button onclick="showSection('sangue')">🩸 Incompatibilidade ABO/RH</button>
+  <button onclick="showSection('xyy')">🧩 Síndrome XYY</button>
+  <button onclick="showSection('intel')">🧠 Genética e Inteligência</button>
+  <button onclick="showSection('flashcards')">🃏 Flash Cards</button>
+  <button onclick="showSection('quiz')">❓ Quiz (27 questões)</button>
+</nav>
+
+<!-- ======================== DEFEITOS CONGÊNITOS ======================== -->
+<div id="defeitos" class="section active"><div class="container">
+<div class="chapter-title"><span>🧬</span> Defeitos Congênitos</div>
+
+<div class="info-block">
+  <div class="label">Definição</div>
+  <h4>O que é um Defeito Congênito?</h4>
+  <p>Toda anormalidade de estrutura anatômica <strong>visível ao exame clínico do recém-nascido</strong> ou posterior ao nascimento, quando se torna evidente o defeito funcional de um órgão interno afetado anatomicamente.</p>
+</div>
+
+<div class="sec-divider"><h3>📐 Classificação por Magnitude</h3></div>
+<div class="grid2">
+  <div class="mini-card" style="border-left:3px solid var(--red)">
+    <h4>Defeitos Maiores <span class="tag tag-red">2–3% dos RN</span></h4>
+    <ul>
+      <li>Comprometimento funcional <strong>importante para a vida</strong></li>
+      <li>Consequências médicas e estéticas significativas</li>
+      <li>Requerem atenção precoce e especializada</li>
+      <li>Têm repercussão social</li>
+    </ul>
+    <p style="margin-top:8px;font-size:11px;color:var(--muted)">Exemplos: cardiopatias congênitas, espinha bífida, lábio leporino bilateral</p>
+  </div>
+  <div class="mini-card" style="border-left:3px solid var(--gold)">
+    <h4>Defeitos Menores <span class="tag tag-gold">15% dos RN</span></h4>
+    <ul>
+      <li>Defeitos estruturais relativamente <strong>frequentes</strong></li>
+      <li>Crescimento desproporcional de parte anatômica</li>
+      <li>Sem significado médico relevante</li>
+      <li>Sem repercussão social especial</li>
+    </ul>
+    <p style="margin-top:8px;font-size:11px;color:var(--muted)">Exemplos: fístula auricular pré-auricular, sindactilia parcial leve</p>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>⚙️ Classificação pelo Efeito Causal</h3></div>
+<div class="grid3">
+  <div class="mini-card" style="border-top:3px solid var(--accent2)">
+    <h4>🔵 Malformação</h4>
+    <p>Formação deficiente de um tecido por <strong>defeitos genéticos intrínsecos</strong>. A anormalidade genética afeta genes envolvidos no desenvolvimento embrionário.</p>
+    <p style="margin-top:8px;color:var(--accent2);font-size:12px;font-weight:600">Origem: GENÉTICA — o erro está no DNA do embrião</p>
+    <p style="margin-top:4px;font-size:11px;color:var(--muted)">Ex: meningomielocele, holoprosencefalia</p>
+  </div>
+  <div class="mini-card" style="border-top:3px solid var(--gold)">
+    <h4>🟡 Deformidade</h4>
+    <p>Efeito de <strong>forças mecânicas incomuns</strong> sobre tecidos geneticamente bem formados. Os tecidos são normais, mas distorcidos mecanicamente.</p>
+    <p style="margin-top:8px;color:var(--gold);font-size:12px;font-weight:600">Origem: MECÂNICA — compressão uterina, oligoidrâmnio</p>
+    <p style="margin-top:4px;font-size:11px;color:var(--muted)">Ex: pé torto equinovaro (clubfoot), torcicolo postural</p>
+  </div>
+  <div class="mini-card" style="border-top:3px solid var(--red)">
+    <h4>🔴 Disrupção</h4>
+    <p>Alterações morfológicas por <strong>ruptura de tecidos e redes de vasos sanguíneos</strong> geneticamente bem formados. Tecido normal que é destruído.</p>
+    <p style="margin-top:8px;color:var(--red);font-size:12px;font-weight:600">Origem: DESTRUTIVA — bridas amnióticas, isquemia</p>
+    <p style="margin-top:4px;font-size:11px;color:var(--muted)">Ex: amputação de dedos por bridas amnióticas</p>
+  </div>
+</div>
+
+<div class="info-block warn">
+  <div class="label">⚡ Diferença Fundamental</div>
+  <h4>Malformação × Deformidade × Disrupção</h4>
+  <p><strong>Malformação</strong> = erro genético desde o início (intrínseco) | <strong>Deformidade</strong> = tecido normal distorcido por forças externas (mecânico) | <strong>Disrupção</strong> = tecido normal que é destruído após sua formação (destrutivo)</p>
+</div>
+
+<div class="sec-divider"><h3>☣️ Teratógenos</h3></div>
+<div class="info-block">
+  <div class="label">Definição</div>
+  <h4>Teratógeno</h4>
+  <p>Agente que produz uma anormalidade (defeito congênito) no desenvolvimento embriofetal.</p>
+</div>
+<div class="grid2">
+  <div class="mini-card">
+    <h4>📊 Indicadores de Teratogenicidade</h4>
+    <ul>
+      <li>Infertilidade</li>
+      <li>Abortos espontâneos</li>
+      <li>Morte fetal</li>
+      <li>Defeitos congênitos</li>
+      <li>Alterações do Sistema Nervioso Central</li>
+      <li>CIUR — Crescimento Intrauterino Restrito</li>
+    </ul>
+  </div>
+  <div class="mini-card">
+    <h4>⚖️ Fatores que Determinam o Efeito Teratogênico</h4>
+    <div class="char-row"><div class="char-num">1</div><div class="char-text"><strong>Momento</strong> da exposição ao teratógeno</div></div>
+    <div class="char-row"><div class="char-num">2</div><div class="char-text"><strong>Tempo</strong> de exposição</div></div>
+    <div class="char-row"><div class="char-num">3</div><div class="char-text"><strong>Dose</strong></div></div>
+    <div class="char-row"><div class="char-num">4</div><div class="char-text"><strong>Suscetibilidade fetal</strong></div></div>
+    <div class="char-row"><div class="char-num">5</div><div class="char-text"><strong>Suscetibilidade materna</strong></div></div>
+  </div>
+</div>
+<table class="compare-table">
+  <tr><th>Categoria</th><th>Agentes</th><th>Exemplos clínicos</th></tr>
+  <tr><td><span class="tag tag-teal">Biológicos</span></td><td>Vírus, Bactérias, Parasitas</td><td>Rubéola (cardiopatia, surdez), CMV (microcefalia), Toxoplasma (coriorretinite), Sífilis congênita</td></tr>
+  <tr><td><span class="tag tag-gold">Químicos</span></td><td>Químicos ambientais, Drogas não prescritas, Drogas prescritas</td><td>Álcool (SAF), Talidomida (focomelia), Ácido retinóico, Metotrexato, Valproato, Tabaco</td></tr>
+  <tr><td><span class="tag tag-red">Físicos</span></td><td>Radiações ionizantes, Calor</td><td>Raios X em doses altas → microcefalia; hipertermia materna → defeitos tubo neural</td></tr>
+</table>
+</div></div>
+
+<!-- ======================== HERANÇA LIGADA AO SEXO ======================== -->
+<div id="heranca" class="section"><div class="container">
+<div class="chapter-title"><span>🔗</span> Padrões de Herança Ligada ao Sexo</div>
+
+<div class="info-block">
+  <div class="label">Conceito</div>
+  <h4>O que é Herança Ligada ao Sexo?</h4>
+  <p>Genes localizados nos <strong>cromossomos sexuais (X e Y)</strong> têm padrões de herança distintos dos autossômicos. A maioria das doenças ligadas ao sexo está no cromossomo X.</p>
+</div>
+
+<div class="sec-divider"><h3>💙 Dominante Ligada ao X (XD)</h3></div>
+<div class="pattern-card xd">
+  <h3>Herança Dominante Ligada ao X</h3>
+  <div class="char-row"><div class="char-num">1</div><div class="char-text">Homem afetado <strong>NÃO transmite</strong> o caráter aos filhos varões, mas transmite a <strong>100% das filhas</strong>.</div></div>
+  <div class="char-row"><div class="char-num">2</div><div class="char-text">Observa-se <strong>maior número de mulheres afetadas</strong> do que homens.</div></div>
+  <div class="char-row"><div class="char-num">3</div><div class="char-text">Mulheres afetadas têm <strong>50% de probabilidade</strong> de transmitir à descendência (ambos os sexos).</div></div>
+  <div class="info-block warn" style="margin-top:14px">
+    <div class="label">⚡ Regra de Ouro XD</div>
+    <p>Pai afetado → 100% das filhas afetadas + 0% dos filhos varões afetados. Mãe afetada (heterozigota) → 50% dos filhos (♂ e ♀) afetados.</p>
+  </div>
+  <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;margin-top:12px">
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Exemplos clínicos</div>
+    <p style="font-size:13px">• Raquitismo hipofosfatêmico ligado ao X | • Síndrome de Rett (MECP2) | • Incontinência pigmentar</p>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>❤️ Recessiva Ligada ao X (XR)</h3></div>
+<div class="pattern-card xr">
+  <h3>Herança Recessiva Ligada ao X</h3>
+  <div class="char-row"><div class="char-num">1</div><div class="char-text">A doença acomete com <strong>muito mais frequência os homens</strong> (hemizigóticos — têm apenas um alelo X).</div></div>
+  <div class="char-row"><div class="char-num">2</div><div class="char-text">O homem afetado <strong>NÃO transmite</strong> o caráter aos seus filhos varões (eles recebem o Y do pai).</div></div>
+  <div class="char-row"><div class="char-num">3</div><div class="char-text">O homem afetado transmite o X patológico a <strong>100% das filhas</strong> (portadoras saudáveis). Essas transmitem a <strong>50% dos filhos varões</strong> (afetados).</div></div>
+  <div class="info-block danger" style="margin-top:14px">
+    <div class="label">⚡ Regra de Ouro XR</div>
+    <p>Mãe portadora (X<sup>a</sup>X) × pai saudável (XY) → 50% dos filhos ♂ afetados / 50% das filhas ♀ portadoras saudáveis. A doença "pula" geração — avô afetado → mãe portadora saudável → neto afetado.</p>
+  </div>
+  <div style="background:var(--bg3);border-radius:8px;padding:12px 14px;margin-top:12px">
+    <div style="font-family:var(--font-mono);font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Exemplos clínicos com localização cromossômica</div>
+    <p style="font-size:13px">• <strong>Distrofia Muscular de Duchenne</strong> <span class="loc">Xp21.2</span> — déficit de distrofina</p>
+    <p style="font-size:13px;margin-top:4px">• <strong>Hemofilia A</strong> <span class="loc">Xq28</span> — déficit de Fator VIII</p>
+    <p style="font-size:13px;margin-top:4px">• <strong>Hemofilia B</strong> <span class="loc">Xq27</span> — déficit de Fator IX</p>
+    <p style="font-size:13px;margin-top:4px">• <strong>Síndrome do X Frágil</strong> <span class="loc">Xq27.3</span> — causa mais comum de DI herdada</p>
+    <p style="font-size:13px;margin-top:4px">• <strong>Daltonismo</strong> — dificuldade em distinguir vermelho-verde</p>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>📊 Tabela Comparativa de Todos os Padrões</h3></div>
+<table class="compare-table">
+  <tr><th>Padrão</th><th>Sexo afetado</th><th>Transmissão</th><th>Risco</th><th>Regra-chave</th><th>Exemplo</th></tr>
+  <tr><td><span class="tag tag-blue">AD</span></td><td>♂ = ♀</td><td>Vertical (cada geração)</td><td>50%</td><td>Ao menos 1 progenitor afetado; pais saudáveis → filhos saudáveis</td><td>Acondroplasia <span class="loc">4p16.3</span>, Marfã <span class="loc">15q21.1</span></td></tr>
+  <tr><td><span class="tag tag-gold">AR</span></td><td>♂ = ♀</td><td>Horizontal (mesma geração)</td><td>25%</td><td>Pais saudáveis portadores; consanguinidade aumenta risco</td><td>PKU <span class="loc">12q22</span>, Fibrose Cística</td></tr>
+  <tr><td><span class="tag tag-purple">XD</span></td><td>♀ > ♂</td><td>Vertical; pai afetado → todas as filhas</td><td>50% (mãe afetada)</td><td>Pai NÃO transmite a filhos varões</td><td>Raquitismo hipofosfatêmico</td></tr>
+  <tr><td><span class="tag tag-red">XR</span></td><td>♂ >> ♀</td><td>Saltada; mãe portadora</td><td>50% dos varões (mãe portadora)</td><td>Pai afetado NÃO transmite a varões; transmite a 100% das filhas</td><td>Duchenne, Hemofilia A/B, X Frágil</td></tr>
+  <tr><td><span class="tag tag-teal">Y-ligada</span></td><td>Somente ♂</td><td>Pai → 100% dos filhos varões</td><td>100% varões</td><td>Holandrica — apenas homens, transmissão total</td><td>Fator SRY (determinação testicular)</td></tr>
+</table>
+</div></div>
+
+<!-- ======================== DIAGNÓSTICO PRÉ-NATAL ======================== -->
+<div id="prenatal" class="section"><div class="container">
+<div class="chapter-title"><span>🔬</span> Diagnóstico Pré-natal</div>
+
+<div class="info-block">
+  <div class="label">Definição</div>
+  <h4>O que é o Diagnóstico Pré-natal?</h4>
+  <p>Conjunto de técnicas médicas destinadas a detectar anomalias <strong>genéticas, estruturais ou metabólicas</strong> no feto durante a gestação.</p>
+</div>
+<div class="grid3" style="margin-bottom:24px">
+  <div class="mini-card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">📋</div><h4>Informar</h4><p>Os pais sobre o estado de saúde fetal com precisão</p></div>
+  <div class="mini-card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">⚖️</div><h4>Decidir</h4><p>Permitir tomada de decisões informadas e autônomas</p></div>
+  <div class="mini-card" style="text-align:center"><div style="font-size:28px;margin-bottom:8px">🏥</div><h4>Preparar</h4><p>Manejo neonatal precoce se necessário</p></div>
+</div>
+
+<div class="sec-divider"><h3>✅ Indicações do Diagnóstico Pré-natal</h3></div>
+<div class="info-block">
+  <ul>
+    <li><strong>Idade materna avançada (&gt;35 anos)</strong> — maior risco de aneuploidias (↑ trissomia 21)</li>
+    <li><strong>Antecedentes de filho com cromossomopatia</strong> (ex: síndrome de Down, trissomia 18)</li>
+    <li><strong>Pais portadores de doenças genéticas</strong> (fibrose cística, hemofilia, PKU)</li>
+    <li><strong>Achados anormais na ecografia</strong> (translucência nucal aumentada, malformações estruturais)</li>
+    <li><strong>História familiar de defeitos do tubo neural</strong> (espinha bífida, anencefalia)</li>
+    <li>Triagem bioquímica alterada (AFP, PAPP-A, beta-hCG fora do intervalo)</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>📡 Métodos NÃO Invasivos</h3></div>
+<div class="grid3">
+  <div class="mini-card">
+    <h4>🔊 Ecografia Obstétrica</h4>
+    <p><strong>1º trimestre:</strong> translucência nucal (marcador de aneuploidias)</p>
+    <p style="margin-top:6px"><strong>2º trimestre:</strong> anatomia fetal completa, marcadores de malformações</p>
+    <p style="margin-top:6px;color:var(--accent2);font-size:12px">✓ Usa ondas sonoras de alta frequência — NÃO prejudica o feto</p>
+    <p style="margin-top:6px;font-size:11px;color:var(--muted)">Diagnostica: número de fetos, sexo, posição, placenta, idade gestacional, movimentos fetais, malformações, gravidez ectópica, mola hidatiforme</p>
+  </div>
+  <div class="mini-card">
+    <h4>🩺 Triagem Bioquímica</h4>
+    <p style="margin-bottom:6px">Análise de sangue materno:</p>
+    <ul>
+      <li><strong>PAPP-A</strong> — proteína plasmática associada à gravidez</li>
+      <li><strong>β-hCG livre</strong> — gonadotrofina coriônica</li>
+      <li><strong>AFP</strong> — alfafetoproteína (↑ em defeitos tubo neural)</li>
+    </ul>
+    <p style="margin-top:8px;font-size:11px;color:var(--muted)">Triplo teste (AFP + hCG + estriol) combina esses marcadores</p>
+  </div>
+  <div class="mini-card">
+    <h4>🧬 NIPT / PANORAMA</h4>
+    <p>Analisa DNA fetal livre em <strong>sangue materno</strong>.</p>
+    <ul style="margin-top:6px">
+      <li>Alta sensibilidade para <strong>trissomias 21, 18, 13</strong></li>
+      <li>Anomalias dos cromossomos sexuais</li>
+      <li>A partir da semana <strong>10</strong></li>
+    </ul>
+    <p style="margin-top:8px;color:var(--red);font-size:12px;font-weight:700">⚠️ É TRIAGEM — não diagnóstico definitivo. Requer confirmação por método invasivo.</p>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>🩸 Métodos Invasivos — Tabela Comparativa</h3></div>
+<table class="compare-table">
+  <tr><th>Técnica</th><th>Semana</th><th>Risco de aborto</th><th>Amostra</th><th>Estudos possíveis</th></tr>
+  <tr><td><strong>Amniocentese</strong></td><td>15–20 sem</td><td><span class="tag tag-green">0,1–0,3%</span></td><td>Líquido amniótico (células fetais)</td><td>Cariótipo, bioquímica, maturidade fetal, sexo, defeitos genéticos</td></tr>
+  <tr><td><strong>BVC (Biópsia de Vilosidades Coriônicas)</strong></td><td>10–13 sem</td><td><span class="tag tag-gold">0,5–1%</span></td><td>Tecido placentário (citotrofoblasto)</td><td>Cariótipo, estudos moleculares, bioquímica. Mais rápido que amniocentese</td></tr>
+  <tr><td><strong>Cordocentese</strong></td><td>&gt;18 sem</td><td><span class="tag tag-red">1–2%</span></td><td>Sangue do cordão umbilical (veia umbilical)</td><td>Hemoglobinopatias, hemofilias, erros congênitos do metabolismo. Permite transfusão fetal e medicação</td></tr>
+</table>
+<div class="info-block warn">
+  <div class="label">⚡ Memória — Semanas × Método</div>
+  <p><strong>10–13 sem</strong> = BVC (mais precoce, maior risco) | <strong>15–20 sem</strong> = Amniocentese (padrão-ouro, menor risco) | <strong>&gt;18 sem</strong> = Cordocentese (sangue fetal, maior risco)</p>
+</div>
+
+<div class="sec-divider"><h3>🤝 Aconselhamento Genético Pré-natal</h3></div>
+<div class="mini-card" style="margin-bottom:20px">
+  <h4>Definição e Etapas</h4>
+  <p>Processo de comunicação que aborda risco de recorrência, interpretação de exames e opções reprodutivas. Objetivo: ajudar famílias a compreender e se adaptar a uma condição genética.</p>
+  <div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+    <div style="background:var(--bg3);border-radius:8px;padding:10px"><strong style="color:var(--accent2)">Etapa 1</strong><br><span style="font-size:12px">História clínica e familiar completa (genograma)</span></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:10px"><strong style="color:var(--accent2)">Etapa 2</strong><br><span style="font-size:12px">Estimativa de riscos (empíricos, mendelianos)</span></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:10px"><strong style="color:var(--accent2)">Etapa 3</strong><br><span style="font-size:12px">Explicação dos exames disponíveis (benefícios, limites, riscos)</span></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:10px"><strong style="color:var(--accent2)">Etapa 4</strong><br><span style="font-size:12px">Análise dos resultados e prognóstico</span></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:10px;grid-column:1/-1"><strong style="color:var(--accent2)">Etapa 5</strong><br><span style="font-size:12px">Apoio psicossocial e respeito pela autonomia do paciente</span></div>
+  </div>
+</div>
+</div></div>
+
+<!-- ======================== ABO / RH ======================== -->
+<div id="sangue" class="section"><div class="container">
+<div class="chapter-title"><span>🩸</span> Incompatibilidade ABO e Fator RH</div>
+
+<div class="sec-divider"><h3>🔴 Sistema ABO — Fundamentos</h3></div>
+<div class="blood-grid">
+  <div class="blood-card"><div class="label">Grupo sanguíneo</div><div class="blood-type a">A</div><p>Antígeno A nos eritrócitos<br><strong>Anticorpos anti-B</strong> no soro<br><span style="color:var(--muted);font-size:11px">Genótipos: AA ou AO</span></p></div>
+  <div class="blood-card"><div class="label">Grupo sanguíneo</div><div class="blood-type b">B</div><p>Antígeno B nos eritrócitos<br><strong>Anticorpos anti-A</strong> no soro<br><span style="color:var(--muted);font-size:11px">Genótipos: BB ou BO</span></p></div>
+  <div class="blood-card"><div class="label">Grupo sanguíneo</div><div class="blood-type ab">AB</div><p>Antígenos A e B nos eritrócitos<br><strong>Sem anticorpos</strong> no soro<br><span style="color:var(--muted);font-size:11px">Receptor universal. Genótipo: AB</span></p></div>
+  <div class="blood-card"><div class="label">Grupo sanguíneo</div><div class="blood-type o">O</div><p>Sem antígenos A nem B<br><strong>Anti-A e Anti-B</strong> no soro<br><span style="color:var(--muted);font-size:11px">Doador universal. Genótipo: OO</span></p></div>
+</div>
+<div class="info-block warn">
+  <div class="label">⚡ Natureza dos Anticorpos ABO</div>
+  <h4>Anticorpos Naturais — IgM</h4>
+  <p>Os anticorpos ABO são <strong>IgM</strong> (naturais, pré-formados, sem necessidade de sensibilização prévia). Por serem IgM, são de <strong>alto peso molecular e NÃO atravessam a placenta</strong>. Por isso a incompatibilidade ABO na gestação é geralmente LEVE.</p>
+</div>
+
+<div class="sec-divider"><h3>⚠️ Incompatibilidade ABO na Gestação</h3></div>
+<div class="grid2">
+  <div class="mini-card">
+    <h4>Quando ocorre?</h4>
+    <ul>
+      <li>Mãe grupo <strong>O</strong> + feto grupo A ou B (mais frequente)</li>
+      <li>Anticorpos IgM do ABO <strong>NÃO cruzam a placenta</strong></li>
+      <li>Algumas mães O produzem IgG anti-A/anti-B que SIM podem cruzar</li>
+      <li>Pode ocorrer desde a <strong>1ª gestação</strong> (diferente do RH)</li>
+    </ul>
+  </div>
+  <div class="mini-card">
+    <h4>Características Clínicas</h4>
+    <ul>
+      <li>Geralmente <strong>leve</strong> — raramente requer exsanguinotransfusão</li>
+      <li>Icterícia neonatal (primeiros dias de vida)</li>
+      <li>Anemia leve</li>
+      <li>Não se previne com imunoprofilaxia</li>
+    </ul>
+  </div>
+</div>
+<div class="info-block success">
+  <div class="label">🔑 Diferença Fundamental — ABO vs RH</div>
+  <p><strong>ABO</strong>: pode afetar desde a 1ª gestação, anticorpos IgM (não cruzam placenta), curso LEVE | <strong>RH</strong>: afeta a partir da 2ª gestação (sensibilização na 1ª), anticorpos IgG (cruzam placenta), curso GRAVE — pode causar hidropsia fetal</p>
+</div>
+
+<div class="sec-divider"><h3>🔵 Sistema RH — Incompatibilidade</h3></div>
+<div class="mini-card" style="margin-bottom:20px">
+  <h4>Mecanismo por Etapas</h4>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px">
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--accent2)"><div style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);margin-bottom:4px">1ª GESTAÇÃO</div><p style="font-size:12px">Mãe RH– + Feto RH+. Eritrócitos fetais entram na circulação materna no parto → sensibilização → produção de IgG anti-D. <strong>O 1º filho raramente é afetado.</strong></p></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--gold)"><div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);margin-bottom:4px">SENSIBILIZAÇÃO</div><p style="font-size:12px">A mãe agora tem <strong>memória imunológica</strong> com IgG anti-D circulantes. Em nova gestação com feto RH+, os anticorpos IgG atravessam a placenta.</p></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--red)"><div style="font-family:var(--font-mono);font-size:10px;color:var(--red);margin-bottom:4px">2ª GESTAÇÃO +</div><p style="font-size:12px">IgG anti-D cruza a placenta → liga-se aos eritrócitos fetais RH+ → <strong>hemólise fetal</strong> → anemia grave → <strong>Eritroblastose Fetal / Hidropsia Fetal</strong>.</p></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px;border-left:3px solid var(--accent4)"><div style="font-family:var(--font-mono);font-size:10px;color:var(--accent4);margin-bottom:4px">CONSEQUÊNCIAS</div><p style="font-size:12px">Anemia hemolítica grave, icterícia intensa, hepatoesplenomegalia, hidropsia fetal, óbito fetal se não tratado.</p></div>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>💉 Profilaxia — Imunoglobulina Anti-D</h3></div>
+<div class="info-block success">
+  <div class="label">Prevenção</div>
+  <h4>Imunoglobulina Anti-D (RhoGAM / Anti-RH)</h4>
+  <p>IgG passiva administrada à mãe RH– para <strong>neutralizar os eritrócitos fetais RH+ antes que o sistema imune materno seja sensibilizado</strong>, prevenindo a formação de anticorpos duradouros.</p>
+</div>
+<div class="grid2">
+  <div class="mini-card" style="border-left:3px solid var(--green)">
+    <h4>✅ Quando Administrar</h4>
+    <ul>
+      <li><strong>28 semanas</strong> de gestação (rotina pré-natal)</li>
+      <li><strong>Dentro de 72 horas</strong> após o parto de feto RH+</li>
+      <li>Após <strong>aborto espontâneo ou induzido</strong></li>
+      <li>Após <strong>amniocentese ou BVC</strong></li>
+      <li>Após <strong>gravidez ectópica</strong></li>
+      <li>Após <strong>trauma abdominal</strong> na gestação</li>
+      <li>Após <strong>cordocentese</strong></li>
+    </ul>
+  </div>
+  <div class="mini-card" style="border-left:3px solid var(--red)">
+    <h4>❌ Quando NÃO é necessária</h4>
+    <ul>
+      <li>Feto RH negativo comprovado</li>
+      <li>Mãe já sensibilizada (anticorpos anti-D presentes)</li>
+      <li>Mãe RH positiva</li>
+    </ul>
+    <div style="background:var(--bg3);border-radius:8px;padding:10px;margin-top:10px"><p style="font-size:12px;color:var(--gold)"><strong>⚡ Importante:</strong> A imunoglobulina anti-D é PREVENTIVA — não trata hemólise já instalada. Deve ser dada ANTES da sensibilização.</p></div>
+  </div>
+</div>
+
+<div class="sec-divider"><h3>🧪 Testes de Coombs</h3></div>
+<table class="compare-table">
+  <tr><th>Teste</th><th>O que detecta</th><th>Em quem é feito</th><th>Indicação</th></tr>
+  <tr><td><strong>Coombs INDIRETO</strong></td><td>Anticorpos anti-D <strong>livres no soro materno</strong> (IgG não ligados a eritrócitos)</td><td><strong>MÃE</strong> RH–</td><td>Triagem de sensibilização materna no pré-natal. Positivo = mãe sensibilizada = risco para o feto</td></tr>
+  <tr><td><strong>Coombs DIRETO</strong></td><td>Anticorpos <strong>já ligados diretamente aos eritrócitos</strong> do recém-nascido</td><td><strong>RECÉM-NASCIDO / SANGUE DO CORDÃO</strong></td><td>Diagnóstico de doença hemolítica do RN (DHRN). Positivo = eritrócitos fetais cobertos de IgG materna</td></tr>
+</table>
+<div class="info-block warn">
+  <div class="label">🧠 Macete — Coombs Direto vs Indireto</div>
+  <p><strong>"Direto = feito no bebê"</strong> — anticorpos já grudados nos eritrócitos. <strong>"Indireto = feito na mãe (soro)"</strong> — anticorpos livres em busca de antígeno. Memorize: <em>I</em>ndireto = <em>I</em>nvestiga a mãe | <em>D</em>ireto = <em>D</em>etecta no filho.</p>
+</div>
+</div></div>
+
+<!-- ======================== SÍNDROME XYY ======================== -->
+<div id="xyy" class="section"><div class="container">
+<div class="chapter-title"><span>🧩</span> Síndrome de Jacobs — 47,XYY</div>
+
+<div class="grid3">
+  <div class="mini-card" style="text-align:center;border-top:3px solid var(--accent2)"><div style="font-family:var(--font-mono);font-size:32px;color:var(--accent2);font-weight:700;margin:8px 0">47,XYY</div><p>Cariótipo com cromossomo Y extra</p></div>
+  <div class="mini-card" style="text-align:center;border-top:3px solid var(--gold)"><div style="font-family:var(--font-display);font-size:28px;color:var(--gold);font-weight:700;margin:8px 0">1/1.000</div><p>Prevalência em recém-nascidos masculinos</p></div>
+  <div class="mini-card" style="text-align:center;border-top:3px solid var(--accent)"><div style="font-family:var(--font-display);font-size:28px;color:var(--accent);font-weight:700;margin:8px 0">&gt;90%</div><p>Não diagnosticados (sem manifestações graves óbvias)</p></div>
+</div>
+
+<div class="info-block">
+  <div class="label">Mecanismo</div>
+  <h4>Como ocorre o 47,XYY?</h4>
+  <p>O erro ocorre durante a <strong>espermatogênese paterna</strong> por não-disjunção na <strong>segunda divisão meiótica (Meiose II)</strong>, produzindo um espermatozoide YY. Quando fertiliza um óvulo X normal, resulta em 47,XYY. Também pode ocorrer por <strong>mitose pós-zigótica</strong> (mosaicismo).</p>
+  <p style="margin-top:6px;color:var(--muted);font-size:12px">Erro é exclusivamente PATERNO (espermatozoide). Diferente da trissomia 21, cujo erro é predominantemente materno.</p>
+</div>
+
+<div class="sec-divider"><h3>📋 Características Fenotípicas</h3></div>
+<table class="compare-table">
+  <tr><th>Característica</th><th>Descrição</th><th>Frequência</th></tr>
+  <tr><td><strong>Estatura elevada</strong></td><td>Única característica constante e evidente. Mais de 1,82 m (até ~2 m)</td><td><span class="tag tag-teal">CONSTANTE</span></td></tr>
+  <tr><td><strong>Acne severa</strong></td><td>Frequente na adolescência</td><td><span class="tag tag-gold">Frequente</span></td></tr>
+  <tr><td><strong>QI levemente reduzido</strong></td><td>Em geral 10–15 pontos abaixo da média familiar. Não causa DI grave.</td><td><span class="tag tag-gold">Frequente</span></td></tr>
+  <tr><td><strong>TDAH / Aprendizagem</strong></td><td>Dificuldades acadêmicas, fracasso escolar, problemas de linguagem</td><td><span class="tag tag-gold">Frequente</span></td></tr>
+  <tr><td><strong>Azoospermia / Oligospermia</strong></td><td>Espermograma alterado — redução ou ausência de espermatozoides</td><td><span class="tag tag-gold">Frequente</span></td></tr>
+  <tr><td><strong>Mãos e pés grandes</strong></td><td>Sem chegar a ser acromegálicas</td><td><span class="tag tag-blue">Variável</span></td></tr>
+  <tr><td><strong>Problemas físicos graves</strong></td><td>São RAROS — a maioria leva vida completamente normal</td><td><span class="tag tag-green">Raro</span></td></tr>
+</table>
+
+<div class="sec-divider"><h3>⚖️ O Mito do "Cromossomo Criminal"</h3></div>
+<div class="info-block danger">
+  <div class="label">MITO — Desconstruído pela Ciência</div>
+  <h4>Origem do mito (décadas de 1960–1970)</h4>
+  <p>Estudos iniciais postularam que o XYY levava a comportamento agressivo, comparando-o ao "reo nato" de Lombroso. <strong>Esses estudos nunca alcançaram significância estatística.</strong> O caso mais famoso — Richard Speck — foi <strong>DESMENTIDO por testes genéticos</strong> (era 46,XY normal).</p>
+</div>
+<div class="grid2">
+  <div class="mini-card">
+    <h4>❌ O que NÃO é verdade</h4>
+    <ul>
+      <li>XYY não determina criminalidade</li>
+      <li>O cromossomo Y extra não causa agressividade por si só</li>
+      <li>A maioria dos XYY nunca terá qualquer problema com a justiça</li>
+      <li>O mito foi baseado em amostras enviesadas (prisões)</li>
+    </ul>
+  </div>
+  <div class="mini-card">
+    <h4>✅ O que a ciência atual diz</h4>
+    <ul>
+      <li>Dificuldades <strong>neurocomportamentais</strong> reais (TDAH, ansiedade, aprendizagem)</li>
+      <li>Fatores sociais e ambientais influem muito mais que o Y extra</li>
+      <li>A agressividade se relaciona mais ao gene <strong>MAOA</strong> (cromossomo X)</li>
+      <li>Com suporte adequado, levam vidas completamente normais</li>
+    </ul>
+  </div>
+</div>
+<table class="compare-table">
+  <tr><th>Gene</th><th>Localização</th><th>Relação com conduta</th></tr>
+  <tr><td><strong>MAOA</strong> ("gene guerreiro")</td><td>Cromossomo X</td><td>Polimorfismos de baixa atividade associados à impulsividade e agressividade. Mais relevante que o Y extra do XYY.</td></tr>
+  <tr><td><strong>SRY</strong></td><td>Cromossomo Y (único)</td><td>Determina desenvolvimento testicular e modula produção de catecolaminas. Não causa criminalidade.</td></tr>
+</table>
+</div></div>
+
+<!-- ======================== GENÉTICA E INTELIGÊNCIA ======================== -->
+<div id="intel" class="section"><div class="container">
+<div class="chapter-title"><span>🧠</span> Genética e Inteligência</div>
+
+<div class="info-block purple">
+  <div class="label">Conceito fundamental</div>
+  <h4>A inteligência é um traço poligênico e multifatorial</h4>
+  <p>A inteligência <strong>NÃO é determinada por um único gene</strong>. É influenciada por <strong>milhares de variantes genéticas</strong> (cada uma com efeito pequeno) + fatores ambientais (educação, nutrição, estimulação, nível socioeconômico). Estudos GWAS identificam SNPs associados, mas cada um explica fração mínima da variância.</p>
+</div>
+
+<div class="sec-divider"><h3>📊 Herdabilidade da Inteligência</h3></div>
+<div class="grid3">
+  <div class="mini-card" style="text-align:center;border-top:3px solid var(--accent4)"><div style="font-family:var(--font-display);font-size:34px;color:var(--accent4);font-weight:700;margin:8px 0">50–80%</div><p><strong>Herdabilidade</strong> estimada em adultos</p><p style="font-size:12px;color:var(--muted);margin-top:6px">A herdabilidade <strong>aumenta com a idade</strong> — em crianças ~40%, em adultos até ~80%</p></div>
+  <div class="mini-card" style="text-align:center;border-top:3px solid var(--accent2)"><div style="font-family:var(--font-display);font-size:34px;color:var(--accent2);font-weight:700;margin:8px 0">MZ > DZ</div><p><strong>Estudos com gêmeos</strong></p><p style="font-size:12px;color:var(--muted);margin-top:6px">Monozigóticos: concordância ~75–80% | Dizigóticos: ~40–60%</p></div>
+  <div class="mini-card" style="text-align:center;border-top:3px solid var(--gold)"><div style="font-family:var(--font-display);font-size:34px;color:var(--gold);font-weight:700;margin:8px 0">Milhares</div><p><strong>SNPs identificados</strong></p><p style="font-size:12px;color:var(--muted);margin-top:6px">Cada variante explica fração mínima (&lt;1%) da variância total do QI</p></div>
+</div>
+
+<div class="sec-divider"><h3>⭐ MEF2C — Mecanismo Celular Chave <span class="ottoni-badge">Cuestionário Ottoni Q4</span></h3></div>
+<div class="info-block danger">
+  <div class="label">🚨 CONTEÚDO DIRETO DO CUESTIONÁRIO — CAIR NA P2</div>
+  <h4>Resposta correta da Questão 4 do Dr. Ottoni — Alternativa A</h4>
+  <p>A alternativa correta é: <strong>"O fator MEF2C, quando está inativado, causa uma discapacidade intelectual severa, e genes regulados por ele estão enfraquecidos para variantes associadas à inteligência."</strong></p>
+</div>
+<div class="mini-card" style="border-left:3px solid var(--accent4);margin-bottom:20px">
+  <h4>🧬 Fator de Transcrição MEF2C</h4>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+    <div style="background:var(--bg3);border-radius:8px;padding:12px"><div style="font-family:var(--font-mono);font-size:10px;color:var(--accent4);margin-bottom:6px;letter-spacing:1px">O QUE É</div><p style="font-size:12px"><strong>MEF2C</strong> (Myocyte Enhancer Factor 2C) é um <strong>fator de transcrição</strong> que regula a expressão de genes envolvidos no desenvolvimento e função neuronal, especialmente na formação de sinapses e na plasticidade cerebral.</p></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px"><div style="font-family:var(--font-mono);font-size:10px;color:var(--red);margin-bottom:6px;letter-spacing:1px">QUANDO INATIVADO</div><p style="font-size:12px">A <strong>inativação do MEF2C</strong> causa <strong>deficiência intelectual severa</strong>. Os genes por ele regulados ficam "enfraquecidos" (downregulated), e variantes nessas regiões estão entre as mais associadas ao QI nos estudos GWAS.</p></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px"><div style="font-family:var(--font-mono);font-size:10px;color:var(--accent2);margin-bottom:6px;letter-spacing:1px">MECANISMO</div><p style="font-size:12px">MEF2C atua em neurônios do hipocampo e córtex. Regula genes de plasticidade sináptica (LTP — potenciação de longa duração). Essencial para formação de memória e aprendizagem.</p></div>
+    <div style="background:var(--bg3);border-radius:8px;padding:12px"><div style="font-family:var(--font-mono);font-size:10px;color:var(--gold);margin-bottom:6px;letter-spacing:1px">RELAÇÃO COM QI</div><p style="font-size:12px">Variantes próximas a genes regulados pelo MEF2C estão entre as mais associadas às diferenças de QI em estudos GWAS populacionais. Liga mecanismo molecular ao traço cognitivo.</p></div>
+  </div>
+</div>
+<div class="info-block warn">
+  <div class="label">❌ Por que as outras alternativas estão erradas</div>
+  <h4>Análise das alternativas incorretas</h4>
+  <ul>
+    <li style="margin-bottom:8px"><strong>Alternativa B — ERRADA:</strong> "Um único gene explica 80% da variância do QI" → <span style="color:var(--red)">FALSO.</span> São <strong>milhares de variantes</strong> com efeito individual mínimo.</li>
+    <li style="margin-bottom:8px"><strong>Alternativa C — ERRADA:</strong> "A maioria se herda do pai (~60%)" → <span style="color:var(--red)">FALSO.</span> Não há predominância paterna específica na herança da inteligência.</li>
+    <li><strong>Alternativa D — ERRADA:</strong> "Os genes não interferem nos processos sinápticos" → <span style="color:var(--red)">FALSO.</span> Os genes de inteligência atuam <strong>primariamente em processos sinápticos</strong> (plasticidade, LTP).</li>
+  </ul>
+</div>
+
+<div class="sec-divider"><h3>🧬 Condições Genéticas que Afetam a Inteligência</h3></div>
+<table class="compare-table">
+  <tr><th>Condição</th><th>Genética</th><th>Impacto cognitivo</th><th>Características-chave</th></tr>
+  <tr><td><strong>Síndrome de Down</strong></td><td>Trissomia 21 (47 cromossomos)</td><td>DI <strong>leve a moderada</strong></td><td>Causa cromossômica mais comum de DI. Hipotonia, face característica, cardiopatia (40%), obliquidade ocular</td></tr>
+  <tr><td><strong>Síndrome do X Frágil</strong></td><td>Expansão de tripletos CGG no gene <strong>FMR1</strong> — <span class="loc">Xq27.3</span></td><td>DI <strong>leve a grave</strong> em ♂; leve em ♀ portadoras</td><td><strong>Causa mais comum de DI HERDADA.</strong> Macroorquidismo, face alongada, orelhas grandes, comportamento autístico</td></tr>
+  <tr><td><strong>Fenilcetonúria (PKU)</strong></td><td>Mutação no gene <strong>PAH</strong> — <span class="loc">12q22-q24.1</span> — AR</td><td>DI grave <strong>se não tratada</strong>; normal se detectada precocemente</td><td>TRATÁVEL com dieta pobre em fenilalanina. Triagem neonatal obrigatória (teste do pezinho)</td></tr>
+  <tr><td><strong>Síndrome de Williams</strong></td><td>Microdeleção <strong>7q11.23</strong></td><td>DI leve + perfil cognitivo DISSOCIADO</td><td>Habilidades verbais e sociais excepcionais vs visuoespacial comprometido. Face de "elfo", hipercalcemia</td></tr>
+  <tr><td><strong>Síndrome de Angelman</strong></td><td>Deleção materna <strong>15q11-q13</strong> (imprinting)</td><td>DI grave, sem linguagem verbal</td><td>"Síndrome da boneca feliz": risos frequentes, convulsões, marcha atáxica</td></tr>
+  <tr><td><strong>Síndrome de Prader-Willi</strong></td><td>Deleção paterna <strong>15q11-q13</strong> (imprinting)</td><td>DI leve a moderada</td><td>Mesma região que Angelman, mas deleção PATERNA. Hiperfagia, obesidade, hipotonia neonatal</td></tr>
+</table>
+
+<div class="sec-divider"><h3>🔬 Métodos de Pesquisa</h3></div>
+<table class="compare-table">
+  <tr><th>Método</th><th>O que mede</th><th>Achado principal</th></tr>
+  <tr><td><strong>Estudos com gêmeos</strong></td><td>Concordância entre MZ e DZ</td><td>MZ criados separados ainda têm QI correlacionado (~72%) — forte componente genético</td></tr>
+  <tr><td><strong>Estudos de adoção</strong></td><td>QI do adotado correlaciona com pais biológicos ou adotivos?</td><td>Em adultos, correlação maior com pais biológicos → genética predomina</td></tr>
+  <tr><td><strong>GWAS</strong></td><td>Varredura de todo o genoma buscando SNPs associados ao QI</td><td>Identifica milhares de variantes, cada uma com efeito pequeno. Nenhum "gene da inteligência" isolado.</td></tr>
+</table>
+</div></div>
+
+<!-- ======================== FLASH CARDS ======================== -->
+<div id="flashcards" class="section"><div class="container">
+<div class="chapter-title"><span>🃏</span> Flash Cards — Clique para Revelar</div>
+<p style="color:var(--muted);font-size:13px;margin-bottom:24px">Clique em cada card para ver a resposta.</p>
+<div class="flashcard-grid">
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Defeitos Congênitos</div><div class="fc-name">Qual a frequência dos defeitos congênitos MAIORES?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2);font-size:16px">2–3%</strong> dos recém-nascidos. Comprometimento funcional importante, consequências médicas/estéticas, requerem atenção precoce. Menores = 15% — sem significado médico/social relevante.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Defeitos Congênitos</div><div class="fc-name">Diferença: Malformação × Deformidade × Disrupção</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2)">Malformação</strong>: erro genético intrínseco | <strong style="color:var(--gold)">Deformidade</strong>: tecido normal + forças mecânicas | <strong style="color:var(--red)">Disrupção</strong>: tecido normal destruído após formação</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Herança XR</div><div class="fc-name">Pai afetado (XR) transmite para os filhos varões?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--red)">NÃO transmite aos filhos varões.</strong> O pai XR passa o cromossomo Y (não o X patológico) para os filhos ♂. Passa o X patológico a 100% das filhas ♀ (portadoras saudáveis). Ex: Duchenne — pai não tem filhos ♂ afetados.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Diagnóstico Pré-natal</div><div class="fc-name">Qual método invasivo é mais precoce? Qual tem menor risco?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2)">Mais precoce</strong>: BVC (Biópsia de Vilosidades Coriônicas) — semanas 10–13. <strong style="color:var(--green)">Menor risco</strong>: Amniocentese — risco 0,1–0,3%. A cordocentese (&gt;18 sem) tem o maior risco (~1–2%).</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Incompatibilidade RH</div><div class="fc-name">Por que a incompatibilidade RH é mais grave a partir da 2ª gestação?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text">Na 1ª gestação, a mãe RH– é sensibilizada no parto → produz IgG anti-D. Na 2ª gestação, os anticorpos <strong>IgG cruzam a placenta</strong> e atacam eritrócitos fetais → hemólise → eritroblastose fetal. O 1º filho raramente é afetado.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Imunoglobulina Anti-D</div><div class="fc-name">Quando aplicar a imunoglobulina anti-RH no parto?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2)">28 semanas</strong> (rotina) + <strong style="color:var(--green)">dentro de 72h após o parto</strong> de feto RH+. Também após: aborto, amniocentese, BVC, gravidez ectópica, trauma abdominal, cordocentese.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Coombs</div><div class="fc-name">Coombs Direto vs Indireto — quem e o que detecta?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--red)">Direto</strong>: feito no <strong>BEBÊ</strong> (sangue do cordão). Anticorpos já ligados aos eritrócitos fetais. Diagnóstico de DHRN. | <strong style="color:var(--accent2)">Indireto</strong>: feito na <strong>MÃE</strong> (soro). Anticorpos livres anti-D. Triagem de sensibilização materna.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Síndrome XYY</div><div class="fc-name">Qual é a única característica CONSTANTE do 47,XYY?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2)">Estatura elevada</strong> — única característica constante e evidente. Outros: acne, QI levemente reduzido (10–15 pts), TDAH, dificuldades de aprendizagem, azoospermia/oligospermia. A maioria leva vida normal.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">Genética e Inteligência</div><div class="fc-name">Qual síndrome é a causa mais comum de DI HERDADA?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2)">Síndrome do X Frágil</strong> (gene FMR1, Xq27.3) — expansão de tripletos CGG. Causa mais comum de DI herdada. [Síndrome de Down é a causa cromossômica mais comum, mas geralmente de novo]. Características: macroorquidismo, face alongada, orelhas grandes.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">ABO</div><div class="fc-name">Por que a incompatibilidade ABO é mais leve que a RH?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text">Anticorpos ABO naturais são <strong>IgM</strong> — moléculas grandes que <strong>NÃO atravessam a placenta</strong>. Os anti-D do sistema RH são <strong>IgG</strong> — moléculas pequenas que <strong>CRUZAM a placenta</strong> ativamente e destroem eritrócitos fetais.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">MEF2C</div><div class="fc-name">O que acontece quando o MEF2C é inativado?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text">A inativação do MEF2C causa <strong>deficiência intelectual severa</strong>. Genes regulados por ele ficam "enfraquecidos" (downregulated). Variantes nessas regiões estão entre as mais associadas ao QI nos estudos GWAS. MEF2C atua na plasticidade sináptica (LTP) no hipocampo e córtex.</div></div></div></div>
+
+  <div class="flashcard" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner"><div class="flashcard-front"><div><div class="fc-tag">PKU</div><div class="fc-name">A Fenilcetonúria causa DI irreversível em todos os afetados?</div></div><div class="fc-hint">Toque para revelar ↗</div></div><div class="flashcard-back"><div class="fc-answer-label">Resposta</div><div class="fc-answer-text"><strong style="color:var(--accent2)">NÃO</strong> — se detectada pelo <strong>teste do pezinho</strong> e tratada com dieta pobre em fenilalanina, o desenvolvimento cognitivo pode ser completamente normal. É o exemplo mais importante de DI <strong>PREVENÍVEL</strong> geneticamente determinada. AR, gene PAH, locus 12q22-q24.1.</div></div></div></div>
+</div>
+</div></div>
+
+<!-- ======================== QUIZ ======================== -->
+<div id="quiz" class="section"><div class="container">
+<div class="chapter-title"><span>❓</span> Quiz — 27 Questões · Genética Médica P2</div>
+<div class="quiz-container" id="quiz-container"></div>
+</div></div>
+
+<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const tabs=['defeitos','heranca','prenatal','sangue','xyy','intel','flashcards','quiz'];
+  document.querySelectorAll('nav.tabs button')[tabs.indexOf(id)].classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+window.addEventListener('scroll',()=>{
+  const btn=document.getElementById('scrolltop');
+  btn.style.display=window.scrollY>400?'flex':'none';
+});
+
+const canvas=document.getElementById('particles');
+const ctx=canvas.getContext('2d');
+let W,H,pts;
+function resize(){W=canvas.width=innerWidth;H=canvas.height=innerHeight;initPts()}
+function initPts(){pts=Array.from({length:55},()=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*1.5+.5}))}
+function drawPts(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p=>{p.x=(p.x+p.vx+W)%W;p.y=(p.y+p.vy+H)%H;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle='rgba(56,232,192,0.2)';ctx.fill()});
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<110){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.strokeStyle=`rgba(56,232,192,${.07*(1-d/110)})`;ctx.lineWidth=.5;ctx.stroke()}}
+  requestAnimationFrame(drawPts);
+}
+window.addEventListener('resize',resize);resize();drawPts();
+
+const quizData=[
+  /* ── DEFEITOS CONGÊNITOS ── */
+  {
+    q:"Qual é a frequência dos defeitos congênitos MAIORES em recém-nascidos?",
+    context:"Os defeitos maiores têm comprometimento funcional importante e repercussão social.",
+    opts:["15%","2–3%","5–8%","0,5%"],
+    correct:1,
+    explain:"Os defeitos congênitos <strong>MAIORES</strong> ocorrem em <strong>2–3%</strong> dos recém-nascidos. São aqueles com comprometimento funcional importante para a vida, consequências médicas e estéticas, que requerem atenção precoce. Os <strong>menores</strong> têm frequência de 15% — estruturalmente frequentes mas sem relevância médica ou social significativa."
+  },
+  {
+    q:"Um defeito congênito causado por forças mecânicas incomuns sobre tecidos geneticamente normais é denominado:",
+    context:"O tecido neste caso é geneticamente normal — o problema é externo.",
+    opts:["Malformação","Displasia","Deformidade","Disrupção"],
+    correct:2,
+    explain:"<strong>Deformidade</strong>: efeito de forças incomuns sobre tecidos geneticamente <em>bem formados</em>. O tecido é normal mas é distorcido mecanicamente. Exemplo clássico: pé torto equinovaro por compressão uterina (oligoidrâmnio). <em>Malformação</em> = erro genético intrínseco. <em>Disrupção</em> = tecido normal destruído após a formação."
+  },
+  {
+    q:"Qual alternativa NÃO é um indicador de teratogenicidade?",
+    context:"Os indicadores de teratogenicidade são os efeitos observados em gestações expostas.",
+    opts:["Abortos espontâneos","CIUR (Crescimento Intrauterino Restrito)","Hipertensão arterial crônica materna","Morte fetal"],
+    correct:2,
+    explain:"<strong>Hipertensão arterial crônica materna</strong> NÃO é um indicador de teratogenicidade — é uma comorbidade materna preexistente. Os indicadores de teratogenicidade são: infertilidade, abortos espontâneos, morte fetal, defeitos congênitos, alterações do SNC e CIUR. Esses eventos sinalizam que um agente pode estar interferindo no desenvolvimento fetal."
+  },
+  {
+    q:"A malformação congênita difere da disrupção porque:",
+    context:"Ambas resultam em estruturas anormais, mas por mecanismos completamente diferentes.",
+    opts:["A malformação é sempre mais grave clinicamente","Na malformação, o erro está no DNA do embrião; na disrupção, um tecido inicialmente normal é destruído","A disrupção é causada por agentes teratogênicos ambientais; a malformação não","A malformação afeta apenas órgãos internos; a disrupção apenas externos"],
+    correct:1,
+    explain:"A <strong>malformação</strong> ocorre por <strong>erro genético intrínseco</strong> — o tecido nunca se formou corretamente. A <strong>disrupção</strong> ocorre quando um tecido <strong>inicialmente bem formado é destruído</strong> por algum fator externo (ex: bridas amnióticas amputando dedos que estavam normais). Esse é o conceito mais importante para diferenciar os dois."
+  },
+  {
+    q:"Os fatores que determinam o efeito teratogênico incluem TODOS os seguintes, EXCETO:",
+    context:"Há 5 fatores classicamente descritos pelo Dr. Ottoni.",
+    opts:["Momento da exposição ao teratógeno","Suscetibilidade fetal","Cor do cabelo da mãe","Dose do agente teratogênico"],
+    correct:2,
+    explain:"Os 5 fatores que determinam o efeito teratogênico são: (1) Momento da exposição, (2) Tempo de exposição, (3) Dose, (4) Suscetibilidade fetal, (5) Suscetibilidade materna. A <strong>cor do cabelo da mãe</strong> não tem qualquer relação com teratogenicidade."
+  },
+  /* ── HERANÇA LIGADA AO SEXO ── */
+  {
+    q:"Na herança recessiva ligada ao X (XR), um pai afetado transmite o caráter a:",
+    context:"O pai XR afetado tem cariótipo X^a Y.",
+    opts:["50% dos filhos varões","100% dos filhos varões","100% das filhas (portadoras saudáveis)","50% de toda a descendência"],
+    correct:2,
+    explain:"O pai XR afetado (X<sup>a</sup>Y) transmite o cromossomo X patológico ao <strong>100% das filhas</strong> — todas serão portadoras saudáveis. <strong>NÃO transmite</strong> aos filhos varões porque esses recebem o cromossomo Y do pai. Esta é a característica mais importante da XR: o pai afetado não transmite a filhos varões, apenas a filhas portadoras."
+  },
+  {
+    q:"Na herança dominante ligada ao X (XD), o que ocorre com os filhos varões de um pai afetado?",
+    context:"O pai XD afetado tem cariótipo X^D Y.",
+    opts:["50% serão afetados","100% serão afetados","0% serão afetados — recebem apenas o Y do pai","100% serão portadores assintomáticos"],
+    correct:2,
+    explain:"Na XD, o pai afetado (X<sup>D</sup>Y) transmite o cromossomo <strong>Y</strong> a seus filhos varões — portanto <strong>NENHUM filho varão é afetado (0%)</strong>. Todas as suas filhas recebem o X<sup>D</sup> paterno → 100% afetadas. Isso distingue a XD da AD: na XD, pai afetado não afeta filhos varões, mas afeta todas as filhas."
+  },
+  {
+    q:"Qual é a localização cromossômica da Distrofia Muscular de Duchenne?",
+    context:"Duchenne é a forma mais comum de distrofia muscular ligada ao X.",
+    opts:["15q21.1","12q22-q24.1","Xp21.2","Xq27.3"],
+    correct:2,
+    explain:"A Distrofia Muscular de Duchenne está localizada em <strong>Xp21.2</strong>. Causa déficit de distrofina. Herança XR — afeta quase exclusivamente meninos. Características: fraqueza muscular progressiva desde a infância, pseudohipertrofia de panturrilhas, sinal de Gowers, cardiomiopatia. A localização Xq27.3 é do X Frágil; 15q21.1 é do Marfã; 12q22 é a PKU."
+  },
+  {
+    q:"Na herança autossômica recessiva (AR), qual é a probabilidade de um casal de portadores ter filhos afetados?",
+    context:"Portadores são heterozigotos (Aa) — saudáveis, mas carregam o alelo patológico.",
+    opts:["50% em cada gestação","25% em cada gestação","75% em cada gestação","100% se ambos os pais forem portadores"],
+    correct:1,
+    explain:"Casal de portadores AR (Aa × Aa) → probabilidade de 25% de filhos afetados (aa) em cada gestação + 50% portadores saudáveis (Aa) + 25% completamente saudáveis (AA). A probabilidade é <strong>25% em cada parto independentemente</strong>. A consanguinidade aumenta o risco porque aumenta a chance de dois portadores terem filhos."
+  },
+  {
+    q:"A Síndrome do X Frágil segue qual padrão de herança e qual gene está afetado?",
+    context:"É a causa mais comum de deficiência intelectual herdada.",
+    opts:["Autossômica dominante — gene FMR1","Recessiva ligada ao X — gene FMR1 (expansão de tripletos CGG) no locus Xq27.3","Autossômica recessiva — gene PAH","Dominante ligada ao X — gene MECP2"],
+    correct:1,
+    explain:"A Síndrome do X Frágil segue herança <strong>recessiva ligada ao X</strong>. O gene afetado é o <strong>FMR1</strong> (locus Xq27.3) — ocorre expansão de tripletos CGG que silencia o gene. É a causa mais comum de DI herdada. Características clínicas: macroorquidismo, face alongada, orelhas grandes, comportamento autístico. Afeta principalmente meninos; meninas portadoras podem ter DI leve."
+  },
+  /* ── DIAGNÓSTICO PRÉ-NATAL ── */
+  {
+    q:"Qual método de diagnóstico pré-natal invasivo tem o MENOR risco de aborto?",
+    context:"Os três métodos invasivos têm riscos diferentes conforme a semana e técnica.",
+    opts:["Cordocentese (1–2%)","Biópsia de Vilosidades Coriônicas (0,5–1%)","Amniocentese (0,1–0,3%)","NIPT (sem risco — não invasivo)"],
+    correct:2,
+    explain:"A <strong>amniocentese</strong> (semanas 15–20) tem o menor risco de aborto: <strong>0,1–0,3%</strong>. A BVC (semanas 10–13) tem risco de 0,5–1%. A cordocentese (&gt;18 sem) tem o maior risco: 1–2%. O NIPT não tem risco de aborto pois é não invasivo, mas NÃO é diagnóstico definitivo — é apenas triagem."
+  },
+  {
+    q:"O NIPT (Teste Pré-natal Não Invasivo) é considerado:",
+    context:"O NIPT analisa DNA fetal livre no sangue materno.",
+    opts:["Método diagnóstico definitivo — substitui completamente a amniocentese","Método de TRIAGEM — alta sensibilidade para trissomias 21, 18, 13, mas requer confirmação invasiva","Método invasivo de alto risco realizado após a semana 18","Exame realizado apenas quando a ecografia mostra malformações estruturais graves"],
+    correct:1,
+    explain:"O NIPT é um método de <strong>TRIAGEM</strong> (não diagnóstico). Tem alta sensibilidade para trissomias 21, 18, 13 e anomalias de cromossomos sexuais, e pode ser realizado a partir da semana 10. Porém, um resultado positivo <strong>REQUER confirmação</strong> por método invasivo (amniocentese ou BVC). Não substitui o diagnóstico definitivo."
+  },
+  {
+    q:"A Biópsia de Vilosidades Coriônicas (BVC) é realizada em qual período gestacional?",
+    context:"Comparar com as outras técnicas invasivas é frequentemente cobrado.",
+    opts:["Semanas 15–20","Semanas 10–13","Após a semana 18","Semanas 6–8"],
+    correct:1,
+    explain:"A BVC é realizada entre as semanas <strong>10–13</strong> de gestação — é o método invasivo mais <strong>precoce</strong>. O material obtido (citotrofoblasto) permite estudos bioquímicos, genéticos e cromossômicos mais rapidamente que a amniocentese. Porém, tem risco de aborto maior (0,5–1%) comparado à amniocentese (0,1–0,3%)."
+  },
+  {
+    q:"A cordocentese permite, ALÉM do diagnóstico, também:",
+    context:"A cordocentese acessa a veia umbilical fetal.",
+    opts:["Realizar ecografia em tempo real do coração fetal","Administrar medicamentos ou realizar transfusão sanguínea diretamente no feto","Coletar células do líquido amniótico para cultura","Realizar amniorredução em caso de poliidrâmnio"],
+    correct:1,
+    explain:"A cordocentese, por acessar diretamente a <strong>veia umbilical fetal</strong>, permite além do diagnóstico: <strong>administrar medicamentos ao feto</strong> e realizar <strong>transfusão sanguínea intrauterina</strong>. Isso é especialmente útil na doença hemolítica grave por incompatibilidade RH, onde o feto anêmico pode receber transfusão de emergência."
+  },
+  {
+    q:"Qual é a principal indicação para solicitar diagnóstico pré-natal invasivo em gestante sem outros fatores de risco?",
+    context:"Há indicações específicas que justificam o risco do procedimento invasivo.",
+    opts:["Mãe primigesta sem fatores de risco","Idade materna >35 anos (↑ risco de aneuploidias) ou antecedente de filho com cromossomopatia","Pai com diabetes tipo 2","Triagem bioquímica absolutamente normal + ecografia sem alterações"],
+    correct:1,
+    explain:"As principais indicações para diagnóstico pré-natal invasivo são: <strong>idade materna &gt;35 anos</strong> (risco de trissomia 21 aumenta com a idade), <strong>antecedente de filho com cromossomopatia</strong>, pais portadores de doenças genéticas, <strong>NIPT ou triagem bioquímica alterados</strong>, ou achados ecográficos anômalos. Sem fatores de risco, o risco do procedimento superaria o benefício."
+  },
+  /* ── ABO / RH ── */
+  {
+    q:"Por que os anticorpos ABO não causam doença hemolítica grave do recém-nascido?",
+    context:"A natureza do anticorpo é determinante neste caso.",
+    opts:["Porque o antígeno A e B não estão presentes nos eritrócitos fetais","Porque os anticorpos ABO são IgM — macromoléculas que NÃO atravessam a placenta","Porque o sistema ABO só se ativa após o nascimento","Porque os anticorpos ABO são destruídos no sangue materno"],
+    correct:1,
+    explain:"Os anticorpos ABO naturais (anti-A, anti-B) são <strong>IgM</strong> — moléculas de alto peso molecular que <strong>NÃO atravessam a placenta</strong>. Em contraste, os anticorpos anti-D do sistema RH são <strong>IgG</strong> (pequenos, atravessam placenta ativamente) e causam hemólise fetal grave. Por isso o ABO é geralmente leve, pode ocorrer desde a 1ª gestação e não se previne com imunoprofilaxia."
+  },
+  {
+    q:"Por que a incompatibilidade RH geralmente NÃO afeta o primeiro filho?",
+    context:"O mecanismo envolve duas gestações sucessivas.",
+    opts:["Porque anticorpos anti-D são IgM e não cruzam a placenta","Porque no primeiro parto ocorre a sensibilização materna inicial — a mãe ainda não tem IgG anti-D","Porque o feto tem proteção natural até o nascimento","Porque o antígeno D só se expressa no segundo trimestre"],
+    correct:1,
+    explain:"Na <strong>1ª gestação</strong>, eritrócitos fetais RH+ entram na circulação materna principalmente no parto → <strong>sensibilização inicial</strong> da mãe RH–. Somente em gestações <strong>POSTERIORES</strong> a mãe já tem IgG anti-D pré-formados que cruzam a placenta e atacam eritrócitos fetais. Por isso a incompatibilidade RH afeta a partir do 2º filho."
+  },
+  {
+    q:"Quando se deve administrar a imunoglobulina anti-D (anti-RH) no parto?",
+    context:"A profilaxia deve ser administrada em momento específico para ser eficaz.",
+    opts:["Antes do parto, durante as contrações","Dentro de 72 horas APÓS o parto de um feto RH+","Somente se a mãe já mostrar anticorpos anti-D","No início do 3º trimestre, independentemente do RH do feto"],
+    correct:1,
+    explain:"A imunoglobulina anti-D deve ser administrada <strong>dentro das 72 horas após o parto</strong> de feto RH+ a toda mãe RH–. Também se administra na <strong>semana 28</strong> de gestação (profilaxia antenatal). Além disso após: aborto, amniocentese, BVC, gravidez ectópica, trauma abdominal. É PREVENTIVA — não trata hemólise já estabelecida."
+  },
+  {
+    q:"O Teste de Coombs DIRETO é realizado em quem e detecta o quê?",
+    context:"Há dois tipos de Coombs com indicações muito distintas.",
+    opts:["Na mãe — detecta anticorpos IgG livres no soro materno","No recém-nascido/sangue do cordão — detecta anticorpos já ligados aos eritrócitos fetais","No pai — detecta genótipo RH","No líquido amniótico — detecta hemoglobina fetal"],
+    correct:1,
+    explain:"O <strong>Coombs DIRETO</strong> é realizado no <strong>recém-nascido ou sangue do cordão umbilical</strong>. Detecta anticorpos IgG que já estão aderidos diretamente aos eritrócitos fetais. Positivo = diagnóstico de doença hemolítica do RN (DHRN). O <strong>Coombs INDIRETO</strong> é realizado na mãe (soro) e detecta anticorpos livres anti-D — usado na triagem pré-natal."
+  },
+  {
+    q:"Qual grupo sanguíneo possui anticorpos ANTI-A E ANTI-B no soro?",
+    context:"Lembrar que os anticorpos ABO são naturais, presentes sem sensibilização prévia.",
+    opts:["Grupo A","Grupo B","Grupo AB","Grupo O"],
+    correct:3,
+    explain:"O grupo <strong>O</strong> não possui antígenos A nem B nos eritrócitos, portanto possui <strong>anticorpos anti-A E anti-B</strong> no soro. O grupo A tem anti-B; o grupo B tem anti-A; o grupo AB não tem anticorpos (receptor universal). O grupo O é o doador universal de hemácias."
+  },
+  /* ── SÍNDROME XYY ── */
+  {
+    q:"⭐ [CUESTIONÁRIO OTTONI — Q1] Assinale a alternativa correta sobre a Síndrome de Jacobs (47,XYY):",
+    context:"Questão apresentada pelo Dr. Ottoni em aula. Identifique a afirmação verdadeira.",
+    opts:[
+      "A) O síndrome se produz exclusivamente por não-disjunção na primeira divisão meiótica da ovogênese.",
+      "B) A prevalência é de aproximadamente 1 por cada 1.000 recém-nascidos varões e o diagnóstico frequentemente não é identificado precocemente devido à ausência de deficiências físicas ou cognitivas graves.",
+      "C) Trata-se de uma monossomia do cromossomo Y, que afeta somente as meninas.",
+      "D) O cariótipo típico é 45,X0, e o síndrome sempre se associa a um atraso mental grave."
+    ],
+    correct:1,
+    explain:"<strong>✅ Correta: alternativa B.</strong><br><br>A prevalência é de aproximadamente <strong>1/1.000 recém-nascidos varões</strong>, e o diagnóstico frequentemente NÃO é identificado precocemente pois a maioria NÃO apresenta deficiências físicas ou cognitivas graves.<br><br>❌ <strong>A) FALSA:</strong> O erro ocorre na <strong>espermatogênese PATERNA</strong> (não ovogênese), por não-disjunção na <strong>2ª divisão meiótica</strong>.<br>❌ <strong>C) FALSA:</strong> É uma <strong>trissomia</strong> (cromossomo Y extra, 47,XYY), não monossomia — e afeta apenas varões.<br>❌ <strong>D) FALSA:</strong> O cariótipo é <strong>47,XYY</strong> (não 45,X0, que é Síndrome de Turner). Não se associa sempre a atraso mental grave."
+  },
+  {
+    q:"Qual é a única característica fenotípica CONSTANTE e evidente da Síndrome 47,XYY?",
+    context:"A maioria dos portadores 47,XYY é fenotipicamente normal.",
+    opts:["Deficiência intelectual grave","Estatura elevada (única característica constante)","Criptorquidia bilateral","Ginecomastia"],
+    correct:1,
+    explain:"A <strong>estatura elevada</strong> é a única característica constante e evidente do síndrome 47,XYY — frequentemente mais de 1,82 m (até ~2 m). Outros achados possíveis: acne, QI levemente reduzido (10–15 pts abaixo da média familiar), TDAH, dificuldades de aprendizagem, azoospermia/oligospermia. A maioria leva vidas completamente normais."
+  },
+  {
+    q:"O 'mito do cromossomo criminal' associado ao síndrome XYY foi desconstruído principalmente porque:",
+    context:"O caso de Richard Speck foi o mais famoso — e o mais emblemático da desconstrução do mito.",
+    opts:["Estudos provaram que portadores XYY têm QI abaixo de 70 invariavelmente","Os estudos originais nunca alcançaram significância estatística, e o caso mais famoso (Richard Speck) tinha cariótipo 46,XY normal","O cromossomo Y extra foi removido com sucesso em todos os portadores","Portadores XYY têm mais serotonina, o que os torna menos agressivos"],
+    correct:1,
+    explain:"O mito foi desconstruído porque: (1) Os estudos originais dos anos 60–70 <strong>nunca alcançaram significância estatística</strong>; (2) O caso mais famoso, Richard Speck, tinha cariótipo <strong>46,XY normal</strong> — o XYY foi FALSO; (3) A agressividade relaciona-se muito mais ao gene <strong>MAOA</strong> (cromossomo X) do que ao Y extra; (4) Fatores sociais e ambientais influem muito mais que o cromossomo extra."
+  },
+  /* ── GENÉTICA E INTELIGÊNCIA ── */
+  {
+    q:"⭐ [CUESTIONÁRIO OTTONI — Q4] Sobre os mecanismos celulares e genes associados à alta capacidade intelectual, assinale a alternativa correta:",
+    context:"Questão apresentada pelo Dr. Ottoni em aula. Mecanismo celular e MEF2C.",
+    opts:[
+      "A) O fator MEF2C, quando está inativado, causa uma deficiência intelectual severa, e genes por ele regulados estão enfraquecidos para variantes associadas à inteligência.",
+      "B) Um único gene (o 'gene da inteligência') explica 80% da variância do QI.",
+      "C) A maioria das variantes genéticas associadas à inteligência é herdada do pai (cerca de 60%).",
+      "D) Os genes associados à inteligência não interferem nos processos sinápticos, somente no metabolismo energético."
+    ],
+    correct:0,
+    explain:"<strong>✅ Correta: alternativa A.</strong><br><br><strong>MEF2C</strong> é um fator de transcrição essencial para plasticidade sináptica e desenvolvimento neuronal. Sua <strong>inativação causa deficiência intelectual severa</strong>. Genes regulados por MEF2C ficam 'enfraquecidos', e variantes nessas regiões estão entre as mais associadas ao QI em estudos GWAS.<br><br>❌ <strong>B) FALSA:</strong> Não existe um único 'gene da inteligência' — são <strong>milhares de variantes</strong>, cada uma com efeito mínimo.<br>❌ <strong>C) FALSA:</strong> Não há predominância paterna específica na herança da inteligência.<br>❌ <strong>D) FALSA:</strong> Os genes de inteligência atuam <strong>primariamente em processos sinápticos</strong> (plasticidade, LTP, formação de sinapses)."
+  },
+  {
+    q:"Qual condição genética é a causa mais comum de deficiência intelectual HERDADA?",
+    context:"Distinguir 'mais comum em geral' de 'mais comum herdada'.",
+    opts:["Síndrome de Down (trissomia 21)","Fenilcetonúria (PKU)","Síndrome do X Frágil (FMR1, Xq27.3)","Síndrome de Williams (del 7q11.23)"],
+    correct:2,
+    explain:"A <strong>Síndrome do X Frágil</strong> (gene FMR1, Xq27.3) é a causa mais comum de DI <strong>HERDADA</strong> — causada por expansão de tripletos CGG no gene FMR1. A Síndrome de Down é a causa <em>cromossômica</em> mais comum de DI, mas geralmente é de novo (não herdada). X Frágil segue herança XR com antecipação."
+  },
+  {
+    q:"A herdabilidade da inteligência em adultos é estimada em:",
+    context:"A herdabilidade AUMENTA com a idade.",
+    opts:["10–20%","30–40%","50–80%","90–100%"],
+    correct:2,
+    explain:"A herdabilidade da inteligência em adultos é estimada entre <strong>50–80%</strong>. É importante lembrar que herdabilidade alta NÃO significa determinismo — indica que, dentro de uma população em ambientes similares, as diferenças são explicadas principalmente pela genética. Herdabilidade em crianças é menor (~40%), <strong>aumentando com a idade</strong>. Ambientes enriquecidos ainda aumentam significativamente o QI expresso."
+  },
+  {
+    q:"A Fenilcetonúria (PKU) causa deficiência intelectual irreversível em TODOS os afetados?",
+    context:"PKU é o exemplo mais importante de DI genética prevenível.",
+    opts:["Sim — a DI é inevitável pois é causada por defeito genético","Não — se detectada precocemente pelo teste do pezinho e tratada com dieta pobre em fenilalanina, o desenvolvimento cognitivo pode ser completamente normal","Sim — mas pode ser parcialmente revertida com reposição enzimática","Não — o QI é afetado apenas se houver consanguinidade"],
+    correct:1,
+    explain:"<strong>NÃO</strong> — a PKU é o exemplo mais importante de DI <strong>PREVENÍVEL</strong> geneticamente determinada. Se detectada pelo <strong>teste do pezinho</strong> e tratada com dieta pobre em fenilalanina, o desenvolvimento cognitivo pode ser completamente normal. Herança AR, gene PAH, locus 12q22-q24.1. Sem tratamento, o acúmulo de fenilalanina causa dano neurológico grave e progressivo."
+  }
+];
+
+let currentQ=0,score=0,answered=false;
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(currentQ>=quizData.length){
+    const pct=Math.round((score/quizData.length)*100);
+    let msg=pct>=90?"🏆 Excelente! Ottoni ficaria impressionado!":pct>=70?"✅ Bom! Continue revisando!":pct>=50?"📚 Precisa revisar mais o conteúdo.":"💪 Revise o material e tente novamente!";
+    c.innerHTML=`<div class="score-card"><div style="font-size:48px;margin-bottom:16px">🧬</div><div class="score-big">${score}/${quizData.length}</div><div style="font-size:24px;margin:8px 0;color:var(--accent2)">${pct}%</div><div class="score-msg">${msg}</div><button class="btn" style="margin-top:24px" onclick="restartQuiz()">🔄 Tentar Novamente</button></div>`;
+    return;
+  }
+  const q=quizData[currentQ];
+  const pct=Math.round((currentQ/quizData.length)*100);
+  c.innerHTML=`
+    <div class="quiz-progress-bar"><div class="quiz-progress-fill" style="width:${pct}%"></div></div>
+    <div class="quiz-num">QUESTÃO ${currentQ+1} DE ${quizData.length} · Pontos: ${score}</div>
+    <div class="quiz-q">${q.q}</div>
+    ${q.context?`<div class="quiz-context">📋 ${q.context}</div>`:''}
+    <div class="quiz-opts">${q.opts.map((o,i)=>`<button class="quiz-opt" onclick="selectAnswer(${i})" id="opt-${i}"><span class="opt-letter">${String.fromCharCode(65+i)})</span><span>${o}</span></button>`).join('')}</div>
+    <div class="quiz-explain" id="quiz-explain"></div>
+    <div class="quiz-nav"><span style="color:var(--muted);font-size:12px">${score} acertos até agora</span><button class="btn" id="next-btn" onclick="nextQuestion()" style="display:none">Próxima →</button></div>`;
+  answered=false;
+}
+
+function selectAnswer(idx){
+  if(answered)return;
+  answered=true;
+  const q=quizData[currentQ];
+  const opts=document.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.classList.add('answered'));
+  opts[q.correct].classList.add('correct');
+  if(idx!==q.correct){opts[idx].classList.add('wrong');}else{score++;}
+  const ex=document.getElementById('quiz-explain');
+  ex.innerHTML=`<strong>${idx===q.correct?'✅ Correto!':'❌ Incorreto.'}</strong><br><br>${q.explain}`;
+  ex.classList.add('show');
+  document.getElementById('next-btn').style.display='block';
+}
+
+function nextQuestion(){currentQ++;renderQuiz();}
+function restartQuiz(){currentQ=0;score=0;answered=false;renderQuiz();}
+
+renderQuiz();
+</script>
+
+<!-- Botão flutuante: Voltar ao dashboard -->
+<a href="dashboard.html" title="Voltar ao Dashboard" style="
+  position:fixed; bottom:24px; left:24px; z-index:9999;
+  display:flex; align-items:center; gap:8px;
+  padding:11px 22px;
+  background:rgba(10,13,20,0.92);
+  border:1px solid rgba(56,232,192,0.35);
+  border-radius:50px; color:#e8eaf6;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+  text-decoration:none;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 4px 20px rgba(56,232,192,0.12);
+  transition:all .25s ease;
+" onmouseover="this.style.borderColor='rgba(56,232,192,0.85)';this.style.background='rgba(56,232,192,0.14)';this.style.transform='translateY(-2px)'"
+   onmouseout="this.style.borderColor='rgba(56,232,192,0.35)';this.style.background='rgba(10,13,20,0.92)';this.style.transform='translateY(0)'">
+  ← Voltar
+</a>
+
+</body>
+</html>

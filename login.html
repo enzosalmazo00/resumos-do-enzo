@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login — Resumos do Enzo</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="auth.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --cyan:    #22d3ee;
+      --cyan2:   #06b6d4;
+      --cyan3:   #67e8f9;
+      --dark:    #020810;
+      --card-bg: rgba(3, 10, 24, 0.72);
+      --border:  rgba(34, 211, 238, 0.18);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--dark);
+      color: #fff;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    #dna-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 0;
+    }
+
+    .aurora { position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+    .aurora-blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      animation: drift 18s ease-in-out infinite;
+    }
+    .aurora-blob:nth-child(1) { width:600px; height:600px; background:radial-gradient(circle,#22d3ee,transparent 70%); top:-100px; left:-100px; animation-duration:20s; }
+    .aurora-blob:nth-child(2) { width:500px; height:500px; background:radial-gradient(circle,#0ea5e9,transparent 70%); bottom:-80px; right:-80px; animation-duration:16s; animation-delay:-6s; }
+    .aurora-blob:nth-child(3) { width:400px; height:400px; background:radial-gradient(circle,#6366f1,transparent 70%); top:40%; left:60%; animation-duration:24s; animation-delay:-12s; opacity:0.10; }
+    @keyframes drift {
+      0%,100% { transform:translate(0,0) scale(1); }
+      33%      { transform:translate(40px,-30px) scale(1.08); }
+      66%      { transform:translate(-20px,40px) scale(0.94); }
+    }
+
+    .grid-overlay {
+      position: fixed; inset: 0; z-index: 2; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(34,211,238,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+    }
+
+    .scan-line {
+      position: fixed; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(34,211,238,0.35) 40%, rgba(103,232,249,0.6) 50%, rgba(34,211,238,0.35) 60%, transparent 100%);
+      z-index: 3; pointer-events: none;
+      animation: scan 8s linear infinite; opacity: 0;
+    }
+    @keyframes scan {
+      0%   { top:-2px; opacity:0; }
+      5%   { opacity:1; }
+      95%  { opacity:1; }
+      100% { top:100vh; opacity:0; }
+    }
+
+    .vignette {
+      position: fixed; inset: 0; z-index: 4; pointer-events: none;
+      background: radial-gradient(ellipse 75% 75% at 50% 50%, transparent 30%, rgba(2,8,16,0.55) 70%, rgba(2,8,16,0.85) 100%);
+    }
+
+    .page {
+      position: relative; z-index: 10;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 40px 20px 48px;
+    }
+
+    .top-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 18px; border-radius: 9999px;
+      border: 1px solid var(--border);
+      background: rgba(34,211,238,0.07);
+      font-size: 10.5px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--cyan); margin-bottom: 18px;
+      animation: fadeDown 0.8s ease both;
+    }
+    .badge-dot {
+      width:6px; height:6px; border-radius:50%;
+      background:var(--cyan); box-shadow:0 0 8px var(--cyan);
+      animation:pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.65);} }
+
+    .brand { text-align:center; margin-bottom:28px; animation:fadeDown 0.8s 0.1s ease both; }
+    .brand-main {
+      font-size: clamp(38px,6vw,72px); font-weight:800; letter-spacing:-3px; line-height:0.95; color:#fff;
+    }
+    .brand-main span {
+      background: linear-gradient(100deg, var(--cyan) 0%, var(--cyan3) 50%, var(--cyan2) 100%);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+    }
+
+    .glass-card {
+      width:100%; max-width:400px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 28px;
+      padding: 40px 36px 32px;
+      backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+      box-shadow: 0 0 0 1px rgba(34,211,238,0.06), 0 24px 64px rgba(0,0,0,0.55), 0 0 80px rgba(34,211,238,0.06) inset;
+      animation: fadeUp 0.9s 0.2s ease both;
+    }
+
+    .card-header { text-align:center; margin-bottom:30px; }
+    .card-icon {
+      width:52px; height:52px; border-radius:16px;
+      background:linear-gradient(135deg,rgba(34,211,238,.18),rgba(6,182,212,.08));
+      border:1px solid var(--border);
+      display:flex; align-items:center; justify-content:center;
+      margin:0 auto 16px; font-size:24px;
+      box-shadow:0 0 20px rgba(34,211,238,0.1);
+    }
+    .card-header h2 { font-size:24px; font-weight:600; margin-bottom:4px; letter-spacing:-0.5px; }
+    .card-header p  { font-size:12.5px; color:rgba(34,211,238,0.45); font-weight:300; }
+
+    .field { margin-bottom:16px; }
+    .field label {
+      display:block; font-size:11px; font-weight:600; color:rgba(34,211,238,0.6);
+      margin-bottom:7px; letter-spacing:0.1em; text-transform:uppercase;
+    }
+    .field input {
+      width:100%; padding:14px 16px;
+      background:rgba(255,255,255,0.04); border:1px solid rgba(34,211,238,0.14);
+      border-radius:14px; color:#fff; font-size:15px; font-family:'Poppins',sans-serif;
+      transition:all 0.25s; -webkit-appearance:none;
+    }
+    .field input::placeholder { color:rgba(255,255,255,0.18); }
+    .field input:focus {
+      outline:none; border-color:var(--cyan);
+      background:rgba(34,211,238,0.06); box-shadow:0 0 0 3px rgba(34,211,238,0.12);
+    }
+
+    #mainBtn {
+      width:100%; padding:15px; margin-top:6px; border:none; border-radius:14px;
+      background:linear-gradient(135deg,#22d3ee,#0891b2); color:#fff;
+      font-size:15px; font-weight:600; font-family:'Poppins',sans-serif;
+      cursor:pointer; box-shadow:0 8px 28px rgba(34,211,238,0.28),0 0 0 1px rgba(34,211,238,0.2);
+      transition:all 0.25s; -webkit-appearance:none; position:relative; overflow:hidden;
+    }
+    #mainBtn::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.12),transparent); border-radius:inherit; }
+    #mainBtn:hover   { transform:translateY(-3px); box-shadow:0 14px 40px rgba(34,211,238,0.38); }
+    #mainBtn:active  { transform:translateY(0); }
+    #mainBtn:disabled{ opacity:0.55; cursor:not-allowed; transform:none; }
+
+    #toggleBtn {
+      width:100%; padding:13px; margin-top:8px;
+      border:1px solid var(--border); border-radius:14px;
+      background:transparent; color:rgba(34,211,238,0.7);
+      font-size:13.5px; font-family:'Poppins',sans-serif;
+      cursor:pointer; transition:all 0.25s; -webkit-appearance:none;
+    }
+    #toggleBtn:hover    { border-color:rgba(34,211,238,0.4); background:rgba(34,211,238,0.05); color:#fff; }
+    #toggleBtn:disabled { opacity:0.5; cursor:not-allowed; }
+
+    #msg { min-height:18px; font-size:12.5px; text-align:center; margin-top:12px; animation:fadeIn 0.3s ease; }
+
+    .divider {
+      display:flex; align-items:center; gap:10px; margin:22px 0 16px;
+      color:rgba(255,255,255,0.18); font-size:11px; letter-spacing:0.08em;
+    }
+    .divider::before,.divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.07); }
+
+    .security-note {
+      padding:11px 14px;
+      background:rgba(251,191,36,0.06); border:1px solid rgba(251,191,36,0.18); border-radius:12px;
+      font-size:11.5px; line-height:1.6; color:rgba(252,211,77,0.8); text-align:center;
+    }
+    .security-note strong { display:block; margin-bottom:2px; font-size:12px; }
+
+    .card-footer { margin-top:20px; text-align:center; font-size:11px; color:rgba(255,255,255,0.15); }
+
+    .subjects {
+      display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+      margin-top:24px; max-width:440px;
+      animation:fadeUp 0.9s 0.4s ease both;
+    }
+    .pill {
+      display:inline-flex; align-items:center; gap:6px;
+      padding:6px 14px; border-radius:9999px;
+      border:1px solid var(--border); background:rgba(34,211,238,0.04);
+      font-size:11px; font-weight:500; color:rgba(165,243,252,0.7);
+      backdrop-filter:blur(8px); transition:all 0.25s;
+    }
+    .pill:hover { background:rgba(34,211,238,0.1); border-color:rgba(34,211,238,0.4); color:#fff; transform:translateY(-2px); }
+
+    @keyframes fadeDown { from{opacity:0;transform:translateY(-16px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeUp   { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeIn   { from{opacity:0;}to{opacity:1;} }
+
+
+    /* ── TERMOS DE USO ── */
+    .terms-box {
+      margin-bottom: 14px;
+      border: 1px solid rgba(34,211,238,0.14);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .terms-scroll {
+      max-height: 130px;
+      overflow-y: auto;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.03);
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: rgba(165,243,252,0.6);
+      scrollbar-width: thin;
+      scrollbar-color: rgba(34,211,238,0.3) transparent;
+    }
+    .terms-scroll::-webkit-scrollbar { width: 4px; }
+    .terms-scroll::-webkit-scrollbar-thumb { background: rgba(34,211,238,0.3); border-radius: 4px; }
+    .terms-scroll p { margin-bottom: 8px; }
+    .terms-scroll strong { color: rgba(165,243,252,0.9); }
+    .terms-scroll .t-section {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(34,211,238,0.5);
+      margin: 10px 0 4px;
+    }
+    .terms-check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      background: rgba(34,211,238,0.04);
+      border-top: 1px solid rgba(34,211,238,0.10);
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .terms-check:hover { background: rgba(34,211,238,0.08); }
+    .terms-check input[type="checkbox"] {
+      width: 16px; height: 16px; flex-shrink: 0;
+      accent-color: #22d3ee;
+      cursor: pointer;
+    }
+    .terms-check label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: rgba(165,243,252,0.7);
+      cursor: pointer;
+      line-height: 1.4;
+    }
+    @media (max-width:600px) {
+      .brand-main { font-size:clamp(30px,9vw,44px); letter-spacing:-1.5px; }
+      .glass-card { padding:28px 20px 24px; border-radius:20px; }
+      #dna-canvas { opacity:0.40; }
+      .subjects { gap:6px; }
+      .pill { font-size:10.5px; padding:5px 11px; }
+    }
+    @media (max-width:380px) {
+      .brand-main { font-size:28px; letter-spacing:-1px; }
+      .glass-card { padding:24px 16px 20px; }
+      .top-badge { font-size:9.5px; padding:6px 14px; }
+    }
+    @media (max-height:700px) {
+      .page { padding:24px 20px 32px; }
+      .brand { margin-bottom:16px; }
+      .top-badge { margin-bottom:12px; }
+      .glass-card { padding:24px 28px 20px; }
+      .card-header { margin-bottom:20px; }
+      .field { margin-bottom:12px; }
+      .subjects { margin-top:16px; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="dna-canvas"></canvas>
+
+<div class="aurora">
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+  <div class="aurora-blob"></div>
+</div>
+
+<div class="grid-overlay"></div>
+<div class="scan-line"></div>
+<div class="vignette"></div>
+
+<div class="page">
+
+  <div class="top-badge">
+    <span class="badge-dot"></span>
+    Plataforma de Estudos &bull; Medicina
+  </div>
+
+  <div class="brand">
+    <div class="brand-main">RESUMOS DO <span>ENZO</span></div>
+    
+  </div>
+
+  <div class="glass-card">
+    <div class="card-header">
+      <div class="card-icon">&#x1F9EC;</div>
+      <h2 id="title">Bem-vindo</h2>
+      <p>Acesso restrito a alunos autorizados</p>
+    </div>
+
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="email" placeholder="seu@email.com" autocomplete="email">
+    </div>
+
+    <div class="field">
+      <label>Senha</label>
+      <input type="password" id="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password">
+    </div>
+
+    <!-- TERMOS DE USO -->
+    <div class="terms-box" id="termsBox">
+      <div class="terms-scroll">
+        <div class="t-section">💰 Valores e Pagamentos</div>
+        <p>• O valor é de <strong>R$15,00 por resumo</strong>, com descontos progressivos para pacotes.</p>
+        <p>• Os valores são <strong>não reembolsáveis</strong> após a liberação do acesso.</p>
+        <p>• Pagamento via PIX para a chave <strong>17997220348</strong>. Após pagar, envie o comprovante e seu e-mail para o WhatsApp do mesmo número.</p>
+
+        <div class="t-section">📅 Prazo de Acesso</div>
+        <p>• Os resumos ficam disponíveis durante as avaliações de <strong>P2 e recuperatórios</strong>.</p>
+        <p>• Após o encerramento do ciclo de P2, os conteúdos serão <strong>atualizados para as provas finais</strong>.</p>
+        <p>• A compra dos resumos de P2 <strong>não garante acesso</strong> aos conteúdos das provas finais, que serão comercializados separadamente.</p>
+
+        <div class="t-section">🔒 Privacidade e Segurança</div>
+        <p>• Não armazenamos dados sensíveis.</p>
+        <p>• <strong>Nunca compartilhe sua senha</strong> com ninguém.</p>
+        <p>• Cada conta é pessoal e intransferível — permite apenas <strong>um dispositivo ativo por vez</strong>.</p>
+      </div>
+      <div class="terms-check" onclick="toggleTerms()">
+        <input type="checkbox" id="termsChk" onchange="updateMainBtn()">
+        <label for="termsChk">Li e concordo com todos os termos para continuar</label>
+      </div>
+    </div>
+
+    <button id="mainBtn" disabled>Entrar</button>
+    <button id="toggleBtn">Criar conta</button>
+    <button id="forceBtn" style="
+      display:none; width:100%; padding:13px; margin-top:8px;
+      border:1px solid rgba(239,68,68,0.4); border-radius:14px;
+      background:rgba(239,68,68,0.08); color:#fca5a5;
+      font-size:13px; font-family:'Poppins',sans-serif;
+      cursor:pointer; transition:all 0.25s; -webkit-appearance:none;
+    " onmouseover="this.style.background='rgba(239,68,68,0.18)'"
+       onmouseout="this.style.background='rgba(239,68,68,0.08)'">
+      ⚡ Forçar desconexão do outro dispositivo
+    </button>
+
+    <div id="msg"></div>
+
+    <div class="divider">acesso seguro</div>
+
+    <div class="security-note">
+      <strong>&#x26A0; Aten&ccedil;&atilde;o</strong>
+      Sistema exclusivo para alunos. Use uma senha &uacute;nica para esta plataforma.
+    </div>
+
+    <div class="card-footer">&copy; 2026 Resumos do Enzo &bull; Medicina</div>
+  </div>
+
+  <div class="subjects">
+    <span class="pill">&#x1F9EA; Bioqu&iacute;mica</span>
+    <span class="pill">&#x26A1; Biol&iacute;sica</span>
+    <span class="pill">&#x1F9EC; Gen&eacute;tica</span>
+    <span class="pill">&#x1FAC0; Fisiologia</span>
+    <span class="pill">&#x1F9A0; Microbiologia</span>
+    <span class="pill">&#x1F6E1;&#xFE0F; Imunologia</span>
+  </div>
+
+</div>
+
+<!-- THREE.JS — DNA NAS LATERAIS -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script>
+(function () {
+  const canvas = document.getElementById('dna-canvas');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+
+  const scene    = new THREE.Scene();
+  scene.fog      = new THREE.FogExp2(0x020810, 0.030);
+
+  const W = () => window.innerWidth;
+  const H = () => window.innerHeight;
+
+  const camera = new THREE.PerspectiveCamera(62, W() / H(), 0.1, 200);
+  camera.position.set(0, 0, 15);
+
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  renderer.setSize(W(), H());
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x000000, 0);
+
+  window.addEventListener('resize', () => {
+    resize();
+    camera.aspect = W() / H();
+    camera.updateProjectionMatrix();
+    renderer.setSize(W(), H());
+    updatePositions();
+  });
+
+  // ── LIGHTS ──
+  scene.add(new THREE.AmbientLight(0x1a2a3a, 2.2));
+  function addLight(color, intensity, x, y, z) {
+    const l = new THREE.PointLight(color, intensity, 70);
+    l.position.set(x, y, z);
+    scene.add(l);
+    return l;
+  }
+  const lLeft   = addLight(0x22d3ee, 7,  -8,  2, 6);
+  const lRight  = addLight(0x0ea5e9, 7,   8,  2, 6);
+  const lTop    = addLight(0xffffff, 2,   0,  7, 4);
+  const lPurple = addLight(0x818cf8, 3,   0, -4, 5);
+
+  // ── DNA BUILDER ──
+  const TURNS=4.0, HEIGHT=11.0, RADIUS=1.5, ZSCALE=0.55, STEPS=200, BPSTEP=6;
+
+  const backboneMat = new THREE.MeshPhongMaterial({
+    color:0x22d3ee, emissive:0x083040, emissiveIntensity:0.45,
+    shininess:180, transparent:true, opacity:0.90
+  });
+
+  const baseMats = [
+    {color:0xff4d6d, emissive:0x8b0020},
+    {color:0x4ade80, emissive:0x064020},
+    {color:0x60a5fa, emissive:0x082060},
+    {color:0xfbbf24, emissive:0x6b4700},
+  ].map(c => new THREE.MeshPhongMaterial({
+    color:c.color, emissive:c.emissive, emissiveIntensity:0.5,
+    shininess:140, transparent:true, opacity:0.95
+  }));
+
+  function helixPoint(step, offset) {
+    const t=step/STEPS, angle=t*Math.PI*2*TURNS+offset, y=(t-0.5)*HEIGHT;
+    return new THREE.Vector3(Math.cos(angle)*RADIUS, y, Math.sin(angle)*RADIUS*ZSCALE);
+  }
+
+  function buildDNA(group) {
+    function buildStrand(offset) {
+      const pts = [];
+      for (let i=0; i<=STEPS; i++) pts.push(helixPoint(i, offset));
+      group.add(new THREE.Mesh(
+        new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), STEPS*2, 0.08, 10, false),
+        backboneMat
+      ));
+    }
+    function makeCylinder(p1, p2, radius, mat) {
+      const dir=new THREE.Vector3().subVectors(p2,p1), len=dir.length();
+      if (len<0.001) return;
+      const mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius,radius,len,10,1), mat);
+      mesh.position.copy(p1).addScaledVector(dir.clone().normalize(), len*0.5);
+      mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), dir.clone().normalize());
+      group.add(mesh);
+    }
+    buildStrand(0);
+    buildStrand(Math.PI);
+    const sphereGeo = new THREE.SphereGeometry(0.15, 16, 16);
+    for (let i=0; i<=STEPS; i+=BPSTEP) {
+      const mat=baseMats[Math.floor(i/BPSTEP)%4], p1=helixPoint(i,0), p2=helixPoint(i,Math.PI);
+      const s1=new THREE.Mesh(sphereGeo,mat); s1.position.copy(p1); group.add(s1);
+      const s2=new THREE.Mesh(sphereGeo,mat); s2.position.copy(p2); group.add(s2);
+      makeCylinder(p1,p2,0.042,mat);
+    }
+  }
+
+  // Dois grupos — esquerdo e direito
+  const leftGroup  = new THREE.Group();
+  const rightGroup = new THREE.Group();
+  scene.add(leftGroup);
+  scene.add(rightGroup);
+
+  buildDNA(leftGroup);
+  buildDNA(rightGroup);
+
+  // Partículas de ambiente
+  function makeParticles(count, spread, color, size, opacity) {
+    const pos=new Float32Array(count*3);
+    for (let i=0;i<pos.length;i++) pos[i]=(Math.random()-0.5)*spread;
+    const geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    scene.add(new THREE.Points(geo,new THREE.PointsMaterial({color,size,transparent:true,opacity})));
+  }
+  makeParticles(500, 28, 0x22d3ee, 0.04, 0.25);
+  makeParticles(200, 32, 0x67e8f9, 0.022, 0.15);
+
+  // ── POSICIONAMENTO RESPONSIVO ──
+  function getDNAOffset() {
+    const aspect = window.innerWidth / window.innerHeight;
+    const isMobile = window.innerWidth < 700;
+    if (isMobile) return { x: 0, scale: 0.7, opacity: 0.35, showBoth: false };
+    // Desktop: offset proporcional à largura para ficar nas laterais
+    const offset = Math.min(3.5 + aspect * 2.2, 8.0);
+    return { x: offset, scale: 1.0, opacity: 1.0, showBoth: true };
+  }
+
+  function updatePositions() {
+    const cfg = getDNAOffset();
+    if (cfg.showBoth) {
+      leftGroup.position.x  = -cfg.x;
+      rightGroup.position.x =  cfg.x;
+      leftGroup.visible  = true;
+      rightGroup.visible = true;
+    } else {
+      // Mobile: só o da direita centralizado atrás do card
+      leftGroup.visible = false;
+      rightGroup.position.x = 0;
+    }
+    // Ajusta opacidade das backbones
+    backboneMat.opacity = cfg.opacity * 0.90;
+  }
+
+  updatePositions();
+
+  // ── ANIMAÇÃO ──
+  (function animate() {
+    requestAnimationFrame(animate);
+    const t = Date.now() * 0.001;
+
+    // DNAs rodam em direções opostas
+    leftGroup.rotation.y  =  t * 0.18;
+    rightGroup.rotation.y = -t * 0.18;
+
+    // Leve flutuação vertical alternada
+    leftGroup.position.y  =  Math.sin(t * 0.22) * 0.3;
+    rightGroup.position.y = -Math.sin(t * 0.22) * 0.3;
+
+    // Luzes orbitando cada lado
+    lLeft.position.set( -getDNAOffset().x + Math.sin(t*0.35)*4, 2+Math.cos(t*0.2)*2, Math.cos(t*0.35)*5+4);
+    lRight.position.set( getDNAOffset().x + Math.cos(t*0.28)*4, 2+Math.sin(t*0.18)*2, Math.sin(t*0.28)*5+4);
+
+    renderer.render(scene, camera);
+  })();
+})();
+</script>
+
+<!-- AUTH CONFIG -->
+<script>
+window.authConfig = {
+  SUPABASE_URL: "https://dmuwtmovrtlhvokdnmis.supabase.co",
+  SUPABASE_KEY: "sb_publishable_TA6bGrJ_gMQ9A4l6G3XYTQ_2rEuNNAj",
+  generateDeviceId() {
+    const combined = navigator.userAgent+'|'+window.screen.width+'x'+window.screen.height+'|'+Intl.DateTimeFormat().resolvedOptions().timeZone;
+    let hash = 0xcbf29ce484222325n;
+    for (let i=0;i<combined.length;i++) {
+      hash ^= BigInt(combined.charCodeAt(i));
+      hash += (hash<<1n)+(hash<<4n)+(hash<<5n)+(hash<<7n)+(hash<<8n)+(hash<<40n);
+    }
+    return Math.abs(Number(hash%BigInt(1e10))).toString(36).padStart(16,'0');
+  },
+
+  // Device ID persistente — usa localStorage para ser estável
+  getDeviceId() {
+    const key = "_resumos_did";
+    let id = localStorage.getItem(key);
+    if (!id) {
+      const arr = new Uint8Array(10);
+      crypto.getRandomValues(arr);
+      id = Array.from(arr).map(b => b.toString(16).padStart(2,"0")).join("");
+      localStorage.setItem(key, id);
+    }
+    return id;
+  },
+  async initSupabase() {
+    if (!window.supabase) { console.warn("Supabase nao carregado"); return null; }
+    try { return supabase.createClient(this.SUPABASE_URL, this.SUPABASE_KEY); }
+    catch(err) { console.error(err); return null; }
+  }
+};
+</script>
+
+<!-- AUTH LOGIC -->
+<script>
+(async function() {
+  let supabaseClient = null;
+  let isLogin        = true;
+  let pendingUserId  = null; // guarda userId durante conflito de dispositivo
+
+  const email     = document.getElementById("email");
+  const password  = document.getElementById("password");
+  const mainBtn   = document.getElementById("mainBtn");
+  const toggleBtn = document.getElementById("toggleBtn");
+  const forceBtn  = document.getElementById("forceBtn");
+  const title     = document.getElementById("title");
+  const msg       = document.getElementById("msg");
+
+  function setMsg(text, color="#7dd3e8") { msg.style.color=color; msg.textContent=text; }
+  function setLoading(l) {
+    var chk = document.getElementById("termsChk");
+    mainBtn.disabled = l ? true : !(chk && chk.checked);
+    toggleBtn.disabled = l;
+    mainBtn.textContent = l ? "Processando..." : (isLogin ? "Entrar" : "Cadastrar");
+  }
+  function showForceBtn(show) { forceBtn.style.display = show ? "block" : "none"; }
+
+  async function checkAlreadyAuthenticated() {
+    if (!supabaseClient) return;
+    try {
+      const { data:{session} } = await supabaseClient.auth.getSession();
+      if (session) window.location.href = "dashboard.html";
+    } catch(err) { console.error(err); }
+  }
+
+  // ── Registrar dispositivo e ir ao dashboard ──
+  async function finalizeLogin(userId) {
+    const deviceId = window.authConfig.getDeviceId();
+    await supabaseClient.from("profiles").update({
+      active_session: true,
+      device_id:      deviceId,
+      last_login:     new Date().toISOString()
+    }).eq("id", userId);
+
+    setMsg("✅ Acesso liberado...", "#4ade80");
+    showForceBtn(false);
+    await new Promise(r => setTimeout(r, 900));
+    window.location.href = "dashboard.html";
+  }
+
+  // ── Botão forçar desconexão ──
+  forceBtn.addEventListener("click", async () => {
+    if (!pendingUserId) return;
+    forceBtn.disabled = true;
+    forceBtn.textContent = "Desconectando...";
+    try {
+      // Limpa o lock do outro dispositivo
+      await supabaseClient.from("profiles").update({
+        active_session: false,
+        device_id:      null
+      }).eq("id", pendingUserId);
+
+      await finalizeLogin(pendingUserId);
+    } catch(err) {
+      console.error(err);
+      setMsg("Erro ao forçar desconexão", "#f87171");
+      forceBtn.disabled = false;
+      forceBtn.textContent = "⚡ Forçar desconexão do outro dispositivo";
+    }
+  });
+
+  // ── Toggle login / cadastro ──
+  toggleBtn.addEventListener("click", () => {
+    isLogin = !isLogin;
+    title.textContent     = isLogin ? "Bem-vindo"  : "Criar conta";
+    mainBtn.textContent   = isLogin ? "Entrar"      : "Cadastrar";
+    toggleBtn.textContent = isLogin ? "Criar conta" : "Já tenho conta";
+    msg.textContent = ""; email.value = ""; password.value = "";
+    showForceBtn(false); pendingUserId = null;
+  });
+
+  // ── Handler principal ──
+  mainBtn.addEventListener("click", async () => {
+    if (!supabaseClient) { setMsg("Sistema indisponível", "#f87171"); return; }
+    const emailVal = email.value.trim(), passVal = password.value;
+    if (!emailVal || !passVal) { setMsg("Preencha todos os campos", "#f87171"); return; }
+
+    setLoading(true);
+    showForceBtn(false);
+
+    try {
+      if (isLogin) {
+        // ── LOGIN ──
+        const { data:authData, error:authError } = await supabaseClient.auth.signInWithPassword({
+          email: emailVal, password: passVal
+        });
+        if (authError) { setMsg("Email ou senha inválidos", "#f87171"); setLoading(false); return; }
+
+        const userId = authData.user.id;
+
+        const { data:profile, error:profileError } = await supabaseClient
+          .from("profiles").select("*").eq("id", userId).single();
+
+        if (profileError || !profile) {
+          await supabaseClient.auth.signOut();
+          setMsg("Erro ao carregar perfil", "#f87171"); setLoading(false); return;
+        }
+
+        if (!profile.is_approved) {
+          await supabaseClient.auth.signOut();
+          setMsg("⏳ Conta aguardando aprovação", "#fb923c"); setLoading(false); return;
+        }
+
+        // ── Verificar dispositivo ──
+        const currentDevice = window.authConfig.getDeviceId();
+        const hasConflict   = profile.active_session && profile.device_id && profile.device_id !== currentDevice;
+
+        if (hasConflict) {
+          // Guarda userId para o forceBtn usar
+          pendingUserId = userId;
+          setMsg("❌ Conta ativa em outro dispositivo.", "#ef4444");
+          showForceBtn(true);
+          setLoading(false);
+          return;
+        }
+
+        // Sem conflito — registra este dispositivo e entra
+        await finalizeLogin(userId);
+
+      } else {
+        // ── CADASTRO ──
+        if (passVal.length < 6) { setMsg("Senha deve ter pelo menos 6 caracteres", "#f87171"); setLoading(false); return; }
+        if (!emailVal.includes("@")) { setMsg("Email inválido", "#f87171"); setLoading(false); return; }
+
+        const { data:authData, error:signupError } = await supabaseClient.auth.signUp({
+          email: emailVal, password: passVal
+        });
+        if (signupError) { setMsg(signupError.message||"Erro ao criar conta", "#f87171"); setLoading(false); return; }
+
+        const { error:insertError } = await supabaseClient.from("profiles").insert({
+          id: authData.user.id, email: authData.user.email, is_approved: true
+        });
+        if (insertError) { setMsg("Erro ao criar perfil", "#f87171"); setLoading(false); return; }
+
+        setMsg("✅ Conta criada! Entrando...", "#4ade80");
+        await new Promise(r => setTimeout(r, 1000));
+        await finalizeLogin(authData.user.id);
+      }
+
+    } catch(err) {
+      console.error(err); setMsg("Erro inesperado", "#f87171"); setLoading(false);
+    }
+  });
+
+  // ── Termos de uso ──
+  window.toggleTerms = function() {
+    var chk = document.getElementById("termsChk");
+    chk.checked = !chk.checked;
+    updateMainBtn();
+  };
+  window.updateMainBtn = function() {
+    var chk     = document.getElementById("termsChk");
+    var btn     = document.getElementById("mainBtn");
+    var isChecked = chk && chk.checked;
+    btn.disabled = !isChecked;
+    btn.style.opacity = isChecked ? "1" : "0.45";
+  };
+  // Inicializa com botão desabilitado
+  updateMainBtn();
+
+  // Reaplica ao trocar login/cadastro
+  var origToggle = toggleBtn.onclick;
+  toggleBtn.addEventListener("click", function() {
+    setTimeout(updateMainBtn, 10);
+  });
+
+  // ── Init ──
+  supabaseClient = await window.authConfig.initSupabase();
+  if (supabaseClient) { await checkAlreadyAuthenticated(); }
+  else { setMsg("⚠ Serviços indisponíveis", "#fb923c"); }
+})();
+</script>
+
+</body>
+</html>

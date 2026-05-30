@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - Resumos do Enzo</title>
+
+  <!-- PAGE_KEY: null = apenas is_approved, sem coluna específica -->
+  <script>window.PAGE_KEY = null;</script>
+  <!-- 1. Oculta a página imediatamente (evita flash de conteúdo não autorizado) -->
+  <script>document.documentElement.style.visibility = "hidden";</script>
+  <!-- 2. Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- 3. Auth guard: checa sessão + is_approved → dispara authReady -->
+  <script src="auth-guard.js"></script>
+  <!-- 4. Revela a página somente após auth OK -->
+  <script>
+    document.addEventListener("authReady", function () {
+      document.documentElement.style.visibility = "visible";
+    });
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #22d3ee;
+      --accent:  #06b6d4;
+      --border:  rgba(34, 211, 238, 0.18);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { height: 100%; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      min-height: 100%;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 50%, rgba(34,211,238,0.06) 0%, transparent 60%),
+        linear-gradient(160deg, #020d1a 0%, #010812 50%, #020d1a 100%);
+      color: #fff;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(34,211,238,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34,211,238,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+
+    .logo span {
+      background: linear-gradient(100deg, #22d3ee 0%, #67e8f9 50%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-email {
+      font-size: 14px;
+      color: #7dd3e8;
+    }
+
+    .logout-btn {
+      padding: 12px 28px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: transparent;
+      color: #7dd3e8;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .3s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--primary);
+      background: rgba(34, 211, 238, 0.05);
+      color: #fff;
+    }
+
+    .content {
+      display: none; /* oculto até authReady */
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .content.visible {
+      display: grid;
+    }
+
+    .content a.card {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .card {
+      padding: 28px;
+      border-radius: 16px;
+      background: rgba(34, 211, 238, 0.05);
+      border: 1px solid var(--border);
+      transition: all .3s;
+    }
+
+    .card:hover {
+      background: rgba(34, 211, 238, 0.12);
+      border-color: var(--primary);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(34, 211, 238, 0.15);
+    }
+
+    .card h3 {
+      font-size: 20px;
+      margin-bottom: 12px;
+      color: var(--primary);
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #a5f3fc;
+      line-height: 1.6;
+    }
+
+    .status-msg {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      font-size: 16px;
+      color: #7dd3e8;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      .header { flex-direction: column; align-items: flex-start; }
+      .user-info { flex-direction: column; align-items: flex-start; width: 100%; }
+      .logout-btn { width: 100%; }
+    }
+
+    /* ── PAINEL DE PREÇOS ── */
+    .pricing-panel {
+      display: none; /* revelado junto com o content */
+      margin-top: 48px;
+      padding: 32px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.06) 0%, rgba(6,182,212,0.03) 100%);
+      border: 1px solid rgba(34,211,238,0.22);
+      max-width: 520px;
+    }
+    .pricing-panel.visible { display: block; }
+
+    .pricing-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+    .pricing-header-icon {
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      background: rgba(34,211,238,0.12);
+      border: 1px solid rgba(34,211,238,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .pricing-header h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2f8fc;
+      letter-spacing: -0.3px;
+    }
+    .pricing-header p {
+      font-size: 11.5px;
+      color: rgba(125,211,232,0.6);
+      margin-top: 1px;
+    }
+
+    .pricing-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+
+    .pricing-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 16px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(34,211,238,0.10);
+      transition: all .25s;
+    }
+    .pricing-row:hover {
+      background: rgba(34,211,238,0.07);
+      border-color: rgba(34,211,238,0.25);
+    }
+    .pricing-row.highlight {
+      background: rgba(34,211,238,0.10);
+      border-color: rgba(34,211,238,0.40);
+      position: relative;
+    }
+
+    .pricing-row-label {
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #c0f0f8;
+    }
+    .pricing-row-label span {
+      font-size: 11px;
+      color: rgba(125,211,232,0.5);
+      margin-left: 6px;
+    }
+    .pricing-row-price {
+      font-size: 15px;
+      font-weight: 700;
+      color: #22d3ee;
+      font-variant-numeric: tabular-nums;
+    }
+    .pricing-row.highlight .pricing-row-price { color: #67e8f9; }
+
+    .pricing-divider {
+      height: 1px;
+      background: rgba(34,211,238,0.10);
+      margin: 16px 0;
+    }
+
+    .pricing-pix {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(34,211,238,0.05);
+      border: 1px solid rgba(34,211,238,0.15);
+      margin-bottom: 12px;
+    }
+    .pix-icon {
+      font-size: 20px; flex-shrink: 0;
+    }
+    .pix-info { flex: 1; }
+    .pix-label {
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(34,211,238,0.5);
+      margin-bottom: 3px;
+    }
+    .pix-key {
+      font-size: 15px;
+      font-weight: 700;
+      color: #e2f8fc;
+      letter-spacing: 0.02em;
+    }
+    .pix-copy {
+      padding: 6px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(34,211,238,0.25);
+      background: transparent;
+      color: #7dd3e8;
+      font-size: 12px;
+      font-family: 'Poppins', sans-serif;
+      cursor: pointer;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    .pix-copy:hover { background: rgba(34,211,238,0.10); border-color: var(--primary); color: #fff; }
+
+    .pricing-footer {
+      font-size: 12px;
+      color: rgba(125,211,232,0.55);
+      line-height: 1.65;
+      text-align: center;
+    }
+    .pricing-footer strong { color: #7dd3e8; font-weight: 600; }
+
+
+    .pricing-terms {
+      margin-top: 4px;
+    }
+    .pt-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(251,191,36,0.75);
+      margin-bottom: 10px;
+    }
+    .pt-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .pt-list li {
+      font-size: 12px;
+      color: rgba(125,211,232,0.55);
+      line-height: 1.6;
+      padding-left: 4px;
+    }
+    .pt-list li strong { color: rgba(125,211,232,0.85); }
+
+    /* ── SEÇÕES P2 / FINAL ── */
+    .section-label {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+    .section-label-text {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(34,211,238,0.5);
+      white-space: nowrap;
+    }
+    .section-label-line {
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(34,211,238,0.2), transparent);
+    }
+
+    /* Card "Em breve" — provas finais */
+    .card.soon {
+      background: rgba(255,255,255,0.02);
+      border-color: rgba(255,255,255,0.06);
+      cursor: default;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+    .card.soon h3 { color: rgba(165,243,252,0.4); }
+    .card.soon p  { color: rgba(165,243,252,0.3); }
+    .soon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 10px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      background: rgba(251,191,36,0.10);
+      border: 1px solid rgba(251,191,36,0.25);
+      color: rgba(251,191,36,0.65);
+    }
+    .soon-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(251,191,36,0.65);
+    }
+    @media (max-width: 640px) {
+      .pricing-panel { padding: 24px 18px; }
+      .pricing-row-label { font-size: 12.5px; }
+      .pricing-row-price { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">RESUMOS <span>ENZO</span></div>
+    <div class="user-info">
+      <div class="user-email" id="userEmail"></div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <!-- Status de carregamento -->
+  <div id="statusArea">
+    <div class="status-msg">Verificando acesso…</div>
+  </div>
+
+  <!-- Grid de cards — revelado via classe .visible após authReady -->
+  <div id="content" class="content">
+
+    <!-- ── PROVAS DE P2 ── -->
+    <div class="section-label">
+      <span class="section-label-text">📝 Provas de P2</span>
+      <span class="section-label-line"></span>
+    </div>
+
+    <a href="resumo_bioquimica_p2.html" class="card">
+      <h3>📚 Bioquímica P2</h3>
+      <p>Metabolismo e bases moleculares da vida.</p>
+    </a>
+
+    <a href="biofisica.html" class="card">
+      <h3>⚡ Biofísica P2</h3>
+      <p>Conteúdo de física aplicada à medicina.</p>
+    </a>
+
+    <a href="genetica_p2_enzo.html" class="card">
+      <h3>🧬 Genética P2</h3>
+      <p>Herança e mutações genéticas.</p>
+    </a>
+
+    <a href="fisiologia_p2_enzo.html" class="card">
+      <h3>🫀 Fisiologia P2</h3>
+      <p>Funcionamento dos sistemas humanos.</p>
+    </a>
+
+    <a href="microbiologia_gram_negativos.html" class="card">
+      <h3>🦠 Microbiologia P2</h3>
+      <p>Conteúdo teórico e microorganismos.</p>
+    </a>
+
+    <a href="micro_pratica.html" class="card">
+      <h3>🧫 Micro Prática P2</h3>
+      <p>Identificação e técnicas laboratoriais.</p>
+    </a>
+
+    <a href="#" class="card">
+      <h3>🛡️ Imunologia P2</h3>
+      <p>Sistema imune, defesas e respostas do organismo.</p>
+    </a>
+
+    <!-- ── PROVAS FINAIS ── -->
+    <div class="section-label" style="margin-top:20px">
+      <span class="section-label-text">🎓 Provas Finais</span>
+      <span class="section-label-line"></span>
+    </div>
+
+    <div class="card soon">
+      <h3>📚 Bioquímica Final</h3>
+      <p>Metabolismo e bases moleculares da vida.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+    <div class="card soon">
+      <h3>⚡ Biofísica Final</h3>
+      <p>Conteúdo de física aplicada à medicina.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+    <div class="card soon">
+      <h3>🧬 Genética Final</h3>
+      <p>Herança e mutações genéticas.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+    <div class="card soon">
+      <h3>🫀 Fisiologia Final</h3>
+      <p>Funcionamento dos sistemas humanos.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+    <div class="card soon">
+      <h3>🦠 Microbiologia Final</h3>
+      <p>Conteúdo teórico e microorganismos.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+    <div class="card soon">
+      <h3>🧫 Micro Prática Final</h3>
+      <p>Identificação e técnicas laboratoriais.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+    <div class="card soon">
+      <h3>🛡️ Imunologia Final</h3>
+      <p>Sistema imune, defesas e respostas do organismo.</p>
+      <div class="soon-badge"><span class="soon-dot"></span> Em breve</div>
+    </div>
+
+  </div>
+
+  <!-- PAINEL DE PREÇOS -->
+  <div id="pricingPanel" class="pricing-panel">
+
+    <div class="pricing-header">
+      <div class="pricing-header-icon">💳</div>
+      <div>
+        <h4>Libere seus Resumos</h4>
+        <p>R$ 15,00 por resumo • Escolha o que precisar</p>
+      </div>
+    </div>
+
+    <div class="pricing-rows">
+
+      <div class="pricing-row highlight">
+        <div class="pricing-row-label">📄 Por Resumo <span>à sua escolha</span></div>
+        <div class="pricing-row-price">R$ 15,00</div>
+      </div>
+
+    </div>
+
+    <div class="pricing-divider"></div>
+
+    <div class="pricing-pix">
+      <div class="pix-icon">⚡</div>
+      <div class="pix-info">
+        <div class="pix-label">Chave PIX</div>
+        <div class="pix-key" id="pixKey">17997220348</div>
+      </div>
+      <button class="pix-copy" onclick="copyPix()">Copiar</button>
+    </div>
+
+    <div class="pricing-footer">
+      Após o pagamento, envie o comprovante e seu<br>
+      <strong>e-mail cadastrado</strong> para o WhatsApp:<br>
+      <strong>(17) 99722-0348</strong> — mesmo número da chave PIX<br><br>
+      Ótimos estudos! 🎓
+    </div>
+
+    <div class="pricing-divider"></div>
+
+    <div class="pricing-terms">
+      <div class="pt-title">⚠️ Condições de Acesso</div>
+      <ul class="pt-list">
+        <li>💰 Valores <strong>não reembolsáveis</strong> após liberação do acesso.</li>
+        <li>📅 Os resumos ficam disponíveis durante as avaliações de <strong>P2 e recuperatórios</strong>. Após o encerramento deste ciclo, serão atualizados para as provas finais.</li>
+        <li>⚠️ A compra dos resumos de P2 <strong>não inclui</strong> o conteúdo das provas finais — serão comercializados separadamente.</li>
+        <li>🔒 Não armazenamos dados sensíveis. <strong>Nunca compartilhe sua senha.</strong></li>
+        <li>✅ Ao criar sua conta e realizar o pagamento, você concorda com todos os itens acima.</li>
+      </ul>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ══ LÓGICA DO DASHBOARD ══ -->
+<script>
+(function () {
+  "use strict";
+
+  var statusArea  = document.getElementById("statusArea");
+  var contentGrid = document.getElementById("content");
+  var userEmailEl = document.getElementById("userEmail");
+  var logoutBtn   = document.getElementById("logoutBtn");
+
+  // ── Render: chamado quando auth-guard.js confirma sessão OK ──────────────
+  function onAuthReady(session) {
+    statusArea.innerHTML = "";
+    userEmailEl.textContent = session.user.email || "";
+    contentGrid.classList.add("visible");
+    document.getElementById("pricingPanel").classList.add("visible");
+  }
+
+  // ── Logout ────────────────────────────────────────────────────────────────
+  logoutBtn.addEventListener("click", async function () {
+    logoutBtn.disabled = true;
+    logoutBtn.textContent = "Saindo…";
+
+    var client  = window.authClient;
+    var session = window.authSession;
+
+    if (client && session) {
+      try {
+        // Libera o slot do dispositivo no banco
+        await client.from("profiles")
+          .update({ active_session: false, device_id: null })
+          .eq("id", session.user.id);
+      } catch (err) { console.warn("[logout] update error:", err); }
+
+      try { await client.auth.signOut(); }
+      catch (err) { console.warn("[logout] signOut error:", err); }
+    }
+
+    window.location.replace("login.html");
+  });
+
+  // ── Escuta o evento disparado pelo auth-guard.js ──────────────────────────
+  document.addEventListener("authReady", function (e) {
+    onAuthReady(e.detail.session);
+  });
+
+})();
+
+function copyPix() {
+  navigator.clipboard.writeText("17997220348").then(function() {
+    var btn = document.querySelector(".pix-copy");
+    btn.textContent = "Copiado!";
+    btn.style.color = "#4ade80";
+    btn.style.borderColor = "rgba(74,222,128,0.4)";
+    setTimeout(function() {
+      btn.textContent = "Copiar";
+      btn.style.color = "";
+      btn.style.borderColor = "";
+    }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>
